@@ -1,5 +1,5 @@
 #Imports
-from classes.arduino import arduino
+from classes import arduino
 import tkinter
 
 #Create window
