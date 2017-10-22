@@ -1,0 +1,4 @@
+#####################################
+# Don't track compiled python files #
+
+*.pyc
