@@ -1,4 +1,3 @@
-#####################################
-# Don't track compiled python files #
+# Don't track compiled python files and python cache #
 
-*.pyc
+__pycache__/
