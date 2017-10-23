@@ -6,7 +6,7 @@ import time
 #class for communicating with the arduino
 # http://www.instructables.com/id/Arduino-Python-Communication-via-USB/
 # https://www.python-course.eu/threads.php
-class arduino(threading.Thread):
+class Arduino(threading.Thread):
 	def __init__(self, comport, baudrate):
 		threading.Thread.__init__(self)
 		# Init the comport to communicate with the arduino
