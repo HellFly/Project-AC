@@ -1,18 +1,18 @@
-String inputData = "";  // Array for incoming data
-byte buffer[5];
+String inputBuffer = "";  // buffer for incoming data
+byte sendBuffer[5];
 
 void setup() {
   Serial.begin(9600);
   
-  // reserve 10 bytes for the inputString:
-  inputData.reserve(10);
+  // reserve 16 bytes for the input data:
+  inputBuffer.reserve(16);
 }
 
 void loop() {
   // Write a temperature of 20 degrees every couple of seconds
-  buffer[0] = 2;          // packet id 2
-  buffer[1] = 128 + 20;   // 20 degrees
-  Serial.write(buffer, 2);
+  sendBuffer[0] = 2;          // packet id 2 for temperature
+  sendBuffer[1] = 128 + 20;   // 20 degrees
+  Serial.write(sendBuffer, 2);
   delay(2000);
 }
 
@@ -23,8 +23,37 @@ void loop() {
 */
 void serialEvent() {
   while (Serial.available()) {
-    inputData += (char)Serial.read();
+    inputBuffer += (char)Serial.read();
+  }
+  
+  parseData();
+}
 
-    // Parse the incoming command here
+void parseData() {
+  byte data[inputBuffer.length()];
+  inputBuffer.getBytes(data, inputBuffer.length());
+
+  byte c = data[0];
+  byte p1 = data[1];
+  byte p2 = data[2];
+  byte p3 = data[3];
+
+  if (c == 0) { // Please send all data
+    if (p1 == 1) { // Send from temperature unit
+      sendBuffer[0] = 2;          // packet id 2 for temperature
+      sendBuffer[1] = 128 + 20;   // 20 degrees
+      Serial.write(sendBuffer, 2);
+      inputBuffer = "";
+    }
+  }
+  else if (c == 20) { // Max opening distance shutters
+    if (p1 == 1) { // For temperature unit
+      int value = p2*256 + p3; // Max opening distance in cm
+      inputBuffer = "";
+    }
+  }
+  else { // no valid value for the packet id, so clear the data
+    inputBuffer = "";
   }
 }
+
