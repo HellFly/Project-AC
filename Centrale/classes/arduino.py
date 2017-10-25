@@ -10,19 +10,28 @@ class Arduino(threading.Thread):
 	def __init__(self, comport, baudrate):
 		threading.Thread.__init__(self)
 		# Init the comport to communicate with the arduino
-		#self.com = serial.Serial(comport , baudrate, timeout=.1)
-		self.com = None
-		self.counter = 0
+		self.com = serial.Serial(comport , baudrate, timeout=.1)
+		#self.com = None
+		self.data = [-1] * 10
 		self.running = True
+		self.start()
 	def run(self):
 		while self.running:
-			data = None
 			if self.com != None:
-				data = self.com.readline()
-
-			self.counter += 1
-			if self.counter > 3:
-				self.running = False
-
-			print("Counter is " + str(self.counter))
-			time.sleep(1)
+				byte = self.com.read()
+				if byte:
+					self.add_byte(ord(byte))
+			
+			
+	def reset_data(self):
+		self.data = [-1] * 10
+	
+	def add_byte(self, byte):
+		i = 0
+		while i < len(self.data):
+			if self.data[i] == -1:
+				self.data[i] = byte
+				i = len(self.data)
+			i += 1
+		if i == len(self.data):
+			self.reset_data()
