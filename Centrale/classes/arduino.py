@@ -1,4 +1,3 @@
-import os
 import serial
 import threading
 import time
@@ -15,17 +14,24 @@ class Arduino(threading.Thread):
 		self.data = [-1] * 10
 		self.running = True
 		self.start()
+		
+		self.temperature_connected = False
+		self.light_connected = False
+		self.temperature = 0
+		self.light = 0
+		self.open_status = 'Open'
 	def run(self):
 		while self.running:
 			if self.com != None:
 				byte = self.com.read()
 				if byte:
 					self.add_byte(ord(byte))
-			
-			
+					self.parse_data()
+
+
+
 	def reset_data(self):
 		self.data = [-1] * 10
-	
 	def add_byte(self, byte):
 		i = 0
 		while i < len(self.data):
@@ -35,3 +41,26 @@ class Arduino(threading.Thread):
 			i += 1
 		if i == len(self.data):
 			self.reset_data()
+	def parse_data(self):
+		c = self.data[0]
+		p1 = self.data[1]
+		p2 = self.data[2]
+		p3 = self.data[3]
+		p4 = self.data[4]
+		
+		if c == 1: # report light sensor
+			if p1 != -1 and p2 != -1:
+				self.light = p1*256 + p2
+				self.reset_data()
+				print("Light: " + str(self.light))
+		elif c == 2: # report temperature sensor
+			if p1 != -1:
+				self.temperature = p1-128
+				self.reset_data()
+				print("Temperature: " + str(self.temperature))
+	
+	
+	def get_temperature(self):
+		return self.temperature
+	def get_light(self):
+		return self.light
