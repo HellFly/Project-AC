@@ -8,8 +8,8 @@ class GUI(tk.Tk):
     def __init__(self, *args, **kwargs): #Args, kwargs
         tk.Tk.__init__(self, *args, **kwargs)
         container = tk.Frame(self)
-
-        container.pack(side="top", fill="both", expand = True)
+        topRow = tk.Frame(self)
+        container.pack(side="bottom", fill="both", expand = True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
