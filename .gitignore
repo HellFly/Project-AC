@@ -2,3 +2,4 @@
 
 Centrale/classes/__pycache__/
 *.pyc
+Centrale/config.ini

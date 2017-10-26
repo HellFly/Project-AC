@@ -5,6 +5,15 @@ import serial
 import threading
 import time
 
+__a_running = True
+
+__a_temperature = 0
+__a_light = 0
+__a_blinds_status = False
+
+__a_temperature_connected = False
+__a_light_connected = False
+
 #class for communicating with the arduino
 # http://www.instructables.com/id/Arduino-Python-Communication-via-USB/
 # https://www.python-course.eu/threads.php
@@ -14,13 +23,11 @@ class Arduino(threading.Thread):
 
 		self.com = None
 		self.data = [-1] * 10
-		self.running = True
 
-		self.temperature_connected = False
-		self.light_connected = False
-		self.temperature = 0
-		self.light = 0
-		self.open_status = 'Open'
+		self.send_bytes = [-1]
+
+		global __a_running
+		__a_running = True
 
 		self.start()
 	def run(self):
@@ -35,14 +42,16 @@ class Arduino(threading.Thread):
 		# Init the comport to communicate with the arduino
 		self.com = serial.Serial(comport , baudrate, timeout=.1)
 
-		while self.running:
+		while __a_running:
 			if self.com != None:
 				byte = self.com.read()
 				if byte:
 					self.add_byte(ord(byte))
 					self.parse_data()
 
-
+				if self.send_bytes[0] != -1:
+					com.write(self.send_bytes)
+					self.send_bytes = [-1]
 
 	def reset_data(self):
 		self.data = [-1] * 10
@@ -64,17 +73,54 @@ class Arduino(threading.Thread):
 
 		if c == 1: # report light sensor
 			if p1 != -1 and p2 != -1:
-				self.light = p1*256 + p2
+				global __a_light
+				__a_light = p1*256 + p2
 				self.reset_data()
-				print("Light: " + str(self.light))
+				print("Light: " + str(__a_light))
 		elif c == 2: # report temperature sensor
 			if p1 != -1:
-				self.temperature = p1-128
+				global __a_temperature
+				__a_temperature = p1-128
 				self.reset_data()
-				print("Temperature: " + str(self.temperature))
+				print("Temperature: " + str(__a_temperature))
+		elif c == 3: # report status of blinds
+			if p1 != -1 and p2 != -1:
+				if p1 == 0: # blinds from light unit
+					if p2 == 0: # blinds are closed
+						__a_blinds_status = False
+					else:
+						__a_blinds_status = True
+					self.reset_data()
+				elif p1 == 1: # blinds from temperature unit
+					if p2 == 0: # blinds are closed
+						__a_blinds_status = False
+					else:
+						__a_blinds_status = True
+					self.reset_data()
+				else: # no valid units to report from so reset the data
+					self.reset_data()
+
+		else: # no valid packet id, so reset the data
+			self.reset_data()
 
 
-	def get_temperature(self):
-		return self.temperature
-	def get_light(self):
-		return self.light
+	def stop(self):
+		print("Stopping thread")
+		global __a_running
+		__a_running = False
+
+	def get_temperature():
+		global __a_temperature
+		return __a_temperature
+	def get_light():
+		global __a_light
+		return __a_light
+	def get_blinds(): # False = closed, True = open
+		global __a_blinds_status
+		return __a_blinds_status
+	def temperature_connected():
+		global __a_temperature_connected
+		return __a_temperature_connected
+	def light_connected():
+		global __a_light_connected
+		return __a_light_connected
