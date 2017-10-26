@@ -9,18 +9,17 @@ void setup() {
 }
 
 void loop() {
-  // Write a temperature of 20 degrees every couple of seconds
-  sendBuffer[0] = 2;          // packet id 2 for temperature
-  sendBuffer[1] = 128 + 20;   // 20 degrees
-  Serial.write(sendBuffer, 2);
+  // Write a temperature and a light value every couple of seconds
+  send_temp(20);
+  delay(2000);
+  send_light(1000);
   delay(2000);
 }
 
 /*
-  SerialEvent occurs whenever a new data comes in the hardware serial RX. This
-  routine is run between each time loop() runs, so using delay inside loop can
-  delay response. Multiple bytes of data may be available.
-*/
+ * This event is caled every time a message is recieved after the loop finishes
+ * This handles parsing the recieved data
+ */
 void serialEvent() {
   while (Serial.available()) {
     inputBuffer += (char)Serial.read();
@@ -29,6 +28,10 @@ void serialEvent() {
   parseData();
 }
 
+/*
+ * Parse he inpuBuffer for recieved commands
+ * Responds if necessary
+ */
 void parseData() {
   byte data[inputBuffer.length()];
   inputBuffer.getBytes(data, inputBuffer.length());
@@ -57,21 +60,25 @@ void parseData() {
   }
 }
 
+/*
+ * Sends the value of the light sensor
+ * int light: the value measured by the ligt sensor
+ */
 void send_light(int light) {
- byte val1;
+  byte val1;
   byte val2;
 
   if (light < 0) {
     val1 = 0;
     val2 = 0;
   }
-  else if (light > 255*256+255) { // if light value > max value able to send
-    val1 = 255;
+  else if (light > 32767) { // if light value > max value able to send
+    val1 = 128;
     val2 = 255;
   }
   else {
-    val1 = (byte)light / 256;
-    val2 = (byte)light % 256;
+    val1 = (byte)(light / 256);
+    val2 = (byte)(light % 256);
   }
 
 
@@ -82,7 +89,11 @@ void send_light(int light) {
   Serial.write(buffer, 3);
 }
 
-void send_temperature(int temp) {
+/*
+ * Sends the temperature
+ * int temp: the temperature in celcius
+ */
+void send_temp(int temp) {
 	temp += 128; // offset of 128 degrees
 	byte val;
 
@@ -102,6 +113,10 @@ void send_temperature(int temp) {
 	Serial.write(buffer, 2);
 }
 
+/*
+ * Sends if the shutter is opened or closed for the light unit
+ * bool is_open:  false = closed, true = open
+ */
 void send_shutter_lightunit(bool is_open) {
   byte buffer[3];
   buffer[0] = 3;
@@ -110,6 +125,10 @@ void send_shutter_lightunit(bool is_open) {
   Serial.write(buffer, 3);
 }
 
+/*
+ * Sends if the shutter is opened or closed for the temperature unit
+ * bool is_open:  false = closed, true = open
+ */
 void send_shutter_tempunit(bool is_open) {
   byte buffer[3];
   buffer[0] = 3;
