@@ -4,12 +4,16 @@ import configparser
 import serial
 import threading
 import time
+import datetime
 
 __a_running = True
 
 __a_temperature = 0
 __a_light = 0
 __a_blinds_status = False
+
+__a_temperature_list = []
+__a_light_list = []
 
 __a_temperature_connected = False
 __a_light_connected = False
@@ -28,6 +32,10 @@ class Arduino(threading.Thread):
 
 		global __a_running
 		__a_running = True
+		global __a_temperature_list
+		__a_temperature_list = []
+		global __a_light_list
+		__a_light_list = []
 
 		self.start()
 	def run(self):
@@ -74,13 +82,17 @@ class Arduino(threading.Thread):
 		if c == 1: # report light sensor
 			if p1 != -1 and p2 != -1:
 				global __a_light
+				global __a_light_list
 				__a_light = p1*256 + p2
+				__a_light_list.append([datetime.datetime.now(), __a_light])
 				self.reset_data()
 				print("Light: " + str(__a_light))
 		elif c == 2: # report temperature sensor
 			if p1 != -1:
 				global __a_temperature
+				global __a_temperature_list
 				__a_temperature = p1-128
+				__a_temperature_list.append([datetime.datetime.now(), __a_temperature])
 				self.reset_data()
 				print("Temperature: " + str(__a_temperature))
 		elif c == 3: # report status of blinds
@@ -115,6 +127,26 @@ class Arduino(threading.Thread):
 	def get_light():
 		global __a_light
 		return __a_light
+	# List structure:
+	#	{
+	#		(datetime, temperature),
+	#		(datetime, temperature),
+	#		(datetime, temperature),
+	#		etc...
+	#	}
+	def get_temperature_list():
+		global __a_temperature_list
+		return __a_temperature_list
+	# List structure:
+	#	{
+	#		(datetime, light),
+	#		(datetime, light),
+	#		(datetime, light),
+	#		etc...
+	#	}
+	def get_light_list():
+		global __a_light_list
+		return __a_light_list
 	def get_blinds(): # False = closed, True = open
 		global __a_blinds_status
 		return __a_blinds_status
