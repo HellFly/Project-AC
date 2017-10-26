@@ -63,6 +63,13 @@ void parseData() {
 }
 
 /*
+ * Function to write a byte array out to serial
+ */
+void write_serial(byte buffer[]) {
+  Serial.write(buffer, sizeof(bytes));
+}
+
+/*
  * Sends the value of the light sensor
  * int light: the value measured by the ligt sensor
  */
@@ -88,7 +95,7 @@ void send_light(int light) {
   buffer[0] = 1;
   buffer[1] = val1;
   buffer[2] = val2;
-  Serial.write(buffer, 3);
+  write_serial(buffer);
 }
 
 /*
@@ -112,7 +119,7 @@ void send_temp(int temp) {
 	byte buffer[2];
 	buffer[0] = 2;
 	buffer[1] = val;
-	Serial.write(buffer, 2);
+	write_serial(buffer);
 }
 
 /*
@@ -124,7 +131,7 @@ void send_shutter_lightunit(bool is_open) {
   buffer[0] = 3;
   buffer[1] = 0;
   buffer[2] = (byte)is_open;
-  Serial.write(buffer, 3);
+  write_serial(buffer);
 }
 
 /*
@@ -136,6 +143,6 @@ void send_shutter_tempunit(bool is_open) {
   buffer[0] = 3;
   buffer[1] = 1;
   buffer[2] = (byte)is_open;
-  Serial.write(buffer, 3);
+  write_serial(buffer);
 }
 
