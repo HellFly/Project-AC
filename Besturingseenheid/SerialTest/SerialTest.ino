@@ -42,10 +42,12 @@ void parseData() {
   byte p3 = data[3];
 
   if (c == 0) { // Please send all data
+    if (p1 == 0) { // Send from light unit
+      send_light(1000);
+      inputBuffer = "";
+    }
     if (p1 == 1) { // Send from temperature unit
-      sendBuffer[0] = 2;          // packet id 2 for temperature
-      sendBuffer[1] = 128 + 20;   // 20 degrees
-      Serial.write(sendBuffer, 2);
+      send_temp(20);
       inputBuffer = "";
     }
   }
@@ -73,7 +75,7 @@ void send_light(int light) {
     val2 = 0;
   }
   else if (light > 32767) { // if light value > max value able to send
-    val1 = 128;
+    val1 = 127;
     val2 = 255;
   }
   else {
