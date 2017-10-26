@@ -3,7 +3,7 @@ from classes.arduino import Arduino
 import tkinter as tk
 
 LARGE_FONT = ("Verdana", 12)
-
+a = Arduino()
 class GUI(tk.Tk):
     def __init__(self, *args, **kwargs): #Args, kwargs
         tk.Tk.__init__(self, *args, **kwargs)
