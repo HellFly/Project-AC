@@ -1,0 +1,1232 @@
+
+tempsensor.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  0000071c  000007b0  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         0000071c  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          0000008e  00800100  00800100  000007b0  2**0
+                  ALLOC
+  3 .stab         00001ba8  00000000  00000000  000007b0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  4 .stabstr      00000583  00000000  00000000  00002358  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_aranges 000000c0  00000000  00000000  000028e0  2**3
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   00000738  00000000  00000000  000029a0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000294  00000000  00000000  000030d8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   000004b2  00000000  00000000  0000336c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  0000019c  00000000  00000000  00003820  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    00000205  00000000  00000000  000039bc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    000003a6  00000000  00000000  00003bc1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 34 00 	jmp	0x68	; 0x68 <__ctors_end>
+   4:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   8:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  10:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  14:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  18:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  1c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  20:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  24:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  28:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  2c:	0c 94 f6 00 	jmp	0x1ec	; 0x1ec <__vector_11>
+  30:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  34:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  38:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  3c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  40:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  44:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  48:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  4c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  50:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  54:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  58:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  5c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  60:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  64:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+
+00000068 <__ctors_end>:
+  68:	11 24       	eor	r1, r1
+  6a:	1f be       	out	0x3f, r1	; 63
+  6c:	cf ef       	ldi	r28, 0xFF	; 255
+  6e:	d8 e0       	ldi	r29, 0x08	; 8
+  70:	de bf       	out	0x3e, r29	; 62
+  72:	cd bf       	out	0x3d, r28	; 61
+
+00000074 <__do_copy_data>:
+  74:	11 e0       	ldi	r17, 0x01	; 1
+  76:	a0 e0       	ldi	r26, 0x00	; 0
+  78:	b1 e0       	ldi	r27, 0x01	; 1
+  7a:	ec e1       	ldi	r30, 0x1C	; 28
+  7c:	f7 e0       	ldi	r31, 0x07	; 7
+  7e:	02 c0       	rjmp	.+4      	; 0x84 <__do_copy_data+0x10>
+  80:	05 90       	lpm	r0, Z+
+  82:	0d 92       	st	X+, r0
+  84:	a0 30       	cpi	r26, 0x00	; 0
+  86:	b1 07       	cpc	r27, r17
+  88:	d9 f7       	brne	.-10     	; 0x80 <__do_copy_data+0xc>
+
+0000008a <__do_clear_bss>:
+  8a:	11 e0       	ldi	r17, 0x01	; 1
+  8c:	a0 e0       	ldi	r26, 0x00	; 0
+  8e:	b1 e0       	ldi	r27, 0x01	; 1
+  90:	01 c0       	rjmp	.+2      	; 0x94 <.do_clear_bss_start>
+
+00000092 <.do_clear_bss_loop>:
+  92:	1d 92       	st	X+, r1
+
+00000094 <.do_clear_bss_start>:
+  94:	ae 38       	cpi	r26, 0x8E	; 142
+  96:	b1 07       	cpc	r27, r17
+  98:	e1 f7       	brne	.-8      	; 0x92 <.do_clear_bss_loop>
+  9a:	0e 94 db 01 	call	0x3b6	; 0x3b6 <main>
+  9e:	0c 94 8c 03 	jmp	0x718	; 0x718 <_exit>
+
+000000a2 <__bad_interrupt>:
+  a2:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+000000a6 <SCH_Add_Task>:
+  Task will be first executed at T = 300 ticks, then 1300, 2300, etc.            
+ 
+-*------------------------------------------------------------------*/
+
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+  a6:	0f 93       	push	r16
+  a8:	1f 93       	push	r17
+  aa:	cf 93       	push	r28
+  ac:	df 93       	push	r29
+  ae:	ec 01       	movw	r28, r24
+  b0:	db 01       	movw	r26, r22
+  b2:	8a 01       	movw	r16, r20
+   unsigned char Index = 0;
+
+   // First find a gap in the array (if there is one)
+   while((SCH_tasks_G[Index].pTask != 0) && (Index < SCH_MAX_TASKS))
+  b4:	80 91 02 01 	lds	r24, 0x0102
+  b8:	90 91 03 01 	lds	r25, 0x0103
+  bc:	00 97       	sbiw	r24, 0x00	; 0
+  be:	b1 f0       	breq	.+44     	; 0xec <SCH_Add_Task+0x46>
+  c0:	e9 e0       	ldi	r30, 0x09	; 9
+  c2:	f1 e0       	ldi	r31, 0x01	; 1
+  c4:	21 e0       	ldi	r18, 0x01	; 1
+  c6:	30 e0       	ldi	r19, 0x00	; 0
+   {
+      Index++;
+  c8:	42 2f       	mov	r20, r18
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+   unsigned char Index = 0;
+
+   // First find a gap in the array (if there is one)
+   while((SCH_tasks_G[Index].pTask != 0) && (Index < SCH_MAX_TASKS))
+  ca:	b9 01       	movw	r22, r18
+  cc:	80 81       	ld	r24, Z
+  ce:	91 81       	ldd	r25, Z+1	; 0x01
+  d0:	00 97       	sbiw	r24, 0x00	; 0
+  d2:	41 f0       	breq	.+16     	; 0xe4 <SCH_Add_Task+0x3e>
+  d4:	2f 5f       	subi	r18, 0xFF	; 255
+  d6:	3f 4f       	sbci	r19, 0xFF	; 255
+  d8:	37 96       	adiw	r30, 0x07	; 7
+  da:	25 31       	cpi	r18, 0x15	; 21
+  dc:	31 05       	cpc	r19, r1
+  de:	a1 f7       	brne	.-24     	; 0xc8 <SCH_Add_Task+0x22>
+   {
+      Index++;
+  e0:	84 2f       	mov	r24, r20
+  e2:	01 c0       	rjmp	.+2      	; 0xe6 <SCH_Add_Task+0x40>
+  e4:	82 2f       	mov	r24, r18
+   }
+
+   // Have we reached the end of the list?   
+   if(Index == SCH_MAX_TASKS)
+  e6:	84 31       	cpi	r24, 0x14	; 20
+  e8:	21 f4       	brne	.+8      	; 0xf2 <SCH_Add_Task+0x4c>
+  ea:	17 c0       	rjmp	.+46     	; 0x11a <SCH_Add_Task+0x74>
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+   unsigned char Index = 0;
+
+   // First find a gap in the array (if there is one)
+   while((SCH_tasks_G[Index].pTask != 0) && (Index < SCH_MAX_TASKS))
+  ec:	60 e0       	ldi	r22, 0x00	; 0
+  ee:	70 e0       	ldi	r23, 0x00	; 0
+ 
+-*------------------------------------------------------------------*/
+
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+   unsigned char Index = 0;
+  f0:	40 e0       	ldi	r20, 0x00	; 0
+      // Task list is full, return an error code
+      return SCH_MAX_TASKS;  
+   }
+
+   // If we're here, there is a space in the task array
+   SCH_tasks_G[Index].pTask = pFunction;
+  f2:	cb 01       	movw	r24, r22
+  f4:	88 0f       	add	r24, r24
+  f6:	99 1f       	adc	r25, r25
+  f8:	88 0f       	add	r24, r24
+  fa:	99 1f       	adc	r25, r25
+  fc:	88 0f       	add	r24, r24
+  fe:	99 1f       	adc	r25, r25
+ 100:	86 1b       	sub	r24, r22
+ 102:	97 0b       	sbc	r25, r23
+ 104:	fc 01       	movw	r30, r24
+ 106:	ee 5f       	subi	r30, 0xFE	; 254
+ 108:	fe 4f       	sbci	r31, 0xFE	; 254
+ 10a:	d1 83       	std	Z+1, r29	; 0x01
+ 10c:	c0 83       	st	Z, r28
+   SCH_tasks_G[Index].Delay =DELAY;
+ 10e:	b3 83       	std	Z+3, r27	; 0x03
+ 110:	a2 83       	std	Z+2, r26	; 0x02
+   SCH_tasks_G[Index].Period = PERIOD;
+ 112:	15 83       	std	Z+5, r17	; 0x05
+ 114:	04 83       	std	Z+4, r16	; 0x04
+   SCH_tasks_G[Index].RunMe = 0;
+ 116:	16 82       	std	Z+6, r1	; 0x06
+
+   // return position of task (to allow later deletion)
+   return Index;
+ 118:	84 2f       	mov	r24, r20
+}
+ 11a:	df 91       	pop	r29
+ 11c:	cf 91       	pop	r28
+ 11e:	1f 91       	pop	r17
+ 120:	0f 91       	pop	r16
+ 122:	08 95       	ret
+
+00000124 <SCH_Delete_Task>:
+unsigned char SCH_Delete_Task(const unsigned char TASK_INDEX)
+{
+   // Return_code can be used for error reporting, NOT USED HERE THOUGH!
+   unsigned char Return_code = 0;
+
+   SCH_tasks_G[TASK_INDEX].pTask = 0;
+ 124:	90 e0       	ldi	r25, 0x00	; 0
+ 126:	fc 01       	movw	r30, r24
+ 128:	ee 0f       	add	r30, r30
+ 12a:	ff 1f       	adc	r31, r31
+ 12c:	ee 0f       	add	r30, r30
+ 12e:	ff 1f       	adc	r31, r31
+ 130:	ee 0f       	add	r30, r30
+ 132:	ff 1f       	adc	r31, r31
+ 134:	e8 1b       	sub	r30, r24
+ 136:	f9 0b       	sbc	r31, r25
+ 138:	ee 5f       	subi	r30, 0xFE	; 254
+ 13a:	fe 4f       	sbci	r31, 0xFE	; 254
+ 13c:	11 82       	std	Z+1, r1	; 0x01
+ 13e:	10 82       	st	Z, r1
+   SCH_tasks_G[TASK_INDEX].Delay = 0;
+ 140:	13 82       	std	Z+3, r1	; 0x03
+ 142:	12 82       	std	Z+2, r1	; 0x02
+   SCH_tasks_G[TASK_INDEX].Period = 0;
+ 144:	15 82       	std	Z+5, r1	; 0x05
+ 146:	14 82       	std	Z+4, r1	; 0x04
+   SCH_tasks_G[TASK_INDEX].RunMe = 0;
+ 148:	16 82       	std	Z+6, r1	; 0x06
+
+   return Return_code;
+}
+ 14a:	80 e0       	ldi	r24, 0x00	; 0
+ 14c:	08 95       	ret
+
+0000014e <SCH_Dispatch_Tasks>:
+  This function must be called (repeatedly) from the main loop.
+
+-*------------------------------------------------------------------*/
+
+void SCH_Dispatch_Tasks(void)
+{
+ 14e:	cf 92       	push	r12
+ 150:	df 92       	push	r13
+ 152:	ef 92       	push	r14
+ 154:	ff 92       	push	r15
+ 156:	1f 93       	push	r17
+ 158:	cf 93       	push	r28
+ 15a:	df 93       	push	r29
+   unsigned char Index;
+
+   // Dispatches (runs) the next task (if one is ready)
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+ 15c:	c8 e0       	ldi	r28, 0x08	; 8
+ 15e:	d1 e0       	ldi	r29, 0x01	; 1
+ 160:	0f 2e       	mov	r0, r31
+ 162:	fa ef       	ldi	r31, 0xFA	; 250
+ 164:	ef 2e       	mov	r14, r31
+ 166:	ff ef       	ldi	r31, 0xFF	; 255
+ 168:	ff 2e       	mov	r15, r31
+ 16a:	f0 2d       	mov	r31, r0
+ 16c:	ec 0e       	add	r14, r28
+ 16e:	fd 1e       	adc	r15, r29
+ 170:	10 e0       	ldi	r17, 0x00	; 0
+   {
+      if((SCH_tasks_G[Index].RunMe > 0) && (SCH_tasks_G[Index].pTask != 0))
+ 172:	88 81       	ld	r24, Y
+ 174:	88 23       	and	r24, r24
+ 176:	91 f0       	breq	.+36     	; 0x19c <SCH_Dispatch_Tasks+0x4e>
+ 178:	d7 01       	movw	r26, r14
+ 17a:	ed 91       	ld	r30, X+
+ 17c:	fc 91       	ld	r31, X
+ 17e:	11 97       	sbiw	r26, 0x01	; 1
+ 180:	30 97       	sbiw	r30, 0x00	; 0
+ 182:	61 f0       	breq	.+24     	; 0x19c <SCH_Dispatch_Tasks+0x4e>
+      {
+         (*SCH_tasks_G[Index].pTask)();  // Run the task
+ 184:	09 95       	icall
+         SCH_tasks_G[Index].RunMe -= 1;   // Reset / reduce RunMe flag
+ 186:	88 81       	ld	r24, Y
+ 188:	81 50       	subi	r24, 0x01	; 1
+ 18a:	88 83       	st	Y, r24
+
+         // Periodic tasks will automatically run again
+         // - if this is a 'one shot' task, remove it from the array
+         if(SCH_tasks_G[Index].Period == 0)
+ 18c:	f7 01       	movw	r30, r14
+ 18e:	84 81       	ldd	r24, Z+4	; 0x04
+ 190:	95 81       	ldd	r25, Z+5	; 0x05
+ 192:	00 97       	sbiw	r24, 0x00	; 0
+ 194:	19 f4       	brne	.+6      	; 0x19c <SCH_Dispatch_Tasks+0x4e>
+         {
+            SCH_Delete_Task(Index);
+ 196:	81 2f       	mov	r24, r17
+ 198:	0e 94 92 00 	call	0x124	; 0x124 <SCH_Delete_Task>
+void SCH_Dispatch_Tasks(void)
+{
+   unsigned char Index;
+
+   // Dispatches (runs) the next task (if one is ready)
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+ 19c:	1f 5f       	subi	r17, 0xFF	; 255
+ 19e:	27 96       	adiw	r28, 0x07	; 7
+ 1a0:	87 e0       	ldi	r24, 0x07	; 7
+ 1a2:	90 e0       	ldi	r25, 0x00	; 0
+ 1a4:	e8 0e       	add	r14, r24
+ 1a6:	f9 1e       	adc	r15, r25
+ 1a8:	14 31       	cpi	r17, 0x14	; 20
+ 1aa:	19 f7       	brne	.-58     	; 0x172 <SCH_Dispatch_Tasks+0x24>
+         {
+            SCH_Delete_Task(Index);
+         }
+      }
+   }
+}
+ 1ac:	df 91       	pop	r29
+ 1ae:	cf 91       	pop	r28
+ 1b0:	1f 91       	pop	r17
+ 1b2:	ff 90       	pop	r15
+ 1b4:	ef 90       	pop	r14
+ 1b6:	df 90       	pop	r13
+ 1b8:	cf 90       	pop	r12
+ 1ba:	08 95       	ret
+
+000001bc <SCH_Init_T1>:
+  You must call this function before using the scheduler.  
+
+-*------------------------------------------------------------------*/
+
+void SCH_Init_T1(void)
+{
+ 1bc:	cf 93       	push	r28
+   unsigned char i;
+
+   for(i = 0; i < SCH_MAX_TASKS; i++)
+ 1be:	c0 e0       	ldi	r28, 0x00	; 0
+   {
+      SCH_Delete_Task(i);
+ 1c0:	8c 2f       	mov	r24, r28
+ 1c2:	0e 94 92 00 	call	0x124	; 0x124 <SCH_Delete_Task>
+
+void SCH_Init_T1(void)
+{
+   unsigned char i;
+
+   for(i = 0; i < SCH_MAX_TASKS; i++)
+ 1c6:	cf 5f       	subi	r28, 0xFF	; 255
+ 1c8:	c4 31       	cpi	r28, 0x14	; 20
+ 1ca:	d1 f7       	brne	.-12     	; 0x1c0 <SCH_Init_T1+0x4>
+
+   // Set up Timer 1
+   // Values for 1ms and 10ms ticks are provided for various crystals
+
+   // Hier moet de timer periode worden aangepast ....!
+   OCR1A = (uint16_t)625;   		     // 10ms = (256/16.000.000) * 625
+ 1cc:	81 e7       	ldi	r24, 0x71	; 113
+ 1ce:	92 e0       	ldi	r25, 0x02	; 2
+ 1d0:	90 93 89 00 	sts	0x0089, r25
+ 1d4:	80 93 88 00 	sts	0x0088, r24
+   TCCR1B = (1 << CS12) | (1 << WGM12);  // prescale op 64, top counter = value OCR1A (CTC mode)
+ 1d8:	8c e0       	ldi	r24, 0x0C	; 12
+ 1da:	80 93 81 00 	sts	0x0081, r24
+   TIMSK1 = 1 << OCIE1A;   		     // Timer 1 Output Compare A Match Interrupt Enable
+ 1de:	82 e0       	ldi	r24, 0x02	; 2
+ 1e0:	80 93 6f 00 	sts	0x006F, r24
+}
+ 1e4:	cf 91       	pop	r28
+ 1e6:	08 95       	ret
+
+000001e8 <SCH_Start>:
+ 
+-*------------------------------------------------------------------*/
+
+void SCH_Start(void)
+{
+      sei();
+ 1e8:	78 94       	sei
+}
+ 1ea:	08 95       	ret
+
+000001ec <__vector_11>:
+  determined by the timer settings in SCH_Init_T1().
+
+-*------------------------------------------------------------------*/
+
+ISR(TIMER1_COMPA_vect)
+{
+ 1ec:	1f 92       	push	r1
+ 1ee:	0f 92       	push	r0
+ 1f0:	0f b6       	in	r0, 0x3f	; 63
+ 1f2:	0f 92       	push	r0
+ 1f4:	11 24       	eor	r1, r1
+ 1f6:	2f 93       	push	r18
+ 1f8:	3f 93       	push	r19
+ 1fa:	8f 93       	push	r24
+ 1fc:	9f 93       	push	r25
+ 1fe:	af 93       	push	r26
+ 200:	bf 93       	push	r27
+ 202:	cf 93       	push	r28
+ 204:	df 93       	push	r29
+ 206:	ef 93       	push	r30
+ 208:	ff 93       	push	r31
+ 20a:	e2 e0       	ldi	r30, 0x02	; 2
+ 20c:	f1 e0       	ldi	r31, 0x01	; 1
+ 20e:	df 01       	movw	r26, r30
+ 210:	16 96       	adiw	r26, 0x06	; 6
+  This is the scheduler ISR.  It is called at a rate 
+  determined by the timer settings in SCH_Init_T1().
+
+-*------------------------------------------------------------------*/
+
+ISR(TIMER1_COMPA_vect)
+ 212:	2e e8       	ldi	r18, 0x8E	; 142
+ 214:	31 e0       	ldi	r19, 0x01	; 1
+{
+   unsigned char Index;
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+   {
+      // Check if there is a task at this location
+      if(SCH_tasks_G[Index].pTask)
+ 216:	80 81       	ld	r24, Z
+ 218:	91 81       	ldd	r25, Z+1	; 0x01
+ 21a:	00 97       	sbiw	r24, 0x00	; 0
+ 21c:	91 f0       	breq	.+36     	; 0x242 <__vector_11+0x56>
+      {
+         if(SCH_tasks_G[Index].Delay == 0)
+ 21e:	82 81       	ldd	r24, Z+2	; 0x02
+ 220:	93 81       	ldd	r25, Z+3	; 0x03
+ 222:	00 97       	sbiw	r24, 0x00	; 0
+ 224:	59 f4       	brne	.+22     	; 0x23c <__vector_11+0x50>
+         {
+            // The task is due to run, Inc. the 'RunMe' flag
+            SCH_tasks_G[Index].RunMe += 1;
+ 226:	8c 91       	ld	r24, X
+ 228:	8f 5f       	subi	r24, 0xFF	; 255
+ 22a:	8c 93       	st	X, r24
+
+            if(SCH_tasks_G[Index].Period)
+ 22c:	84 81       	ldd	r24, Z+4	; 0x04
+ 22e:	95 81       	ldd	r25, Z+5	; 0x05
+ 230:	00 97       	sbiw	r24, 0x00	; 0
+ 232:	39 f0       	breq	.+14     	; 0x242 <__vector_11+0x56>
+            {
+               // Schedule periodic tasks to run again
+               SCH_tasks_G[Index].Delay = SCH_tasks_G[Index].Period;
+               SCH_tasks_G[Index].Delay -= 1;
+ 234:	01 97       	sbiw	r24, 0x01	; 1
+ 236:	93 83       	std	Z+3, r25	; 0x03
+ 238:	82 83       	std	Z+2, r24	; 0x02
+ 23a:	03 c0       	rjmp	.+6      	; 0x242 <__vector_11+0x56>
+            }
+         }
+         else
+         {
+            // Not yet ready to run: just decrement the delay
+            SCH_tasks_G[Index].Delay -= 1;
+ 23c:	01 97       	sbiw	r24, 0x01	; 1
+ 23e:	93 83       	std	Z+3, r25	; 0x03
+ 240:	82 83       	std	Z+2, r24	; 0x02
+ 242:	37 96       	adiw	r30, 0x07	; 7
+ 244:	17 96       	adiw	r26, 0x07	; 7
+-*------------------------------------------------------------------*/
+
+ISR(TIMER1_COMPA_vect)
+{
+   unsigned char Index;
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+ 246:	e2 17       	cp	r30, r18
+ 248:	f3 07       	cpc	r31, r19
+ 24a:	29 f7       	brne	.-54     	; 0x216 <__vector_11+0x2a>
+            // Not yet ready to run: just decrement the delay
+            SCH_tasks_G[Index].Delay -= 1;
+         }
+      }
+   }
+}
+ 24c:	ff 91       	pop	r31
+ 24e:	ef 91       	pop	r30
+ 250:	df 91       	pop	r29
+ 252:	cf 91       	pop	r28
+ 254:	bf 91       	pop	r27
+ 256:	af 91       	pop	r26
+ 258:	9f 91       	pop	r25
+ 25a:	8f 91       	pop	r24
+ 25c:	3f 91       	pop	r19
+ 25e:	2f 91       	pop	r18
+ 260:	0f 90       	pop	r0
+ 262:	0f be       	out	0x3f, r0	; 63
+ 264:	0f 90       	pop	r0
+ 266:	1f 90       	pop	r1
+ 268:	18 95       	reti
+
+0000026a <uart_init>:
+
+//Initialize UART.
+void uart_init()
+{
+	 // set the baud rate
+	 UBRR0H = 0;
+ 26a:	10 92 c5 00 	sts	0x00C5, r1
+	 UBRR0L = UBBRVAL;
+ 26e:	83 e3       	ldi	r24, 0x33	; 51
+ 270:	80 93 c4 00 	sts	0x00C4, r24
+	 // disable U2X mode
+	 UCSR0A = 0;
+ 274:	10 92 c0 00 	sts	0x00C0, r1
+	 // enable transmitter
+	 UCSR0B = _BV(TXEN0);
+ 278:	88 e0       	ldi	r24, 0x08	; 8
+ 27a:	80 93 c1 00 	sts	0x00C1, r24
+	 // set frame format : asynchronous, 8 data bits, 1 stop bit, no parity
+	 UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
+ 27e:	86 e0       	ldi	r24, 0x06	; 6
+ 280:	80 93 c2 00 	sts	0x00C2, r24
+}
+ 284:	08 95       	ret
+
+00000286 <transmit>:
+void transmit(uint8_t data)
+{
+	 // wait for an empty transmit buffer
+	 // UDRE is set when the transmit buffer is empty
+	 
+	 loop_until_bit_is_set(UCSR0A, UDRE0);   
+ 286:	e0 ec       	ldi	r30, 0xC0	; 192
+ 288:	f0 e0       	ldi	r31, 0x00	; 0
+ 28a:	90 81       	ld	r25, Z
+ 28c:	95 ff       	sbrs	r25, 5
+ 28e:	fd cf       	rjmp	.-6      	; 0x28a <transmit+0x4>
+	 UDR0 = data;
+ 290:	80 93 c6 00 	sts	0x00C6, r24
+}
+ 294:	08 95       	ret
+
+00000296 <calculateAverageTemperature>:
+}
+
+//This function is used to calculate the average temperature.
+void calculateAverageTemperature()
+{
+	averageTemperature /= 10; //calculate average from 6 measured values with intervals of 10 seconds.
+ 296:	80 91 00 01 	lds	r24, 0x0100
+ 29a:	90 91 01 01 	lds	r25, 0x0101
+ 29e:	6a e0       	ldi	r22, 0x0A	; 10
+ 2a0:	70 e0       	ldi	r23, 0x00	; 0
+ 2a2:	0e 94 78 03 	call	0x6f0	; 0x6f0 <__udivmodhi4>
+ 2a6:	86 2f       	mov	r24, r22
+ 2a8:	60 93 00 01 	sts	0x0100, r22
+ 2ac:	70 93 01 01 	sts	0x0101, r23
+	transmit(averageTemperature); //Send average temperature to screen.
+ 2b0:	0e 94 43 01 	call	0x286	; 0x286 <transmit>
+	averageTemperature = 0; //reset average temperature.
+ 2b4:	10 92 01 01 	sts	0x0101, r1
+ 2b8:	10 92 00 01 	sts	0x0100, r1
+}
+ 2bc:	08 95       	ret
+
+000002be <setup>:
+}
+
+//Set up the ADC registers: ADMUX and ADCSRA. We use ADC channel 0.
+void setup()
+{
+	ADMUX |= (1 << REFS0); //set reference voltage 
+ 2be:	ec e7       	ldi	r30, 0x7C	; 124
+ 2c0:	f0 e0       	ldi	r31, 0x00	; 0
+ 2c2:	80 81       	ld	r24, Z
+ 2c4:	80 64       	ori	r24, 0x40	; 64
+ 2c6:	80 83       	st	Z, r24
+	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //set prescaler
+ 2c8:	ea e7       	ldi	r30, 0x7A	; 122
+ 2ca:	f0 e0       	ldi	r31, 0x00	; 0
+ 2cc:	80 81       	ld	r24, Z
+ 2ce:	87 60       	ori	r24, 0x07	; 7
+ 2d0:	80 83       	st	Z, r24
+	ADCSRA |= (1 << ADEN); //enable the ADC
+ 2d2:	80 81       	ld	r24, Z
+ 2d4:	80 68       	ori	r24, 0x80	; 128
+ 2d6:	80 83       	st	Z, r24
+}
+ 2d8:	08 95       	ret
+
+000002da <adc_read>:
+{
+	// select the corresponding channel 0~7
+	// ANDing with ’7′ will always keep the value
+	// of ‘ch’ between 0 and 7
+	ch &= 0b00000111;  // AND operation with 7
+	ADMUX = (ADMUX & 0xF8)|ch; // clears the bottom 3 bits before ORing
+ 2da:	ec e7       	ldi	r30, 0x7C	; 124
+ 2dc:	f0 e0       	ldi	r31, 0x00	; 0
+ 2de:	90 81       	ld	r25, Z
+uint16_t adc_read(uint8_t ch)
+{
+	// select the corresponding channel 0~7
+	// ANDing with ’7′ will always keep the value
+	// of ‘ch’ between 0 and 7
+	ch &= 0b00000111;  // AND operation with 7
+ 2e0:	87 70       	andi	r24, 0x07	; 7
+	ADMUX = (ADMUX & 0xF8)|ch; // clears the bottom 3 bits before ORing
+ 2e2:	98 7f       	andi	r25, 0xF8	; 248
+ 2e4:	98 2b       	or	r25, r24
+ 2e6:	90 83       	st	Z, r25
+	
+	// start the conversion
+	ADCSRA |= (1<<ADSC);
+ 2e8:	ea e7       	ldi	r30, 0x7A	; 122
+ 2ea:	f0 e0       	ldi	r31, 0x00	; 0
+ 2ec:	80 81       	ld	r24, Z
+ 2ee:	80 64       	ori	r24, 0x40	; 64
+ 2f0:	80 83       	st	Z, r24
+	
+	// wait for conversion to complete
+	// ADSC becomes ’0′ again
+	// till then, run loop continuously
+	while(ADCSRA & (1<<ADSC));
+ 2f2:	80 81       	ld	r24, Z
+ 2f4:	86 fd       	sbrc	r24, 6
+ 2f6:	fd cf       	rjmp	.-6      	; 0x2f2 <adc_read+0x18>
+	
+	return (ADC); 
+ 2f8:	80 91 78 00 	lds	r24, 0x0078
+ 2fc:	90 91 79 00 	lds	r25, 0x0079
+}
+ 300:	08 95       	ret
+
+00000302 <calculateTemperature>:
+
+//This function translates the voltage value from the ADC into a temperature.
+void calculateTemperature()
+{
+ 302:	cf 92       	push	r12
+ 304:	df 92       	push	r13
+ 306:	ef 92       	push	r14
+ 308:	ff 92       	push	r15
+ 30a:	0f 93       	push	r16
+ 30c:	1f 93       	push	r17
+ 30e:	cf 93       	push	r28
+ 310:	df 93       	push	r29
+	uint16_t reading = adc_read(0); //get the 10 bit return value from the ADC.
+ 312:	80 e0       	ldi	r24, 0x00	; 0
+ 314:	0e 94 6d 01 	call	0x2da	; 0x2da <adc_read>
+	uint8_t temp = (uint8_t)reading; //force cast it to an 8 bit integer
+	
+	//Formula to calculate the temperature 
+	float voltage = (float)temp/(float)1024; //ADC return a value between 0 and 1023 which is a ratio to the 5V. 
+ 318:	68 2f       	mov	r22, r24
+ 31a:	70 e0       	ldi	r23, 0x00	; 0
+ 31c:	80 e0       	ldi	r24, 0x00	; 0
+ 31e:	90 e0       	ldi	r25, 0x00	; 0
+ 320:	0e 94 87 02 	call	0x50e	; 0x50e <__floatunsisf>
+ 324:	20 e0       	ldi	r18, 0x00	; 0
+ 326:	30 e0       	ldi	r19, 0x00	; 0
+ 328:	40 e8       	ldi	r20, 0x80	; 128
+ 32a:	5a e3       	ldi	r21, 0x3A	; 58
+ 32c:	0e 94 15 03 	call	0x62a	; 0x62a <__mulsf3>
+	voltage *= 5;
+ 330:	46 2f       	mov	r20, r22
+ 332:	57 2f       	mov	r21, r23
+ 334:	68 2f       	mov	r22, r24
+ 336:	79 2f       	mov	r23, r25
+ 338:	cb 01       	movw	r24, r22
+ 33a:	ba 01       	movw	r22, r20
+ 33c:	20 e0       	ldi	r18, 0x00	; 0
+ 33e:	30 e0       	ldi	r19, 0x00	; 0
+ 340:	40 ea       	ldi	r20, 0xA0	; 160
+ 342:	50 e4       	ldi	r21, 0x40	; 64
+ 344:	0e 94 15 03 	call	0x62a	; 0x62a <__mulsf3>
+ 348:	c6 2f       	mov	r28, r22
+ 34a:	d7 2f       	mov	r29, r23
+ 34c:	18 2f       	mov	r17, r24
+ 34e:	09 2f       	mov	r16, r25
+	voltage -= 0.5;
+	float temperature = (float)100*voltage;
+	
+	//transmit(temperature); //enable to transmit to screen
+	averageTemperature += temperature;
+ 350:	60 91 00 01 	lds	r22, 0x0100
+ 354:	70 91 01 01 	lds	r23, 0x0101
+ 358:	80 e0       	ldi	r24, 0x00	; 0
+ 35a:	90 e0       	ldi	r25, 0x00	; 0
+ 35c:	0e 94 87 02 	call	0x50e	; 0x50e <__floatunsisf>
+ 360:	6b 01       	movw	r12, r22
+ 362:	7c 01       	movw	r14, r24
+	uint8_t temp = (uint8_t)reading; //force cast it to an 8 bit integer
+	
+	//Formula to calculate the temperature 
+	float voltage = (float)temp/(float)1024; //ADC return a value between 0 and 1023 which is a ratio to the 5V. 
+	voltage *= 5;
+	voltage -= 0.5;
+ 364:	8c 2f       	mov	r24, r28
+ 366:	9d 2f       	mov	r25, r29
+ 368:	a1 2f       	mov	r26, r17
+ 36a:	b0 2f       	mov	r27, r16
+ 36c:	bc 01       	movw	r22, r24
+ 36e:	cd 01       	movw	r24, r26
+ 370:	20 e0       	ldi	r18, 0x00	; 0
+ 372:	30 e0       	ldi	r19, 0x00	; 0
+ 374:	40 e0       	ldi	r20, 0x00	; 0
+ 376:	5f e3       	ldi	r21, 0x3F	; 63
+ 378:	0e 94 f6 01 	call	0x3ec	; 0x3ec <__subsf3>
+	float temperature = (float)100*voltage;
+ 37c:	20 e0       	ldi	r18, 0x00	; 0
+ 37e:	30 e0       	ldi	r19, 0x00	; 0
+ 380:	48 ec       	ldi	r20, 0xC8	; 200
+ 382:	52 e4       	ldi	r21, 0x42	; 66
+ 384:	0e 94 15 03 	call	0x62a	; 0x62a <__mulsf3>
+ 388:	9b 01       	movw	r18, r22
+ 38a:	ac 01       	movw	r20, r24
+	
+	//transmit(temperature); //enable to transmit to screen
+	averageTemperature += temperature;
+ 38c:	c7 01       	movw	r24, r14
+ 38e:	b6 01       	movw	r22, r12
+ 390:	0e 94 f7 01 	call	0x3ee	; 0x3ee <__addsf3>
+ 394:	0e 94 5b 02 	call	0x4b6	; 0x4b6 <__fixunssfsi>
+ 398:	dc 01       	movw	r26, r24
+ 39a:	cb 01       	movw	r24, r22
+ 39c:	90 93 01 01 	sts	0x0101, r25
+ 3a0:	80 93 00 01 	sts	0x0100, r24
+}
+ 3a4:	df 91       	pop	r29
+ 3a6:	cf 91       	pop	r28
+ 3a8:	1f 91       	pop	r17
+ 3aa:	0f 91       	pop	r16
+ 3ac:	ff 90       	pop	r15
+ 3ae:	ef 90       	pop	r14
+ 3b0:	df 90       	pop	r13
+ 3b2:	cf 90       	pop	r12
+ 3b4:	08 95       	ret
+
+000003b6 <main>:
+	averageTemperature = 0; //reset average temperature.
+}
+
+int main()                     
+{
+	setup(); 
+ 3b6:	0e 94 5f 01 	call	0x2be	; 0x2be <setup>
+	uart_init();
+ 3ba:	0e 94 35 01 	call	0x26a	; 0x26a <uart_init>
+	SCH_Init_T1();
+ 3be:	0e 94 de 00 	call	0x1bc	; 0x1bc <SCH_Init_T1>
+	SCH_Add_Task(calculateTemperature, 0, 100); //Read temperature every 10 seconds
+ 3c2:	81 e8       	ldi	r24, 0x81	; 129
+ 3c4:	91 e0       	ldi	r25, 0x01	; 1
+ 3c6:	60 e0       	ldi	r22, 0x00	; 0
+ 3c8:	70 e0       	ldi	r23, 0x00	; 0
+ 3ca:	44 e6       	ldi	r20, 0x64	; 100
+ 3cc:	50 e0       	ldi	r21, 0x00	; 0
+ 3ce:	0e 94 53 00 	call	0xa6	; 0xa6 <SCH_Add_Task>
+	SCH_Add_Task(calculateAverageTemperature, 1000, 1000); //Calculate average every minute. Delay it by 10 seconds to prevent incomplete average measurements.
+ 3d2:	8b e4       	ldi	r24, 0x4B	; 75
+ 3d4:	91 e0       	ldi	r25, 0x01	; 1
+ 3d6:	68 ee       	ldi	r22, 0xE8	; 232
+ 3d8:	73 e0       	ldi	r23, 0x03	; 3
+ 3da:	48 ee       	ldi	r20, 0xE8	; 232
+ 3dc:	53 e0       	ldi	r21, 0x03	; 3
+ 3de:	0e 94 53 00 	call	0xa6	; 0xa6 <SCH_Add_Task>
+	SCH_Start();
+ 3e2:	0e 94 f4 00 	call	0x1e8	; 0x1e8 <SCH_Start>
+	while(1)
+	{
+		SCH_Dispatch_Tasks();
+ 3e6:	0e 94 a7 00 	call	0x14e	; 0x14e <SCH_Dispatch_Tasks>
+ 3ea:	fd cf       	rjmp	.-6      	; 0x3e6 <main+0x30>
+
+000003ec <__subsf3>:
+ 3ec:	50 58       	subi	r21, 0x80	; 128
+
+000003ee <__addsf3>:
+ 3ee:	bb 27       	eor	r27, r27
+ 3f0:	aa 27       	eor	r26, r26
+ 3f2:	0e d0       	rcall	.+28     	; 0x410 <__addsf3x>
+ 3f4:	e0 c0       	rjmp	.+448    	; 0x5b6 <__fp_round>
+ 3f6:	d1 d0       	rcall	.+418    	; 0x59a <__fp_pscA>
+ 3f8:	30 f0       	brcs	.+12     	; 0x406 <__addsf3+0x18>
+ 3fa:	d6 d0       	rcall	.+428    	; 0x5a8 <__fp_pscB>
+ 3fc:	20 f0       	brcs	.+8      	; 0x406 <__addsf3+0x18>
+ 3fe:	31 f4       	brne	.+12     	; 0x40c <__addsf3+0x1e>
+ 400:	9f 3f       	cpi	r25, 0xFF	; 255
+ 402:	11 f4       	brne	.+4      	; 0x408 <__addsf3+0x1a>
+ 404:	1e f4       	brtc	.+6      	; 0x40c <__addsf3+0x1e>
+ 406:	c6 c0       	rjmp	.+396    	; 0x594 <__fp_nan>
+ 408:	0e f4       	brtc	.+2      	; 0x40c <__addsf3+0x1e>
+ 40a:	e0 95       	com	r30
+ 40c:	e7 fb       	bst	r30, 7
+ 40e:	bc c0       	rjmp	.+376    	; 0x588 <__fp_inf>
+
+00000410 <__addsf3x>:
+ 410:	e9 2f       	mov	r30, r25
+ 412:	e2 d0       	rcall	.+452    	; 0x5d8 <__fp_split3>
+ 414:	80 f3       	brcs	.-32     	; 0x3f6 <__addsf3+0x8>
+ 416:	ba 17       	cp	r27, r26
+ 418:	62 07       	cpc	r22, r18
+ 41a:	73 07       	cpc	r23, r19
+ 41c:	84 07       	cpc	r24, r20
+ 41e:	95 07       	cpc	r25, r21
+ 420:	18 f0       	brcs	.+6      	; 0x428 <__addsf3x+0x18>
+ 422:	71 f4       	brne	.+28     	; 0x440 <__addsf3x+0x30>
+ 424:	9e f5       	brtc	.+102    	; 0x48c <__addsf3x+0x7c>
+ 426:	fa c0       	rjmp	.+500    	; 0x61c <__fp_zero>
+ 428:	0e f4       	brtc	.+2      	; 0x42c <__addsf3x+0x1c>
+ 42a:	e0 95       	com	r30
+ 42c:	0b 2e       	mov	r0, r27
+ 42e:	ba 2f       	mov	r27, r26
+ 430:	a0 2d       	mov	r26, r0
+ 432:	0b 01       	movw	r0, r22
+ 434:	b9 01       	movw	r22, r18
+ 436:	90 01       	movw	r18, r0
+ 438:	0c 01       	movw	r0, r24
+ 43a:	ca 01       	movw	r24, r20
+ 43c:	a0 01       	movw	r20, r0
+ 43e:	11 24       	eor	r1, r1
+ 440:	ff 27       	eor	r31, r31
+ 442:	59 1b       	sub	r21, r25
+ 444:	99 f0       	breq	.+38     	; 0x46c <__addsf3x+0x5c>
+ 446:	59 3f       	cpi	r21, 0xF9	; 249
+ 448:	50 f4       	brcc	.+20     	; 0x45e <__addsf3x+0x4e>
+ 44a:	50 3e       	cpi	r21, 0xE0	; 224
+ 44c:	68 f1       	brcs	.+90     	; 0x4a8 <__addsf3x+0x98>
+ 44e:	1a 16       	cp	r1, r26
+ 450:	f0 40       	sbci	r31, 0x00	; 0
+ 452:	a2 2f       	mov	r26, r18
+ 454:	23 2f       	mov	r18, r19
+ 456:	34 2f       	mov	r19, r20
+ 458:	44 27       	eor	r20, r20
+ 45a:	58 5f       	subi	r21, 0xF8	; 248
+ 45c:	f3 cf       	rjmp	.-26     	; 0x444 <__addsf3x+0x34>
+ 45e:	46 95       	lsr	r20
+ 460:	37 95       	ror	r19
+ 462:	27 95       	ror	r18
+ 464:	a7 95       	ror	r26
+ 466:	f0 40       	sbci	r31, 0x00	; 0
+ 468:	53 95       	inc	r21
+ 46a:	c9 f7       	brne	.-14     	; 0x45e <__addsf3x+0x4e>
+ 46c:	7e f4       	brtc	.+30     	; 0x48c <__addsf3x+0x7c>
+ 46e:	1f 16       	cp	r1, r31
+ 470:	ba 0b       	sbc	r27, r26
+ 472:	62 0b       	sbc	r22, r18
+ 474:	73 0b       	sbc	r23, r19
+ 476:	84 0b       	sbc	r24, r20
+ 478:	ba f0       	brmi	.+46     	; 0x4a8 <__addsf3x+0x98>
+ 47a:	91 50       	subi	r25, 0x01	; 1
+ 47c:	a1 f0       	breq	.+40     	; 0x4a6 <__addsf3x+0x96>
+ 47e:	ff 0f       	add	r31, r31
+ 480:	bb 1f       	adc	r27, r27
+ 482:	66 1f       	adc	r22, r22
+ 484:	77 1f       	adc	r23, r23
+ 486:	88 1f       	adc	r24, r24
+ 488:	c2 f7       	brpl	.-16     	; 0x47a <__addsf3x+0x6a>
+ 48a:	0e c0       	rjmp	.+28     	; 0x4a8 <__addsf3x+0x98>
+ 48c:	ba 0f       	add	r27, r26
+ 48e:	62 1f       	adc	r22, r18
+ 490:	73 1f       	adc	r23, r19
+ 492:	84 1f       	adc	r24, r20
+ 494:	48 f4       	brcc	.+18     	; 0x4a8 <__addsf3x+0x98>
+ 496:	87 95       	ror	r24
+ 498:	77 95       	ror	r23
+ 49a:	67 95       	ror	r22
+ 49c:	b7 95       	ror	r27
+ 49e:	f7 95       	ror	r31
+ 4a0:	9e 3f       	cpi	r25, 0xFE	; 254
+ 4a2:	08 f0       	brcs	.+2      	; 0x4a6 <__addsf3x+0x96>
+ 4a4:	b3 cf       	rjmp	.-154    	; 0x40c <__addsf3+0x1e>
+ 4a6:	93 95       	inc	r25
+ 4a8:	88 0f       	add	r24, r24
+ 4aa:	08 f0       	brcs	.+2      	; 0x4ae <__addsf3x+0x9e>
+ 4ac:	99 27       	eor	r25, r25
+ 4ae:	ee 0f       	add	r30, r30
+ 4b0:	97 95       	ror	r25
+ 4b2:	87 95       	ror	r24
+ 4b4:	08 95       	ret
+
+000004b6 <__fixunssfsi>:
+ 4b6:	98 d0       	rcall	.+304    	; 0x5e8 <__fp_splitA>
+ 4b8:	88 f0       	brcs	.+34     	; 0x4dc <__fixunssfsi+0x26>
+ 4ba:	9f 57       	subi	r25, 0x7F	; 127
+ 4bc:	90 f0       	brcs	.+36     	; 0x4e2 <__fixunssfsi+0x2c>
+ 4be:	b9 2f       	mov	r27, r25
+ 4c0:	99 27       	eor	r25, r25
+ 4c2:	b7 51       	subi	r27, 0x17	; 23
+ 4c4:	a0 f0       	brcs	.+40     	; 0x4ee <__fixunssfsi+0x38>
+ 4c6:	d1 f0       	breq	.+52     	; 0x4fc <__fixunssfsi+0x46>
+ 4c8:	66 0f       	add	r22, r22
+ 4ca:	77 1f       	adc	r23, r23
+ 4cc:	88 1f       	adc	r24, r24
+ 4ce:	99 1f       	adc	r25, r25
+ 4d0:	1a f0       	brmi	.+6      	; 0x4d8 <__fixunssfsi+0x22>
+ 4d2:	ba 95       	dec	r27
+ 4d4:	c9 f7       	brne	.-14     	; 0x4c8 <__fixunssfsi+0x12>
+ 4d6:	12 c0       	rjmp	.+36     	; 0x4fc <__fixunssfsi+0x46>
+ 4d8:	b1 30       	cpi	r27, 0x01	; 1
+ 4da:	81 f0       	breq	.+32     	; 0x4fc <__fixunssfsi+0x46>
+ 4dc:	9f d0       	rcall	.+318    	; 0x61c <__fp_zero>
+ 4de:	b1 e0       	ldi	r27, 0x01	; 1
+ 4e0:	08 95       	ret
+ 4e2:	9c c0       	rjmp	.+312    	; 0x61c <__fp_zero>
+ 4e4:	67 2f       	mov	r22, r23
+ 4e6:	78 2f       	mov	r23, r24
+ 4e8:	88 27       	eor	r24, r24
+ 4ea:	b8 5f       	subi	r27, 0xF8	; 248
+ 4ec:	39 f0       	breq	.+14     	; 0x4fc <__fixunssfsi+0x46>
+ 4ee:	b9 3f       	cpi	r27, 0xF9	; 249
+ 4f0:	cc f3       	brlt	.-14     	; 0x4e4 <__fixunssfsi+0x2e>
+ 4f2:	86 95       	lsr	r24
+ 4f4:	77 95       	ror	r23
+ 4f6:	67 95       	ror	r22
+ 4f8:	b3 95       	inc	r27
+ 4fa:	d9 f7       	brne	.-10     	; 0x4f2 <__fixunssfsi+0x3c>
+ 4fc:	3e f4       	brtc	.+14     	; 0x50c <__fixunssfsi+0x56>
+ 4fe:	90 95       	com	r25
+ 500:	80 95       	com	r24
+ 502:	70 95       	com	r23
+ 504:	61 95       	neg	r22
+ 506:	7f 4f       	sbci	r23, 0xFF	; 255
+ 508:	8f 4f       	sbci	r24, 0xFF	; 255
+ 50a:	9f 4f       	sbci	r25, 0xFF	; 255
+ 50c:	08 95       	ret
+
+0000050e <__floatunsisf>:
+ 50e:	e8 94       	clt
+ 510:	09 c0       	rjmp	.+18     	; 0x524 <__floatsisf+0x12>
+
+00000512 <__floatsisf>:
+ 512:	97 fb       	bst	r25, 7
+ 514:	3e f4       	brtc	.+14     	; 0x524 <__floatsisf+0x12>
+ 516:	90 95       	com	r25
+ 518:	80 95       	com	r24
+ 51a:	70 95       	com	r23
+ 51c:	61 95       	neg	r22
+ 51e:	7f 4f       	sbci	r23, 0xFF	; 255
+ 520:	8f 4f       	sbci	r24, 0xFF	; 255
+ 522:	9f 4f       	sbci	r25, 0xFF	; 255
+ 524:	99 23       	and	r25, r25
+ 526:	a9 f0       	breq	.+42     	; 0x552 <__floatsisf+0x40>
+ 528:	f9 2f       	mov	r31, r25
+ 52a:	96 e9       	ldi	r25, 0x96	; 150
+ 52c:	bb 27       	eor	r27, r27
+ 52e:	93 95       	inc	r25
+ 530:	f6 95       	lsr	r31
+ 532:	87 95       	ror	r24
+ 534:	77 95       	ror	r23
+ 536:	67 95       	ror	r22
+ 538:	b7 95       	ror	r27
+ 53a:	f1 11       	cpse	r31, r1
+ 53c:	f8 cf       	rjmp	.-16     	; 0x52e <__floatsisf+0x1c>
+ 53e:	fa f4       	brpl	.+62     	; 0x57e <__floatsisf+0x6c>
+ 540:	bb 0f       	add	r27, r27
+ 542:	11 f4       	brne	.+4      	; 0x548 <__floatsisf+0x36>
+ 544:	60 ff       	sbrs	r22, 0
+ 546:	1b c0       	rjmp	.+54     	; 0x57e <__floatsisf+0x6c>
+ 548:	6f 5f       	subi	r22, 0xFF	; 255
+ 54a:	7f 4f       	sbci	r23, 0xFF	; 255
+ 54c:	8f 4f       	sbci	r24, 0xFF	; 255
+ 54e:	9f 4f       	sbci	r25, 0xFF	; 255
+ 550:	16 c0       	rjmp	.+44     	; 0x57e <__floatsisf+0x6c>
+ 552:	88 23       	and	r24, r24
+ 554:	11 f0       	breq	.+4      	; 0x55a <__floatsisf+0x48>
+ 556:	96 e9       	ldi	r25, 0x96	; 150
+ 558:	11 c0       	rjmp	.+34     	; 0x57c <__floatsisf+0x6a>
+ 55a:	77 23       	and	r23, r23
+ 55c:	21 f0       	breq	.+8      	; 0x566 <__floatsisf+0x54>
+ 55e:	9e e8       	ldi	r25, 0x8E	; 142
+ 560:	87 2f       	mov	r24, r23
+ 562:	76 2f       	mov	r23, r22
+ 564:	05 c0       	rjmp	.+10     	; 0x570 <__floatsisf+0x5e>
+ 566:	66 23       	and	r22, r22
+ 568:	71 f0       	breq	.+28     	; 0x586 <__floatsisf+0x74>
+ 56a:	96 e8       	ldi	r25, 0x86	; 134
+ 56c:	86 2f       	mov	r24, r22
+ 56e:	70 e0       	ldi	r23, 0x00	; 0
+ 570:	60 e0       	ldi	r22, 0x00	; 0
+ 572:	2a f0       	brmi	.+10     	; 0x57e <__floatsisf+0x6c>
+ 574:	9a 95       	dec	r25
+ 576:	66 0f       	add	r22, r22
+ 578:	77 1f       	adc	r23, r23
+ 57a:	88 1f       	adc	r24, r24
+ 57c:	da f7       	brpl	.-10     	; 0x574 <__floatsisf+0x62>
+ 57e:	88 0f       	add	r24, r24
+ 580:	96 95       	lsr	r25
+ 582:	87 95       	ror	r24
+ 584:	97 f9       	bld	r25, 7
+ 586:	08 95       	ret
+
+00000588 <__fp_inf>:
+ 588:	97 f9       	bld	r25, 7
+ 58a:	9f 67       	ori	r25, 0x7F	; 127
+ 58c:	80 e8       	ldi	r24, 0x80	; 128
+ 58e:	70 e0       	ldi	r23, 0x00	; 0
+ 590:	60 e0       	ldi	r22, 0x00	; 0
+ 592:	08 95       	ret
+
+00000594 <__fp_nan>:
+ 594:	9f ef       	ldi	r25, 0xFF	; 255
+ 596:	80 ec       	ldi	r24, 0xC0	; 192
+ 598:	08 95       	ret
+
+0000059a <__fp_pscA>:
+ 59a:	00 24       	eor	r0, r0
+ 59c:	0a 94       	dec	r0
+ 59e:	16 16       	cp	r1, r22
+ 5a0:	17 06       	cpc	r1, r23
+ 5a2:	18 06       	cpc	r1, r24
+ 5a4:	09 06       	cpc	r0, r25
+ 5a6:	08 95       	ret
+
+000005a8 <__fp_pscB>:
+ 5a8:	00 24       	eor	r0, r0
+ 5aa:	0a 94       	dec	r0
+ 5ac:	12 16       	cp	r1, r18
+ 5ae:	13 06       	cpc	r1, r19
+ 5b0:	14 06       	cpc	r1, r20
+ 5b2:	05 06       	cpc	r0, r21
+ 5b4:	08 95       	ret
+
+000005b6 <__fp_round>:
+ 5b6:	09 2e       	mov	r0, r25
+ 5b8:	03 94       	inc	r0
+ 5ba:	00 0c       	add	r0, r0
+ 5bc:	11 f4       	brne	.+4      	; 0x5c2 <__fp_round+0xc>
+ 5be:	88 23       	and	r24, r24
+ 5c0:	52 f0       	brmi	.+20     	; 0x5d6 <__fp_round+0x20>
+ 5c2:	bb 0f       	add	r27, r27
+ 5c4:	40 f4       	brcc	.+16     	; 0x5d6 <__fp_round+0x20>
+ 5c6:	bf 2b       	or	r27, r31
+ 5c8:	11 f4       	brne	.+4      	; 0x5ce <__fp_round+0x18>
+ 5ca:	60 ff       	sbrs	r22, 0
+ 5cc:	04 c0       	rjmp	.+8      	; 0x5d6 <__fp_round+0x20>
+ 5ce:	6f 5f       	subi	r22, 0xFF	; 255
+ 5d0:	7f 4f       	sbci	r23, 0xFF	; 255
+ 5d2:	8f 4f       	sbci	r24, 0xFF	; 255
+ 5d4:	9f 4f       	sbci	r25, 0xFF	; 255
+ 5d6:	08 95       	ret
+
+000005d8 <__fp_split3>:
+ 5d8:	57 fd       	sbrc	r21, 7
+ 5da:	90 58       	subi	r25, 0x80	; 128
+ 5dc:	44 0f       	add	r20, r20
+ 5de:	55 1f       	adc	r21, r21
+ 5e0:	59 f0       	breq	.+22     	; 0x5f8 <__fp_splitA+0x10>
+ 5e2:	5f 3f       	cpi	r21, 0xFF	; 255
+ 5e4:	71 f0       	breq	.+28     	; 0x602 <__fp_splitA+0x1a>
+ 5e6:	47 95       	ror	r20
+
+000005e8 <__fp_splitA>:
+ 5e8:	88 0f       	add	r24, r24
+ 5ea:	97 fb       	bst	r25, 7
+ 5ec:	99 1f       	adc	r25, r25
+ 5ee:	61 f0       	breq	.+24     	; 0x608 <__fp_splitA+0x20>
+ 5f0:	9f 3f       	cpi	r25, 0xFF	; 255
+ 5f2:	79 f0       	breq	.+30     	; 0x612 <__fp_splitA+0x2a>
+ 5f4:	87 95       	ror	r24
+ 5f6:	08 95       	ret
+ 5f8:	12 16       	cp	r1, r18
+ 5fa:	13 06       	cpc	r1, r19
+ 5fc:	14 06       	cpc	r1, r20
+ 5fe:	55 1f       	adc	r21, r21
+ 600:	f2 cf       	rjmp	.-28     	; 0x5e6 <__fp_split3+0xe>
+ 602:	46 95       	lsr	r20
+ 604:	f1 df       	rcall	.-30     	; 0x5e8 <__fp_splitA>
+ 606:	08 c0       	rjmp	.+16     	; 0x618 <__fp_splitA+0x30>
+ 608:	16 16       	cp	r1, r22
+ 60a:	17 06       	cpc	r1, r23
+ 60c:	18 06       	cpc	r1, r24
+ 60e:	99 1f       	adc	r25, r25
+ 610:	f1 cf       	rjmp	.-30     	; 0x5f4 <__fp_splitA+0xc>
+ 612:	86 95       	lsr	r24
+ 614:	71 05       	cpc	r23, r1
+ 616:	61 05       	cpc	r22, r1
+ 618:	08 94       	sec
+ 61a:	08 95       	ret
+
+0000061c <__fp_zero>:
+ 61c:	e8 94       	clt
+
+0000061e <__fp_szero>:
+ 61e:	bb 27       	eor	r27, r27
+ 620:	66 27       	eor	r22, r22
+ 622:	77 27       	eor	r23, r23
+ 624:	cb 01       	movw	r24, r22
+ 626:	97 f9       	bld	r25, 7
+ 628:	08 95       	ret
+
+0000062a <__mulsf3>:
+ 62a:	0b d0       	rcall	.+22     	; 0x642 <__mulsf3x>
+ 62c:	c4 cf       	rjmp	.-120    	; 0x5b6 <__fp_round>
+ 62e:	b5 df       	rcall	.-150    	; 0x59a <__fp_pscA>
+ 630:	28 f0       	brcs	.+10     	; 0x63c <__mulsf3+0x12>
+ 632:	ba df       	rcall	.-140    	; 0x5a8 <__fp_pscB>
+ 634:	18 f0       	brcs	.+6      	; 0x63c <__mulsf3+0x12>
+ 636:	95 23       	and	r25, r21
+ 638:	09 f0       	breq	.+2      	; 0x63c <__mulsf3+0x12>
+ 63a:	a6 cf       	rjmp	.-180    	; 0x588 <__fp_inf>
+ 63c:	ab cf       	rjmp	.-170    	; 0x594 <__fp_nan>
+ 63e:	11 24       	eor	r1, r1
+ 640:	ee cf       	rjmp	.-36     	; 0x61e <__fp_szero>
+
+00000642 <__mulsf3x>:
+ 642:	ca df       	rcall	.-108    	; 0x5d8 <__fp_split3>
+ 644:	a0 f3       	brcs	.-24     	; 0x62e <__mulsf3+0x4>
+
+00000646 <__mulsf3_pse>:
+ 646:	95 9f       	mul	r25, r21
+ 648:	d1 f3       	breq	.-12     	; 0x63e <__mulsf3+0x14>
+ 64a:	95 0f       	add	r25, r21
+ 64c:	50 e0       	ldi	r21, 0x00	; 0
+ 64e:	55 1f       	adc	r21, r21
+ 650:	62 9f       	mul	r22, r18
+ 652:	f0 01       	movw	r30, r0
+ 654:	72 9f       	mul	r23, r18
+ 656:	bb 27       	eor	r27, r27
+ 658:	f0 0d       	add	r31, r0
+ 65a:	b1 1d       	adc	r27, r1
+ 65c:	63 9f       	mul	r22, r19
+ 65e:	aa 27       	eor	r26, r26
+ 660:	f0 0d       	add	r31, r0
+ 662:	b1 1d       	adc	r27, r1
+ 664:	aa 1f       	adc	r26, r26
+ 666:	64 9f       	mul	r22, r20
+ 668:	66 27       	eor	r22, r22
+ 66a:	b0 0d       	add	r27, r0
+ 66c:	a1 1d       	adc	r26, r1
+ 66e:	66 1f       	adc	r22, r22
+ 670:	82 9f       	mul	r24, r18
+ 672:	22 27       	eor	r18, r18
+ 674:	b0 0d       	add	r27, r0
+ 676:	a1 1d       	adc	r26, r1
+ 678:	62 1f       	adc	r22, r18
+ 67a:	73 9f       	mul	r23, r19
+ 67c:	b0 0d       	add	r27, r0
+ 67e:	a1 1d       	adc	r26, r1
+ 680:	62 1f       	adc	r22, r18
+ 682:	83 9f       	mul	r24, r19
+ 684:	a0 0d       	add	r26, r0
+ 686:	61 1d       	adc	r22, r1
+ 688:	22 1f       	adc	r18, r18
+ 68a:	74 9f       	mul	r23, r20
+ 68c:	33 27       	eor	r19, r19
+ 68e:	a0 0d       	add	r26, r0
+ 690:	61 1d       	adc	r22, r1
+ 692:	23 1f       	adc	r18, r19
+ 694:	84 9f       	mul	r24, r20
+ 696:	60 0d       	add	r22, r0
+ 698:	21 1d       	adc	r18, r1
+ 69a:	82 2f       	mov	r24, r18
+ 69c:	76 2f       	mov	r23, r22
+ 69e:	6a 2f       	mov	r22, r26
+ 6a0:	11 24       	eor	r1, r1
+ 6a2:	9f 57       	subi	r25, 0x7F	; 127
+ 6a4:	50 40       	sbci	r21, 0x00	; 0
+ 6a6:	8a f0       	brmi	.+34     	; 0x6ca <__mulsf3_pse+0x84>
+ 6a8:	e1 f0       	breq	.+56     	; 0x6e2 <__mulsf3_pse+0x9c>
+ 6aa:	88 23       	and	r24, r24
+ 6ac:	4a f0       	brmi	.+18     	; 0x6c0 <__mulsf3_pse+0x7a>
+ 6ae:	ee 0f       	add	r30, r30
+ 6b0:	ff 1f       	adc	r31, r31
+ 6b2:	bb 1f       	adc	r27, r27
+ 6b4:	66 1f       	adc	r22, r22
+ 6b6:	77 1f       	adc	r23, r23
+ 6b8:	88 1f       	adc	r24, r24
+ 6ba:	91 50       	subi	r25, 0x01	; 1
+ 6bc:	50 40       	sbci	r21, 0x00	; 0
+ 6be:	a9 f7       	brne	.-22     	; 0x6aa <__mulsf3_pse+0x64>
+ 6c0:	9e 3f       	cpi	r25, 0xFE	; 254
+ 6c2:	51 05       	cpc	r21, r1
+ 6c4:	70 f0       	brcs	.+28     	; 0x6e2 <__mulsf3_pse+0x9c>
+ 6c6:	60 cf       	rjmp	.-320    	; 0x588 <__fp_inf>
+ 6c8:	aa cf       	rjmp	.-172    	; 0x61e <__fp_szero>
+ 6ca:	5f 3f       	cpi	r21, 0xFF	; 255
+ 6cc:	ec f3       	brlt	.-6      	; 0x6c8 <__mulsf3_pse+0x82>
+ 6ce:	98 3e       	cpi	r25, 0xE8	; 232
+ 6d0:	dc f3       	brlt	.-10     	; 0x6c8 <__mulsf3_pse+0x82>
+ 6d2:	86 95       	lsr	r24
+ 6d4:	77 95       	ror	r23
+ 6d6:	67 95       	ror	r22
+ 6d8:	b7 95       	ror	r27
+ 6da:	f7 95       	ror	r31
+ 6dc:	e7 95       	ror	r30
+ 6de:	9f 5f       	subi	r25, 0xFF	; 255
+ 6e0:	c1 f7       	brne	.-16     	; 0x6d2 <__mulsf3_pse+0x8c>
+ 6e2:	fe 2b       	or	r31, r30
+ 6e4:	88 0f       	add	r24, r24
+ 6e6:	91 1d       	adc	r25, r1
+ 6e8:	96 95       	lsr	r25
+ 6ea:	87 95       	ror	r24
+ 6ec:	97 f9       	bld	r25, 7
+ 6ee:	08 95       	ret
+
+000006f0 <__udivmodhi4>:
+ 6f0:	aa 1b       	sub	r26, r26
+ 6f2:	bb 1b       	sub	r27, r27
+ 6f4:	51 e1       	ldi	r21, 0x11	; 17
+ 6f6:	07 c0       	rjmp	.+14     	; 0x706 <__udivmodhi4_ep>
+
+000006f8 <__udivmodhi4_loop>:
+ 6f8:	aa 1f       	adc	r26, r26
+ 6fa:	bb 1f       	adc	r27, r27
+ 6fc:	a6 17       	cp	r26, r22
+ 6fe:	b7 07       	cpc	r27, r23
+ 700:	10 f0       	brcs	.+4      	; 0x706 <__udivmodhi4_ep>
+ 702:	a6 1b       	sub	r26, r22
+ 704:	b7 0b       	sbc	r27, r23
+
+00000706 <__udivmodhi4_ep>:
+ 706:	88 1f       	adc	r24, r24
+ 708:	99 1f       	adc	r25, r25
+ 70a:	5a 95       	dec	r21
+ 70c:	a9 f7       	brne	.-22     	; 0x6f8 <__udivmodhi4_loop>
+ 70e:	80 95       	com	r24
+ 710:	90 95       	com	r25
+ 712:	bc 01       	movw	r22, r24
+ 714:	cd 01       	movw	r24, r26
+ 716:	08 95       	ret
+
+00000718 <_exit>:
+ 718:	f8 94       	cli
+
+0000071a <__stop_program>:
+ 71a:	ff cf       	rjmp	.-2      	; 0x71a <__stop_program>
