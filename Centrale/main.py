@@ -10,6 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from matplotlib.figure import Figure
 from matplotlib import style
 from PIL import Image, ImageTk
+from time import sleep
 
 #Styles
 LARGE_FONT = ("Verdana", 12)
@@ -18,7 +19,12 @@ f = Figure(figsize=(5,5), dpi=100)
 a = f.add_subplot(111)
 
 #Initiate arduino
-ard = Arduino(0,0)
+ard = Arduino()
+
+#Globals
+global temperature
+temperature = ard.get_temperature()
+
 
 def animate(i):
     #Testdata
@@ -103,8 +109,10 @@ class GUI(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Central unit control", font=LARGE_FONT)
+        global temperature
+        label = ttk.Label(self, text=temperature, font=LARGE_FONT)
         label.pack(pady=10,padx=10)
+
 
         #Page buttons
         settingsbutton = ttk.Button(self, text="Go to settings", command=lambda: controller.show_frame(Settings))
@@ -159,7 +167,12 @@ anima = animation.FuncAnimation(f, animate, interval=1000)
 
 #Full screen without start menu
 # app.wm_attributes('-fullscreen', 1)
+for i in range(6):
+    sleep(1) # Need this to slow the changes down
+    temperature = ard.get_temperature
+    app.update_idletasks()
 
 app.mainloop()
+ard.stop()
 #Delete random testdata
 open("testdata.txt", 'w').close()
