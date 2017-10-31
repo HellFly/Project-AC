@@ -98,15 +98,14 @@ class Arduino(threading.Thread):
 				print("Temperature: " + str(__a_temperature))
 		elif c == 3: # report status of blinds
 			if p1 != -1 and p2 != -1:
+				global __a_blinds_status
 				if p1 == 0: # blinds from light unit
-					global __a_blinds_status
 					if p2 == 0: # blinds are closed
 						__a_blinds_status = False
 					else:
 						__a_blinds_status = True
 					self.reset_data()
 				elif p1 == 1: # blinds from temperature unit
-					global __a_blinds_status
 					if p2 == 0: # blinds are closed
 						__a_blinds_status = False
 					else:
