@@ -6,18 +6,6 @@ import threading
 import time
 import datetime
 
-__a_running = True
-
-__a_temperature = 0
-__a_light = 0
-__a_blinds_status = False
-
-__a_temperature_list = []
-__a_light_list = []
-
-__a_temperature_connected = False
-__a_light_connected = False
-
 #class for communicating with the arduino
 # http://www.instructables.com/id/Arduino-Python-Communication-via-USB/
 # https://www.python-course.eu/threads.php
@@ -32,10 +20,23 @@ class Arduino(threading.Thread):
 
 		global __a_running
 		__a_running = True
+
+		global __a_temperature
+		__a_temperature = 0
+		global __a_light
+		__a_light = 0
+		global __a_blinds_status
+		__a_blinds_status = False
+
 		global __a_temperature_list
 		__a_temperature_list = []
 		global __a_light_list
 		__a_light_list = []
+
+		global __a_temperature_connected
+		__a_temperature_connected = False
+		global __a_light_connected
+		__a_light_connected = False
 
 		self.start()
 	def run(self):
@@ -98,12 +99,14 @@ class Arduino(threading.Thread):
 		elif c == 3: # report status of blinds
 			if p1 != -1 and p2 != -1:
 				if p1 == 0: # blinds from light unit
+					global __a_blinds_status
 					if p2 == 0: # blinds are closed
 						__a_blinds_status = False
 					else:
 						__a_blinds_status = True
 					self.reset_data()
 				elif p1 == 1: # blinds from temperature unit
+					global __a_blinds_status
 					if p2 == 0: # blinds are closed
 						__a_blinds_status = False
 					else:
@@ -121,10 +124,10 @@ class Arduino(threading.Thread):
 		global __a_running
 		__a_running = False
 
-	def get_temperature():
+	def get_temperature(self):
 		global __a_temperature
 		return __a_temperature
-	def get_light():
+	def get_light(self):
 		global __a_light
 		return __a_light
 	# List structure:
@@ -134,7 +137,7 @@ class Arduino(threading.Thread):
 	#		(datetime, temperature),
 	#		etc...
 	#	}
-	def get_temperature_list():
+	def get_temperature_list(self):
 		global __a_temperature_list
 		return __a_temperature_list
 	# List structure:
@@ -144,15 +147,15 @@ class Arduino(threading.Thread):
 	#		(datetime, light),
 	#		etc...
 	#	}
-	def get_light_list():
+	def get_light_list(sef):
 		global __a_light_list
 		return __a_light_list
-	def get_blinds(): # False = closed, True = open
+	def get_blinds(self): # False = closed, True = open
 		global __a_blinds_status
 		return __a_blinds_status
-	def temperature_connected():
+	def temperature_connected(self):
 		global __a_temperature_connected
 		return __a_temperature_connected
-	def light_connected():
+	def light_connected(self):
 		global __a_light_connected
 		return __a_light_connected
