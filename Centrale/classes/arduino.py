@@ -147,7 +147,7 @@ class Arduino(threading.Thread):
 	#		(datetime, light),
 	#		etc...
 	#	}
-	def get_light_list(sef):
+	def get_light_list(self):
 		global __a_light_list
 		return __a_light_list
 	def get_blinds(self): # False = closed, True = open
