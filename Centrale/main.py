@@ -9,13 +9,16 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 from matplotlib import style
+from PIL import Image, ImageTk
 
+#Styles
 LARGE_FONT = ("Verdana", 12)
-a = Arduino(0,0)
 style.use("ggplot")
-
 f = Figure(figsize=(5,5), dpi=100)
 a = f.add_subplot(111)
+
+#Initiate arduino
+ard = Arduino(0,0)
 
 def animate(i):
     #Testdata
@@ -35,39 +38,63 @@ def animate(i):
             yList.append(float(y))
     a.clear()
     a.plot(xList, yList)
+def doNothing():
+    print("Nothing")
+
 
 class GUI(tk.Tk):
 
     def __init__(self, *args, **kwargs): #Args, kwargs
 
         tk.Tk.__init__(self, *args, **kwargs)
-        tk.Tk.iconbitmap(self, default="images/arduino_icon.ico")
+        tk.Tk.iconbitmap(self, default="images/hqdefault.ico")
         tk.Tk.wm_title(self, "They see me rollin")
 
-        #Topframe
-        topRow = tk.Frame(self,bg="blue")
-        topRow.pack(side="top", fill="x", expand = True)
-        topRow.grid_rowconfigure(0, weight=1)
-        topRow.grid_columnconfigure(0, weight=1)
+        #Topmenu
+        tMenu = tk.Menu()
+        self.config(menu=tMenu)
+        subMenu = tk.Menu(tMenu, tearoff=0)
+        tMenu.add_cascade(label="File", menu=subMenu)
+        subMenu.add_command(label="Add arduino", command=doNothing)
+        subMenu.add_command(label="Save", command=doNothing)
+        subMenu.add_separator()
+        #Exit program
+        subMenu.add_command(label="Exit", command=self.destroy)
 
+        #Title bar
+        #top = tk.Frame(self, bg="black")
+        #top.grid(row=0, column=0, sticky="w")
+        #Title
+        title = tk.Label(text="Central unit control", font=LARGE_FONT, bg="black", fg="white")
+        title.grid(row=0, column=0, sticky="w")
+
+
+        # **** Switching between frames in tkinter(1) ****
+        # Source: https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
         #Container
-        container = tk.Frame(self)
-        container.pack(side="bottom", fill="both", expand = True)
+        container = tk.Frame(self, width=400, height=200)
+        container.grid()
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
-        #Different pages library
+        # **** Switching between frames in tkinter(2) ****
+        #Different pages library method
         self.frames = {}
-        #Add pageclasses to tuple in loop
+        #Add pages (classes) to tuple in loop
         for F in (StartPage, Settings, ControlUnit, Graph):
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
-
         #Initialise screen
-
         self.show_frame(StartPage)
 
+
+        #Status bar
+        statustext = "ASDASDASDAD"
+        #statusbar = tk.Frame(self, bg="blue")
+        statusLabel = tk.Label(text=statustext, bd=1, relief="sunken", anchor="w", fg="white", bg="blue")
+        statusLabel.grid(row=1, column=0, sticky="w")
+    # **** Switching between frames in tkinter(3) ****
     #Show frame function
     def show_frame(self, cont):
         frame = self.frames[cont]
@@ -113,14 +140,25 @@ class Graph(tk.Frame):
 
 
         canvas = FigureCanvasTkAgg(f, self)
-        canvas.show()
+        #canvas.show()
         toolbar = NavigationToolbar2TkAgg(canvas, self)
         toolbar.update()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         canvas._tkcanvas.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
+class topMenu(tk.Menu):
+    def __init__(self):
+        tk.Menu.__init__(self)
+
+
 app = GUI()
 anima = animation.FuncAnimation(f, animate, interval=1000)
+
+#Full screen with start menu
+# app.state('zoomed')
+
+#Full screen without start menu
+# app.wm_attributes('-fullscreen', 1)
 
 app.mainloop()
 #Delete random testdata

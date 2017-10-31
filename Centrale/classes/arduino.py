@@ -26,3 +26,22 @@ class Arduino(threading.Thread):
 
 			print("Counter is " + str(self.counter))
 			time.sleep(1)
+
+	def setLightValue(self, sensorvalue):
+		self.lightvolume = sensorvalue
+
+	def printLightVolume(self):
+		setLightValue(sensorinput)
+
+		if self.lightvolume < 40:
+			print("Zeer donker")
+		elif self.lightvolume > 40 and self.lightvolume < 80:
+			print("Donker")
+		elif self.lightvolume > 80 and self.lightvolume < 120:
+			print("Schemerig")
+		elif self.lightvolume > 120 and self.lightvolume < 160:
+			print("Licht")
+		elif self.lightvolume > 160 and self.lightvolume < 200:
+			print("Zeer licht")
+		else:
+			print("Er is geen lichtvolume gemeten")
