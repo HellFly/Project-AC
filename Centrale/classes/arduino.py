@@ -121,7 +121,7 @@ class Arduino(threading.Thread):
 		global __a_running
 		__a_running = False
 
-	def get_temperature():
+	def get_temperature(self):
 		global __a_temperature
 		return __a_temperature
 	def get_light():
