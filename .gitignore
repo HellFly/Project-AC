@@ -1,4 +1,5 @@
 # Don't track compiled python files and python cache #
 
-__pycache__/
+Centrale/classes/__pycache__/
 *.pyc
+Centrale/config.ini
