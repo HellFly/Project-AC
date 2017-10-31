@@ -1,0 +1,733 @@
+
+lichtsensor.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  00000388  0000041c  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         00000388  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          0000008e  00800100  00800100  0000041c  2**0
+                  ALLOC
+  3 .stab         000006cc  00000000  00000000  0000041c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  4 .stabstr      00000085  00000000  00000000  00000ae8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_aranges 000000c0  00000000  00000000  00000b70  2**3
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   0000071a  00000000  00000000  00000c30  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000294  00000000  00000000  0000134a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   000004af  00000000  00000000  000015de  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  00000174  00000000  00000000  00001a90  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    000001dd  00000000  00000000  00001c04  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    000002c1  00000000  00000000  00001de1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 34 00 	jmp	0x68	; 0x68 <__ctors_end>
+   4:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   8:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  10:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  14:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  18:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  1c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  20:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  24:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  28:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  2c:	0c 94 f6 00 	jmp	0x1ec	; 0x1ec <__vector_11>
+  30:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  34:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  38:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  3c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  40:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  44:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  48:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  4c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  50:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  54:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  58:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  5c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  60:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  64:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+
+00000068 <__ctors_end>:
+  68:	11 24       	eor	r1, r1
+  6a:	1f be       	out	0x3f, r1	; 63
+  6c:	cf ef       	ldi	r28, 0xFF	; 255
+  6e:	d8 e0       	ldi	r29, 0x08	; 8
+  70:	de bf       	out	0x3e, r29	; 62
+  72:	cd bf       	out	0x3d, r28	; 61
+
+00000074 <__do_copy_data>:
+  74:	11 e0       	ldi	r17, 0x01	; 1
+  76:	a0 e0       	ldi	r26, 0x00	; 0
+  78:	b1 e0       	ldi	r27, 0x01	; 1
+  7a:	e8 e8       	ldi	r30, 0x88	; 136
+  7c:	f3 e0       	ldi	r31, 0x03	; 3
+  7e:	02 c0       	rjmp	.+4      	; 0x84 <__do_copy_data+0x10>
+  80:	05 90       	lpm	r0, Z+
+  82:	0d 92       	st	X+, r0
+  84:	a0 30       	cpi	r26, 0x00	; 0
+  86:	b1 07       	cpc	r27, r17
+  88:	d9 f7       	brne	.-10     	; 0x80 <__do_copy_data+0xc>
+
+0000008a <__do_clear_bss>:
+  8a:	11 e0       	ldi	r17, 0x01	; 1
+  8c:	a0 e0       	ldi	r26, 0x00	; 0
+  8e:	b1 e0       	ldi	r27, 0x01	; 1
+  90:	01 c0       	rjmp	.+2      	; 0x94 <.do_clear_bss_start>
+
+00000092 <.do_clear_bss_loop>:
+  92:	1d 92       	st	X+, r1
+
+00000094 <.do_clear_bss_start>:
+  94:	ae 38       	cpi	r26, 0x8E	; 142
+  96:	b1 07       	cpc	r27, r17
+  98:	e1 f7       	brne	.-8      	; 0x92 <.do_clear_bss_loop>
+  9a:	0e 94 93 01 	call	0x326	; 0x326 <main>
+  9e:	0c 94 c2 01 	jmp	0x384	; 0x384 <_exit>
+
+000000a2 <__bad_interrupt>:
+  a2:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+000000a6 <SCH_Add_Task>:
+  Task will be first executed at T = 300 ticks, then 1300, 2300, etc.            
+ 
+-*------------------------------------------------------------------*/
+
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+  a6:	0f 93       	push	r16
+  a8:	1f 93       	push	r17
+  aa:	cf 93       	push	r28
+  ac:	df 93       	push	r29
+  ae:	ec 01       	movw	r28, r24
+  b0:	db 01       	movw	r26, r22
+  b2:	8a 01       	movw	r16, r20
+   unsigned char Index = 0;
+
+   // First find a gap in the array (if there is one)
+   while((SCH_tasks_G[Index].pTask != 0) && (Index < SCH_MAX_TASKS))
+  b4:	80 91 02 01 	lds	r24, 0x0102
+  b8:	90 91 03 01 	lds	r25, 0x0103
+  bc:	00 97       	sbiw	r24, 0x00	; 0
+  be:	b1 f0       	breq	.+44     	; 0xec <SCH_Add_Task+0x46>
+  c0:	e9 e0       	ldi	r30, 0x09	; 9
+  c2:	f1 e0       	ldi	r31, 0x01	; 1
+  c4:	21 e0       	ldi	r18, 0x01	; 1
+  c6:	30 e0       	ldi	r19, 0x00	; 0
+   {
+      Index++;
+  c8:	42 2f       	mov	r20, r18
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+   unsigned char Index = 0;
+
+   // First find a gap in the array (if there is one)
+   while((SCH_tasks_G[Index].pTask != 0) && (Index < SCH_MAX_TASKS))
+  ca:	b9 01       	movw	r22, r18
+  cc:	80 81       	ld	r24, Z
+  ce:	91 81       	ldd	r25, Z+1	; 0x01
+  d0:	00 97       	sbiw	r24, 0x00	; 0
+  d2:	41 f0       	breq	.+16     	; 0xe4 <SCH_Add_Task+0x3e>
+  d4:	2f 5f       	subi	r18, 0xFF	; 255
+  d6:	3f 4f       	sbci	r19, 0xFF	; 255
+  d8:	37 96       	adiw	r30, 0x07	; 7
+  da:	25 31       	cpi	r18, 0x15	; 21
+  dc:	31 05       	cpc	r19, r1
+  de:	a1 f7       	brne	.-24     	; 0xc8 <SCH_Add_Task+0x22>
+   {
+      Index++;
+  e0:	84 2f       	mov	r24, r20
+  e2:	01 c0       	rjmp	.+2      	; 0xe6 <SCH_Add_Task+0x40>
+  e4:	82 2f       	mov	r24, r18
+   }
+
+   // Have we reached the end of the list?   
+   if(Index == SCH_MAX_TASKS)
+  e6:	84 31       	cpi	r24, 0x14	; 20
+  e8:	21 f4       	brne	.+8      	; 0xf2 <SCH_Add_Task+0x4c>
+  ea:	17 c0       	rjmp	.+46     	; 0x11a <SCH_Add_Task+0x74>
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+   unsigned char Index = 0;
+
+   // First find a gap in the array (if there is one)
+   while((SCH_tasks_G[Index].pTask != 0) && (Index < SCH_MAX_TASKS))
+  ec:	60 e0       	ldi	r22, 0x00	; 0
+  ee:	70 e0       	ldi	r23, 0x00	; 0
+ 
+-*------------------------------------------------------------------*/
+
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+   unsigned char Index = 0;
+  f0:	40 e0       	ldi	r20, 0x00	; 0
+      // Task list is full, return an error code
+      return SCH_MAX_TASKS;  
+   }
+
+   // If we're here, there is a space in the task array
+   SCH_tasks_G[Index].pTask = pFunction;
+  f2:	cb 01       	movw	r24, r22
+  f4:	88 0f       	add	r24, r24
+  f6:	99 1f       	adc	r25, r25
+  f8:	88 0f       	add	r24, r24
+  fa:	99 1f       	adc	r25, r25
+  fc:	88 0f       	add	r24, r24
+  fe:	99 1f       	adc	r25, r25
+ 100:	86 1b       	sub	r24, r22
+ 102:	97 0b       	sbc	r25, r23
+ 104:	fc 01       	movw	r30, r24
+ 106:	ee 5f       	subi	r30, 0xFE	; 254
+ 108:	fe 4f       	sbci	r31, 0xFE	; 254
+ 10a:	d1 83       	std	Z+1, r29	; 0x01
+ 10c:	c0 83       	st	Z, r28
+   SCH_tasks_G[Index].Delay =DELAY;
+ 10e:	b3 83       	std	Z+3, r27	; 0x03
+ 110:	a2 83       	std	Z+2, r26	; 0x02
+   SCH_tasks_G[Index].Period = PERIOD;
+ 112:	15 83       	std	Z+5, r17	; 0x05
+ 114:	04 83       	std	Z+4, r16	; 0x04
+   SCH_tasks_G[Index].RunMe = 0;
+ 116:	16 82       	std	Z+6, r1	; 0x06
+
+   // return position of task (to allow later deletion)
+   return Index;
+ 118:	84 2f       	mov	r24, r20
+}
+ 11a:	df 91       	pop	r29
+ 11c:	cf 91       	pop	r28
+ 11e:	1f 91       	pop	r17
+ 120:	0f 91       	pop	r16
+ 122:	08 95       	ret
+
+00000124 <SCH_Delete_Task>:
+unsigned char SCH_Delete_Task(const unsigned char TASK_INDEX)
+{
+   // Return_code can be used for error reporting, NOT USED HERE THOUGH!
+   unsigned char Return_code = 0;
+
+   SCH_tasks_G[TASK_INDEX].pTask = 0;
+ 124:	90 e0       	ldi	r25, 0x00	; 0
+ 126:	fc 01       	movw	r30, r24
+ 128:	ee 0f       	add	r30, r30
+ 12a:	ff 1f       	adc	r31, r31
+ 12c:	ee 0f       	add	r30, r30
+ 12e:	ff 1f       	adc	r31, r31
+ 130:	ee 0f       	add	r30, r30
+ 132:	ff 1f       	adc	r31, r31
+ 134:	e8 1b       	sub	r30, r24
+ 136:	f9 0b       	sbc	r31, r25
+ 138:	ee 5f       	subi	r30, 0xFE	; 254
+ 13a:	fe 4f       	sbci	r31, 0xFE	; 254
+ 13c:	11 82       	std	Z+1, r1	; 0x01
+ 13e:	10 82       	st	Z, r1
+   SCH_tasks_G[TASK_INDEX].Delay = 0;
+ 140:	13 82       	std	Z+3, r1	; 0x03
+ 142:	12 82       	std	Z+2, r1	; 0x02
+   SCH_tasks_G[TASK_INDEX].Period = 0;
+ 144:	15 82       	std	Z+5, r1	; 0x05
+ 146:	14 82       	std	Z+4, r1	; 0x04
+   SCH_tasks_G[TASK_INDEX].RunMe = 0;
+ 148:	16 82       	std	Z+6, r1	; 0x06
+
+   return Return_code;
+}
+ 14a:	80 e0       	ldi	r24, 0x00	; 0
+ 14c:	08 95       	ret
+
+0000014e <SCH_Dispatch_Tasks>:
+  This function must be called (repeatedly) from the main loop.
+
+-*------------------------------------------------------------------*/
+
+void SCH_Dispatch_Tasks(void)
+{
+ 14e:	cf 92       	push	r12
+ 150:	df 92       	push	r13
+ 152:	ef 92       	push	r14
+ 154:	ff 92       	push	r15
+ 156:	1f 93       	push	r17
+ 158:	cf 93       	push	r28
+ 15a:	df 93       	push	r29
+   unsigned char Index;
+
+   // Dispatches (runs) the next task (if one is ready)
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+ 15c:	c8 e0       	ldi	r28, 0x08	; 8
+ 15e:	d1 e0       	ldi	r29, 0x01	; 1
+ 160:	0f 2e       	mov	r0, r31
+ 162:	fa ef       	ldi	r31, 0xFA	; 250
+ 164:	ef 2e       	mov	r14, r31
+ 166:	ff ef       	ldi	r31, 0xFF	; 255
+ 168:	ff 2e       	mov	r15, r31
+ 16a:	f0 2d       	mov	r31, r0
+ 16c:	ec 0e       	add	r14, r28
+ 16e:	fd 1e       	adc	r15, r29
+ 170:	10 e0       	ldi	r17, 0x00	; 0
+   {
+      if((SCH_tasks_G[Index].RunMe > 0) && (SCH_tasks_G[Index].pTask != 0))
+ 172:	88 81       	ld	r24, Y
+ 174:	88 23       	and	r24, r24
+ 176:	91 f0       	breq	.+36     	; 0x19c <SCH_Dispatch_Tasks+0x4e>
+ 178:	d7 01       	movw	r26, r14
+ 17a:	ed 91       	ld	r30, X+
+ 17c:	fc 91       	ld	r31, X
+ 17e:	11 97       	sbiw	r26, 0x01	; 1
+ 180:	30 97       	sbiw	r30, 0x00	; 0
+ 182:	61 f0       	breq	.+24     	; 0x19c <SCH_Dispatch_Tasks+0x4e>
+      {
+         (*SCH_tasks_G[Index].pTask)();  // Run the task
+ 184:	09 95       	icall
+         SCH_tasks_G[Index].RunMe -= 1;   // Reset / reduce RunMe flag
+ 186:	88 81       	ld	r24, Y
+ 188:	81 50       	subi	r24, 0x01	; 1
+ 18a:	88 83       	st	Y, r24
+
+         // Periodic tasks will automatically run again
+         // - if this is a 'one shot' task, remove it from the array
+         if(SCH_tasks_G[Index].Period == 0)
+ 18c:	f7 01       	movw	r30, r14
+ 18e:	84 81       	ldd	r24, Z+4	; 0x04
+ 190:	95 81       	ldd	r25, Z+5	; 0x05
+ 192:	00 97       	sbiw	r24, 0x00	; 0
+ 194:	19 f4       	brne	.+6      	; 0x19c <SCH_Dispatch_Tasks+0x4e>
+         {
+            SCH_Delete_Task(Index);
+ 196:	81 2f       	mov	r24, r17
+ 198:	0e 94 92 00 	call	0x124	; 0x124 <SCH_Delete_Task>
+void SCH_Dispatch_Tasks(void)
+{
+   unsigned char Index;
+
+   // Dispatches (runs) the next task (if one is ready)
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+ 19c:	1f 5f       	subi	r17, 0xFF	; 255
+ 19e:	27 96       	adiw	r28, 0x07	; 7
+ 1a0:	87 e0       	ldi	r24, 0x07	; 7
+ 1a2:	90 e0       	ldi	r25, 0x00	; 0
+ 1a4:	e8 0e       	add	r14, r24
+ 1a6:	f9 1e       	adc	r15, r25
+ 1a8:	14 31       	cpi	r17, 0x14	; 20
+ 1aa:	19 f7       	brne	.-58     	; 0x172 <SCH_Dispatch_Tasks+0x24>
+         {
+            SCH_Delete_Task(Index);
+         }
+      }
+   }
+}
+ 1ac:	df 91       	pop	r29
+ 1ae:	cf 91       	pop	r28
+ 1b0:	1f 91       	pop	r17
+ 1b2:	ff 90       	pop	r15
+ 1b4:	ef 90       	pop	r14
+ 1b6:	df 90       	pop	r13
+ 1b8:	cf 90       	pop	r12
+ 1ba:	08 95       	ret
+
+000001bc <SCH_Init_T1>:
+  You must call this function before using the scheduler.  
+
+-*------------------------------------------------------------------*/
+
+void SCH_Init_T1(void)
+{
+ 1bc:	cf 93       	push	r28
+   unsigned char i;
+
+   for(i = 0; i < SCH_MAX_TASKS; i++)
+ 1be:	c0 e0       	ldi	r28, 0x00	; 0
+   {
+      SCH_Delete_Task(i);
+ 1c0:	8c 2f       	mov	r24, r28
+ 1c2:	0e 94 92 00 	call	0x124	; 0x124 <SCH_Delete_Task>
+
+void SCH_Init_T1(void)
+{
+   unsigned char i;
+
+   for(i = 0; i < SCH_MAX_TASKS; i++)
+ 1c6:	cf 5f       	subi	r28, 0xFF	; 255
+ 1c8:	c4 31       	cpi	r28, 0x14	; 20
+ 1ca:	d1 f7       	brne	.-12     	; 0x1c0 <SCH_Init_T1+0x4>
+
+   // Set up Timer 1
+   // Values for 1ms and 10ms ticks are provided for various crystals
+
+   // Hier moet de timer periode worden aangepast ....!
+   OCR1A = (uint16_t)625;   		     // 10ms = (256/16.000.000) * 625
+ 1cc:	81 e7       	ldi	r24, 0x71	; 113
+ 1ce:	92 e0       	ldi	r25, 0x02	; 2
+ 1d0:	90 93 89 00 	sts	0x0089, r25
+ 1d4:	80 93 88 00 	sts	0x0088, r24
+   TCCR1B = (1 << CS12) | (1 << WGM12);  // prescale op 64, top counter = value OCR1A (CTC mode)
+ 1d8:	8c e0       	ldi	r24, 0x0C	; 12
+ 1da:	80 93 81 00 	sts	0x0081, r24
+   TIMSK1 = 1 << OCIE1A;   		     // Timer 1 Output Compare A Match Interrupt Enable
+ 1de:	82 e0       	ldi	r24, 0x02	; 2
+ 1e0:	80 93 6f 00 	sts	0x006F, r24
+}
+ 1e4:	cf 91       	pop	r28
+ 1e6:	08 95       	ret
+
+000001e8 <SCH_Start>:
+ 
+-*------------------------------------------------------------------*/
+
+void SCH_Start(void)
+{
+      sei();
+ 1e8:	78 94       	sei
+}
+ 1ea:	08 95       	ret
+
+000001ec <__vector_11>:
+  determined by the timer settings in SCH_Init_T1().
+
+-*------------------------------------------------------------------*/
+
+ISR(TIMER1_COMPA_vect)
+{
+ 1ec:	1f 92       	push	r1
+ 1ee:	0f 92       	push	r0
+ 1f0:	0f b6       	in	r0, 0x3f	; 63
+ 1f2:	0f 92       	push	r0
+ 1f4:	11 24       	eor	r1, r1
+ 1f6:	2f 93       	push	r18
+ 1f8:	3f 93       	push	r19
+ 1fa:	8f 93       	push	r24
+ 1fc:	9f 93       	push	r25
+ 1fe:	af 93       	push	r26
+ 200:	bf 93       	push	r27
+ 202:	cf 93       	push	r28
+ 204:	df 93       	push	r29
+ 206:	ef 93       	push	r30
+ 208:	ff 93       	push	r31
+ 20a:	e2 e0       	ldi	r30, 0x02	; 2
+ 20c:	f1 e0       	ldi	r31, 0x01	; 1
+ 20e:	df 01       	movw	r26, r30
+ 210:	16 96       	adiw	r26, 0x06	; 6
+  This is the scheduler ISR.  It is called at a rate 
+  determined by the timer settings in SCH_Init_T1().
+
+-*------------------------------------------------------------------*/
+
+ISR(TIMER1_COMPA_vect)
+ 212:	2e e8       	ldi	r18, 0x8E	; 142
+ 214:	31 e0       	ldi	r19, 0x01	; 1
+{
+   unsigned char Index;
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+   {
+      // Check if there is a task at this location
+      if(SCH_tasks_G[Index].pTask)
+ 216:	80 81       	ld	r24, Z
+ 218:	91 81       	ldd	r25, Z+1	; 0x01
+ 21a:	00 97       	sbiw	r24, 0x00	; 0
+ 21c:	91 f0       	breq	.+36     	; 0x242 <__vector_11+0x56>
+      {
+         if(SCH_tasks_G[Index].Delay == 0)
+ 21e:	82 81       	ldd	r24, Z+2	; 0x02
+ 220:	93 81       	ldd	r25, Z+3	; 0x03
+ 222:	00 97       	sbiw	r24, 0x00	; 0
+ 224:	59 f4       	brne	.+22     	; 0x23c <__vector_11+0x50>
+         {
+            // The task is due to run, Inc. the 'RunMe' flag
+            SCH_tasks_G[Index].RunMe += 1;
+ 226:	8c 91       	ld	r24, X
+ 228:	8f 5f       	subi	r24, 0xFF	; 255
+ 22a:	8c 93       	st	X, r24
+
+            if(SCH_tasks_G[Index].Period)
+ 22c:	84 81       	ldd	r24, Z+4	; 0x04
+ 22e:	95 81       	ldd	r25, Z+5	; 0x05
+ 230:	00 97       	sbiw	r24, 0x00	; 0
+ 232:	39 f0       	breq	.+14     	; 0x242 <__vector_11+0x56>
+            {
+               // Schedule periodic tasks to run again
+               SCH_tasks_G[Index].Delay = SCH_tasks_G[Index].Period;
+               SCH_tasks_G[Index].Delay -= 1;
+ 234:	01 97       	sbiw	r24, 0x01	; 1
+ 236:	93 83       	std	Z+3, r25	; 0x03
+ 238:	82 83       	std	Z+2, r24	; 0x02
+ 23a:	03 c0       	rjmp	.+6      	; 0x242 <__vector_11+0x56>
+            }
+         }
+         else
+         {
+            // Not yet ready to run: just decrement the delay
+            SCH_tasks_G[Index].Delay -= 1;
+ 23c:	01 97       	sbiw	r24, 0x01	; 1
+ 23e:	93 83       	std	Z+3, r25	; 0x03
+ 240:	82 83       	std	Z+2, r24	; 0x02
+ 242:	37 96       	adiw	r30, 0x07	; 7
+ 244:	17 96       	adiw	r26, 0x07	; 7
+-*------------------------------------------------------------------*/
+
+ISR(TIMER1_COMPA_vect)
+{
+   unsigned char Index;
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+ 246:	e2 17       	cp	r30, r18
+ 248:	f3 07       	cpc	r31, r19
+ 24a:	29 f7       	brne	.-54     	; 0x216 <__vector_11+0x2a>
+            // Not yet ready to run: just decrement the delay
+            SCH_tasks_G[Index].Delay -= 1;
+         }
+      }
+   }
+}
+ 24c:	ff 91       	pop	r31
+ 24e:	ef 91       	pop	r30
+ 250:	df 91       	pop	r29
+ 252:	cf 91       	pop	r28
+ 254:	bf 91       	pop	r27
+ 256:	af 91       	pop	r26
+ 258:	9f 91       	pop	r25
+ 25a:	8f 91       	pop	r24
+ 25c:	3f 91       	pop	r19
+ 25e:	2f 91       	pop	r18
+ 260:	0f 90       	pop	r0
+ 262:	0f be       	out	0x3f, r0	; 63
+ 264:	0f 90       	pop	r0
+ 266:	1f 90       	pop	r1
+ 268:	18 95       	reti
+
+0000026a <uart_init>:
+
+//Initialize UART.
+void uart_init()
+{
+	 // set the baud rate
+	 UBRR0H = 0;
+ 26a:	10 92 c5 00 	sts	0x00C5, r1
+	 UBRR0L = UBBRVAL;
+ 26e:	83 e3       	ldi	r24, 0x33	; 51
+ 270:	80 93 c4 00 	sts	0x00C4, r24
+	 // disable U2X mode
+	 UCSR0A = 0;
+ 274:	10 92 c0 00 	sts	0x00C0, r1
+	 // enable transmitter
+	 UCSR0B = _BV(TXEN0);
+ 278:	88 e0       	ldi	r24, 0x08	; 8
+ 27a:	80 93 c1 00 	sts	0x00C1, r24
+	 // set frame format : asynchronous, 8 data bits, 1 stop bit, no parity
+	 UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
+ 27e:	86 e0       	ldi	r24, 0x06	; 6
+ 280:	80 93 c2 00 	sts	0x00C2, r24
+}
+ 284:	08 95       	ret
+
+00000286 <transmit>:
+void transmit(uint16_t data)
+{
+	 // wait for an empty transmit buffer
+	 // UDRE is set when the transmit buffer is empty
+	 
+	 loop_until_bit_is_set(UCSR0A, UDRE0);   
+ 286:	e0 ec       	ldi	r30, 0xC0	; 192
+ 288:	f0 e0       	ldi	r31, 0x00	; 0
+ 28a:	90 81       	ld	r25, Z
+ 28c:	95 ff       	sbrs	r25, 5
+ 28e:	fd cf       	rjmp	.-6      	; 0x28a <transmit+0x4>
+	 UDR0 = data;
+ 290:	80 93 c6 00 	sts	0x00C6, r24
+}
+ 294:	08 95       	ret
+
+00000296 <calculateAverageLight>:
+}
+
+//This function is used to calculate the average temperature.
+void calculateAverageLight()
+{
+	averageLight /= 3; //calculate average from 3 measured values with intervals of 10 seconds.
+ 296:	80 91 00 01 	lds	r24, 0x0100
+ 29a:	90 91 01 01 	lds	r25, 0x0101
+ 29e:	63 e0       	ldi	r22, 0x03	; 3
+ 2a0:	70 e0       	ldi	r23, 0x00	; 0
+ 2a2:	0e 94 ae 01 	call	0x35c	; 0x35c <__udivmodhi4>
+ 2a6:	86 2f       	mov	r24, r22
+ 2a8:	97 2f       	mov	r25, r23
+ 2aa:	60 93 00 01 	sts	0x0100, r22
+ 2ae:	70 93 01 01 	sts	0x0101, r23
+	transmit(averageLight); //Send average to screen.
+ 2b2:	0e 94 43 01 	call	0x286	; 0x286 <transmit>
+	averageLight = 0; //reset average light.
+ 2b6:	10 92 01 01 	sts	0x0101, r1
+ 2ba:	10 92 00 01 	sts	0x0100, r1
+}
+ 2be:	08 95       	ret
+
+000002c0 <setup>:
+}
+
+//Set up the ADC registers: ADMUX and ADCSRA. We use ADC channel 1.
+void setup()
+{
+	ADMUX |= (1 << MUX2); //Set ADC channel 1
+ 2c0:	ec e7       	ldi	r30, 0x7C	; 124
+ 2c2:	f0 e0       	ldi	r31, 0x00	; 0
+ 2c4:	80 81       	ld	r24, Z
+ 2c6:	84 60       	ori	r24, 0x04	; 4
+ 2c8:	80 83       	st	Z, r24
+	//ADMUX |= (1 << ADLAR);
+	ADMUX |= (1 << REFS0); //set reference voltage 
+ 2ca:	80 81       	ld	r24, Z
+ 2cc:	80 64       	ori	r24, 0x40	; 64
+ 2ce:	80 83       	st	Z, r24
+	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //set prescaler
+ 2d0:	ea e7       	ldi	r30, 0x7A	; 122
+ 2d2:	f0 e0       	ldi	r31, 0x00	; 0
+ 2d4:	80 81       	ld	r24, Z
+ 2d6:	87 60       	ori	r24, 0x07	; 7
+ 2d8:	80 83       	st	Z, r24
+	ADCSRA |= (1 << ADEN); //enable the ADC
+ 2da:	80 81       	ld	r24, Z
+ 2dc:	80 68       	ori	r24, 0x80	; 128
+ 2de:	80 83       	st	Z, r24
+}
+ 2e0:	08 95       	ret
+
+000002e2 <adc_read>:
+{
+	// select the corresponding channel 0~7
+	// ANDing with ’7? will always keep the value
+	// of ‘ch’ between 0 and 7
+	ch &= 0b00000111;  // AND operation with 7
+	ADMUX = (ADMUX & 0xF8)|ch; // clears the bottom 3 bits before ORing
+ 2e2:	ec e7       	ldi	r30, 0x7C	; 124
+ 2e4:	f0 e0       	ldi	r31, 0x00	; 0
+ 2e6:	90 81       	ld	r25, Z
+uint16_t adc_read(uint8_t ch)
+{
+	// select the corresponding channel 0~7
+	// ANDing with ’7? will always keep the value
+	// of ‘ch’ between 0 and 7
+	ch &= 0b00000111;  // AND operation with 7
+ 2e8:	87 70       	andi	r24, 0x07	; 7
+	ADMUX = (ADMUX & 0xF8)|ch; // clears the bottom 3 bits before ORing
+ 2ea:	98 7f       	andi	r25, 0xF8	; 248
+ 2ec:	98 2b       	or	r25, r24
+ 2ee:	90 83       	st	Z, r25
+	
+	// start the conversion
+	ADCSRA |= (1<<ADSC);
+ 2f0:	ea e7       	ldi	r30, 0x7A	; 122
+ 2f2:	f0 e0       	ldi	r31, 0x00	; 0
+ 2f4:	80 81       	ld	r24, Z
+ 2f6:	80 64       	ori	r24, 0x40	; 64
+ 2f8:	80 83       	st	Z, r24
+	
+	// wait for conversion to complete
+	// ADSC becomes ’0? again
+	// till then, run loop continuously
+	while(ADCSRA & (1<<ADSC));
+ 2fa:	80 81       	ld	r24, Z
+ 2fc:	86 fd       	sbrc	r24, 6
+ 2fe:	fd cf       	rjmp	.-6      	; 0x2fa <adc_read+0x18>
+	
+	return (ADC); 
+ 300:	80 91 78 00 	lds	r24, 0x0078
+ 304:	90 91 79 00 	lds	r25, 0x0079
+}
+ 308:	08 95       	ret
+
+0000030a <calculateLight>:
+
+//This function translates the voltage value from the ADC into a light value.
+void calculateLight()
+{
+	uint16_t reading = adc_read(0); //get the 10 bit return value from the ADC.
+ 30a:	80 e0       	ldi	r24, 0x00	; 0
+ 30c:	0e 94 71 01 	call	0x2e2	; 0x2e2 <adc_read>
+	uint8_t light = (uint8_t)reading;
+	
+	//transmit(light);
+	
+	averageLight += light;
+ 310:	20 91 00 01 	lds	r18, 0x0100
+ 314:	30 91 01 01 	lds	r19, 0x0101
+ 318:	28 0f       	add	r18, r24
+ 31a:	31 1d       	adc	r19, r1
+ 31c:	30 93 01 01 	sts	0x0101, r19
+ 320:	20 93 00 01 	sts	0x0100, r18
+}
+ 324:	08 95       	ret
+
+00000326 <main>:
+	averageLight = 0; //reset average light.
+}
+
+int main()                     
+{
+	setup(); 
+ 326:	0e 94 60 01 	call	0x2c0	; 0x2c0 <setup>
+	uart_init();
+ 32a:	0e 94 35 01 	call	0x26a	; 0x26a <uart_init>
+	SCH_Init_T1();
+ 32e:	0e 94 de 00 	call	0x1bc	; 0x1bc <SCH_Init_T1>
+	SCH_Add_Task(calculateLight, 0, 1000); //Read lightintensity every 10 seconds
+ 332:	85 e8       	ldi	r24, 0x85	; 133
+ 334:	91 e0       	ldi	r25, 0x01	; 1
+ 336:	60 e0       	ldi	r22, 0x00	; 0
+ 338:	70 e0       	ldi	r23, 0x00	; 0
+ 33a:	48 ee       	ldi	r20, 0xE8	; 232
+ 33c:	53 e0       	ldi	r21, 0x03	; 3
+ 33e:	0e 94 53 00 	call	0xa6	; 0xa6 <SCH_Add_Task>
+	SCH_Add_Task(calculateAverageLight, 1000, 3000); //Calculate average every 30 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
+ 342:	8b e4       	ldi	r24, 0x4B	; 75
+ 344:	91 e0       	ldi	r25, 0x01	; 1
+ 346:	68 ee       	ldi	r22, 0xE8	; 232
+ 348:	73 e0       	ldi	r23, 0x03	; 3
+ 34a:	48 eb       	ldi	r20, 0xB8	; 184
+ 34c:	5b e0       	ldi	r21, 0x0B	; 11
+ 34e:	0e 94 53 00 	call	0xa6	; 0xa6 <SCH_Add_Task>
+	SCH_Start();
+ 352:	0e 94 f4 00 	call	0x1e8	; 0x1e8 <SCH_Start>
+	while(1)
+	{
+		SCH_Dispatch_Tasks();
+ 356:	0e 94 a7 00 	call	0x14e	; 0x14e <SCH_Dispatch_Tasks>
+ 35a:	fd cf       	rjmp	.-6      	; 0x356 <main+0x30>
+
+0000035c <__udivmodhi4>:
+ 35c:	aa 1b       	sub	r26, r26
+ 35e:	bb 1b       	sub	r27, r27
+ 360:	51 e1       	ldi	r21, 0x11	; 17
+ 362:	07 c0       	rjmp	.+14     	; 0x372 <__udivmodhi4_ep>
+
+00000364 <__udivmodhi4_loop>:
+ 364:	aa 1f       	adc	r26, r26
+ 366:	bb 1f       	adc	r27, r27
+ 368:	a6 17       	cp	r26, r22
+ 36a:	b7 07       	cpc	r27, r23
+ 36c:	10 f0       	brcs	.+4      	; 0x372 <__udivmodhi4_ep>
+ 36e:	a6 1b       	sub	r26, r22
+ 370:	b7 0b       	sbc	r27, r23
+
+00000372 <__udivmodhi4_ep>:
+ 372:	88 1f       	adc	r24, r24
+ 374:	99 1f       	adc	r25, r25
+ 376:	5a 95       	dec	r21
+ 378:	a9 f7       	brne	.-22     	; 0x364 <__udivmodhi4_loop>
+ 37a:	80 95       	com	r24
+ 37c:	90 95       	com	r25
+ 37e:	bc 01       	movw	r22, r24
+ 380:	cd 01       	movw	r24, r26
+ 382:	08 95       	ret
+
+00000384 <_exit>:
+ 384:	f8 94       	cli
+
+00000386 <__stop_program>:
+ 386:	ff cf       	rjmp	.-2      	; 0x386 <__stop_program>
