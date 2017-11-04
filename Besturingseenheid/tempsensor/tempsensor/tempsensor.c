@@ -47,6 +47,92 @@ void transmit(uint8_t data)
 	 UDR0 = data;
 }
 
+// Sends a single char (byte) over UART
+void transmit_char(char c) {
+	loop_until_bit_is_set(UCSR0A, UDRE0);
+	UDR0 = c;
+}
+
+// Sends a string of chars (bytes) over UART
+void transmit_string(char *c) {
+	while (*c) {
+		transmit_char(*c);
+		c++;
+	}
+}
+
+// Sends the light value via UART
+void send_light(uint8_t light) {
+	char val1;
+	char val2;
+	
+	if (light < 0) {
+		val1 = 0;
+		val2 = 0;
+	}
+	else if (light > 32767) { // if light value > max value able to send
+	val1 = 127;
+	val2 = 255;
+}
+else {
+	val1 = (char)(light / 256);
+	val2 = (char)(light % 256);
+}
+
+char buffer[3];
+buffer[0] = 1;
+buffer[1] = val1;
+buffer[2] = val2;
+transmit_string(buffer);
+}
+
+// Sends the temperature via UART
+void send_temperature(uint8_t temp) {
+	temp += 128;
+	char val;
+	
+	if (temp < 0) {
+		val = 0;
+	}
+	else if (temp > 255) {
+		val = 255;
+	}
+	else {
+		val = (char)temp;
+	}
+	
+	char buffer[2];
+	buffer[0] = 2;
+	buffer[1] = val;
+	transmit_string(buffer);
+}
+
+// Sends whether the shutter of the light unit is open or closed
+// 1 = open, 0 = closed
+void send_shutter_status_light(char is_open) {
+	if (is_open > 1) {
+		is_open = 1;
+	}
+	char buffer[3];
+	buffer[0] = 3;
+	buffer[1] = 0;
+	buffer[2] = is_open;
+	transmit_string(buffer);
+}
+
+// Sends whether the shutter of the temperature unit is open or closed
+// 1 = open, 0 = closed
+void send_shutter_status_temp(char is_open) {
+	if (is_open > 1) {
+		is_open = 1;
+	}
+	char buffer[3];
+	buffer[0] = 3;
+	buffer[1] = 1;
+	buffer[2] = is_open;
+	transmit_string(buffer);
+}
+
 //Set up the ADC registers: ADMUX and ADCSRA. We use ADC channel 0.
 void setup()
 {
