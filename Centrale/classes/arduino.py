@@ -20,7 +20,8 @@ class Arduino(threading.Thread):
 		global __a_running
 		global __a_temperature
 		global __a_light
-		global __a_blinds_status
+		global __a_blinds_light
+		global __a_blinds_temperature
 
 		global __a_temperature_list
 		global __a_light_list
@@ -33,7 +34,8 @@ class Arduino(threading.Thread):
 		__a_running = True
 		__a_temperature = 0
 		__a_light = 0
-		__a_blinds_status = False
+		__a_blinds_light = False
+		__a_blinds_temperature = False
 
 		__a_temperature_list = []
 		__a_light_list = []
@@ -104,18 +106,19 @@ class Arduino(threading.Thread):
 				print("Temperature: " + str(__a_temperature))
 		elif c == 3: # report status of blinds
 			if p1 != -1 and p2 != -1:
-				global __a_blinds_status
 				if p1 == 0: # blinds from light unit
+					global __a_blinds_light
 					if p2 == 0: # blinds are closed
-						__a_blinds_status = False
+						__a_blinds_light = False
 					else:
-						__a_blinds_status = True
+						__a_blinds_light = True
 					self.reset_data()
 				elif p1 == 1: # blinds from temperature unit
+					global __a_blinds_temperature
 					if p2 == 0: # blinds are closed
-						__a_blinds_status = False
+						__a_blinds_temperature = False
 					else:
-						__a_blinds_status = True
+						__a_blinds_temperature = True
 					self.reset_data()
 				else: # no valid units to report from so reset the data
 					self.reset_data()
@@ -159,15 +162,21 @@ class Arduino(threading.Thread):
 	#		(datetime, light),
 	#		etc...
 	#	}
-
 	def get_light_list(self):
 		global __a_light_list
 		return __a_light_list
 
-	# Het the status of the blinds
-	def get_blinds(self): # False = closed, True = open
-		global __a_blinds_status
-		return __a_blinds_status
+	# Get the status of the blinds of the light unit
+	# False = closed, True = open
+	def get_blinds_light(self):
+		global __a_blinds_light
+		return __a_blinds_light
+
+	# Get the status of the blinds of the temperature unit
+	# False = closed, True = open
+	def get_blinds_temperature(self):
+		global __a_blinds_temperature
+		return __a_blinds_temperature
 
 	# Get if the temperature unit is connected
 	def temperature_connected(self):
