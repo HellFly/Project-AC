@@ -70,20 +70,21 @@ void send_light(uint8_t light) {
 		val1 = 0;
 		val2 = 0;
 	}
-	else if (light > 32767) { // if light value > max value able to send
-	val1 = 127;
-	val2 = 255;
-}
-else {
-	val1 = (char)(light / 256);
-	val2 = (char)(light % 256);
-}
+	else if (light > 32767) {
+		// if light value > max value able to send
+		val1 = 127;
+		val2 = 255;
+	}
+	else {
+		val1 = (char)(light / 256);
+		val2 = (char)(light % 256);
+	}
 
-char buffer[3];
-buffer[0] = 1;
-buffer[1] = val1;
-buffer[2] = val2;
-transmit_string(buffer);
+	char buffer[3];
+	buffer[0] = 1;
+	buffer[1] = val1;
+	buffer[2] = val2;
+	transmit_string(buffer);
 }
 
 // Sends the temperature via UART
@@ -173,6 +174,7 @@ void calculateTemperature()
 	float temperature = (float)100*voltage;
 	
 	//transmit(temperature); //enable to transmit to screen
+	send_temperature((uint8_t)temperature); //enable to transmit to screen
 	averageTemperature += temperature;
 }
 
@@ -180,7 +182,8 @@ void calculateTemperature()
 void calculateAverageTemperature()
 {
 	averageTemperature /= 6; //calculate average from 6 measured values with intervals of 10 seconds.
-	transmit(averageTemperature); //Send average temperature to screen.
+	//transmit(averageTemperature); //Send average temperature to screen.
+	send_temperature(averageTemperature);
 	averageTemperature = 0; //reset average temperature.
 }
 
