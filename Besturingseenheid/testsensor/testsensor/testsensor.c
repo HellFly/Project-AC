@@ -5,7 +5,6 @@
  *  Author: Roy
  */ 
 
-
 #include <avr/io.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -17,40 +16,58 @@
 #include <util/delay.h>
 #define UBBRVAL 51
 
-//Global variable for the average temperature.
+//*************SETTING UP AND DEFINING SOME VARIABLES****************
+
 uint16_t averageTemperature = 0;
 
 //Will be used to indicate the state of a screen
-typedef enum {UP=0, SCROLLING=1, DOWN=2} state; 
-static const uint8_t MAX_TEMP = 23; // in degrees celcius
+typedef enum {UP=0, SCROLLING=1, DOWN=2} state;
+	
+//Used for sending commands to screen
+typedef enum {SCROLLDOWN=0, NEUTRAL=1, SCROLLUP=2} command;
+	
+static const uint8_t MAX_TEMP = 22; // in degrees celcius
 static const uint8_t MIN_TEMP = 20;
 static const uint8_t MAX_DISTANCE = 160; //in centimeters
 static const uint8_t MIN_DISTANCE = 10;
 
-state screen = UP; //screen is up by default for now. TODO:Get current state in realtime.
-uint8_t distance = 160; //ditto
+state screen = UP; //screen is up by default 
+command instruction = NEUTRAL;
+uint8_t distance = 160; 
 
-void scrollDown()
-{
-	if(screen = UP){
-		screen = SCROLLING;
-		while(distance > MIN_DISTANCE){
-			distance--;
-		}
-		screen = DOWN;
-	}		
-}
 
-void scrollUp()
-{
-	while(distance < MAX_DISTANCE){
-		distance++;
-	}
-}
-
+//**********FUNCTIONS TO CONTROL LEDS*****************
 void setupLeds(){
-	
+	DDRB |= _BV(DDB5); //red led pin 5
+	DDRB |= _BV(DDB3); //yellow led pin 3
+	DDRB |= _BV(DDB1); //green led pin 1
 }
+
+void turnOnRED(){
+	 PORTB |= _BV(PORTB5);
+}
+
+void turnOffRED(){
+	PORTB &= ~_BV(PORTB5);
+}
+
+void turnOnYELLOW(){
+	PORTB |= _BV(PORTB3);
+}
+
+void turnOffYELLOW(){
+	PORTB &= ~_BV(PORTB3);
+}	
+
+void turnOnGREEN(){
+	PORTB |= _BV(PORTB1);
+}
+
+void turnOffGREEN(){
+	PORTB &= ~_BV(PORTB1);
+}
+
+//*********UART FUNCTIONS*****************
 
 //Initialize UART.
 void uart_init()
@@ -75,6 +92,9 @@ void transmit(uint8_t data)
 	 loop_until_bit_is_set(UCSR0A, UDRE0);   
 	 UDR0 = data;
 }
+
+
+//***********FUNCTIONS FOR THE ADC****************
 
 //Set up the ADC registers: ADMUX and ADCSRA. We use ADC channel 0.
 void setupADC()
@@ -103,6 +123,46 @@ uint16_t adc_read(uint8_t ch)
 	return (ADC); 
 }
 
+
+//********FUNCTIONS TO CONTROL THE SCREEN*************
+
+void lowerScreen(){
+	distance -= 10;
+}
+
+//Scrolls screen down
+void scrollDown()
+{
+	if(screen == UP){
+		instruction = SCROLLDOWN;
+		unsigned char lowerscreen = SCH_Add_Task(lowerScreen, 0, 50);
+		screen = SCROLLING;
+	}		
+}
+
+//Scroll screen up
+void scrollUp()
+{
+	if(screen == DOWN){
+		screen = SCROLLING;
+		instruction = SCROLLUP;
+		while(distance < MAX_DISTANCE){
+			distance += 10;
+		}
+		screen = UP;
+		instruction = NEUTRAL;
+		turnOnGREEN(); //screen finished scrolling up
+		turnOffRED(); 
+		turnOffYELLOW(); //Just to ensure they will be turned off
+	}
+}
+
+void transmitDistance(){
+	transmit(distance);
+}
+
+//**********FUNCTIONS UNIQUE TO THE TEMPSENSOR****************
+
 //This function translates the voltage value from the ADC into a temperature.
 void calculateTemperature()
 {
@@ -122,18 +182,73 @@ void calculateTemperature()
 //This function is used to calculate the average temperature.
 void calculateAverageTemperature()
 {
-	averageTemperature /= 6; //calculate average from 6 measured values with intervals of 10 seconds.
+	averageTemperature /= 10; //calculate average from 6 measured values with intervals of 10 seconds.
 	transmit(averageTemperature); //Send average temperature to screen.
+}
+
+void resetAverageTemperature(){
 	averageTemperature = 0; //reset average temperature.
 }
+
+void temperatureCheck(){
+	if(averageTemperature >= MAX_TEMP){
+		scrollDown();
+	}
+}
+
+//Mainly used for controlling the LEDS
+void checkCommand(){
+	if(instruction == SCROLLDOWN){
+		unsigned char redon = SCH_Add_Task(turnOnRED, 0, 100);
+		unsigned char yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
+		unsigned char redoff = SCH_Add_Task(turnOffRED, 50, 100);
+		unsigned char yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
+	} else if(instruction == SCROLLUP){
+		unsigned char greenon = SCH_Add_Task(turnOnGREEN, 0, 100);
+		unsigned char yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
+		unsigned char greenoff = SCH_Add_Task(turnOffGREEN, 50, 100);
+		unsigned char yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
+	} 
+}
+
+//Stop scrolling the screen and flashing the LEDs
+void checkDistance(){
+	if(distance == MIN_DISTANCE){
+		screen = DOWN;
+		instruction = NEUTRAL; 
+		SCH_Delete_Task(lowerscreen)
+		SCH_Delete_Task(redon);
+		SCH_Delete_Task(yellowon);
+		SCH_Delete_Task(redoff);
+		SCH_Delete_Task(yellowoff);
+		SCH_Add_Task()
+		turnOnRED();
+	}
+}
+
+
+//******MAIN********
 
 int main()                     
 {
 	setupADC(); 
+	setupLeds();
 	uart_init();
 	SCH_Init_T1();
-	SCH_Add_Task(calculateTemperature, 0, 1000); //Read temperature every 10 seconds
-	SCH_Add_Task(calculateAverageTemperature, 1000, 6000); //Calculate average every minute. Delay it by 10 seconds to prevent incomplete average measurements.
+	unsigned char calctemp = SCH_Add_Task(calculateTemperature, 0, 100); //Read temperature every second
+	unsigned char calcaveragetemp = SCH_Add_Task(calculateAverageTemperature, 1000, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
+	unsigned char tempcheck = SCH_Add_Task(temperatureCheck, 1000, 1000); //What should the screen do?
+	//SCH_Add_Task(transmitDistance, 1000, 100);
+	unsigned char checkcomm = SCH_Add_Task(checkCommand, 1000, 1000); //Which Leds have to be flashing?
+	unsigned char resetaverage = SCH_Add_Task(resetAverageTemperature, 1000, 1000); //reset average temperature
+	unsigned char checkdistance = SCH_Add_Task(checkDistance, 1000, 50); //Screen is done scrolling? Turn off/on the correct leds . 
+	
+	/* unsigned char a = SCH_Add_Task(turnOnRED, 0, 100);
+	unsigned char b = SCH_Add_Task(turnOffRED, 50, 100);
+	SCH_Delete_Task(a);
+	SCH_Delete_Task(b); */
+	
+	
 	SCH_Start();
 	while(1)
 	{
