@@ -66,9 +66,9 @@ class Arduino(threading.Thread):
 					self.parse_data()
 
 				global __a_send_bytes
-				if send_bytes[0] != -1:
-					com.write(send_bytes)
-					send_bytes = [-1]
+				if __a_send_bytes[0] != -1:
+					com.write(__a_send_bytes)
+					__a_send_bytes = [-1]
 
 	def reset_data(self):
 		self.data = [-1] * 10
