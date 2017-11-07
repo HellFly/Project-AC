@@ -5,7 +5,11 @@ import serial
 import threading
 import time
 import datetime
+<<<<<<< HEAD
 import random
+=======
+import math
+>>>>>>> a46de18c92dae501e0db54ab46fba936508385ee
 
 #class for communicating with the arduino
 # http://www.instructables.com/id/Arduino-Python-Communication-via-USB/
@@ -17,27 +21,33 @@ class Arduino(threading.Thread):
 		self.com = None
 		self.data = [-1] * 10
 
-		self.send_bytes = [-1]
-
 		global __a_running
-		__a_running = True
-
 		global __a_temperature
-		__a_temperature = 0
 		global __a_light
-		__a_light = 0
-		global __a_blinds_status
-		__a_blinds_status = False
+		global __a_blinds_light
+		global __a_blinds_temperature
 
 		global __a_temperature_list
-		__a_temperature_list = []
 		global __a_light_list
-		__a_light_list = []
 
 		global __a_temperature_connected
-		__a_temperature_connected = False
 		global __a_light_connected
+
+		global __a_send_bytes
+
+		__a_running = True
+		__a_temperature = 0
+		__a_light = 0
+		__a_blinds_light = False
+		__a_blinds_temperature = False
+
+		__a_temperature_list = []
+		__a_light_list = []
+
+		__a_temperature_connected = False
 		__a_light_connected = False
+
+		__a_send_bytes = [-1]
 
 		self.start()
 	def run(self):
@@ -50,7 +60,7 @@ class Arduino(threading.Thread):
 		baudrate = self.config['Communication']['baudrate']
 
 		# Init the comport to communicate with the arduino
-		self.com = serial.Serial(comport , baudrate, timeout=.1)
+		self.com = serial.Serial(comport , baudrate, timeout=.001)
 
 		while __a_running:
 			if self.com != None:
@@ -59,9 +69,10 @@ class Arduino(threading.Thread):
 					self.add_byte(ord(byte))
 					self.parse_data()
 
-				if self.send_bytes[0] != -1:
-					com.write(self.send_bytes)
-					self.send_bytes = [-1]
+				global __a_send_bytes
+				if __a_send_bytes[0] != -1:
+					com.write(__a_send_bytes)
+					__a_send_bytes = [-1]
 
 	def reset_data(self):
 		self.data = [-1] * 10
@@ -100,18 +111,22 @@ class Arduino(threading.Thread):
 		elif c == 3: # report status of blinds
 			if p1 != -1 and p2 != -1:
 				if p1 == 0: # blinds from light unit
-					global __a_blinds_status
+					global __a_blinds_light
 					if p2 == 0: # blinds are closed
-						__a_blinds_status = False
+						__a_blinds_light = False
 					else:
-						__a_blinds_status = True
+						__a_blinds_light = True
 					self.reset_data()
 				elif p1 == 1: # blinds from temperature unit
+<<<<<<< HEAD
 					#global __a_blinds_status
+=======
+					global __a_blinds_temperature
+>>>>>>> a46de18c92dae501e0db54ab46fba936508385ee
 					if p2 == 0: # blinds are closed
-						__a_blinds_status = False
+						__a_blinds_temperature = False
 					else:
-						__a_blinds_status = True
+						__a_blinds_temperature = True
 					self.reset_data()
 				else: # no valid units to report from so reset the data
 					self.reset_data()
@@ -119,19 +134,24 @@ class Arduino(threading.Thread):
 		else: # no valid packet id, so reset the data
 			self.reset_data()
 
-
+	# Stop the thread
 	def stop(self):
 		print("Stopping thread")
 		global __a_running
 		__a_running = False
 
+	# Get the last reported temperature from the temperature unit
 	def get_temperature(self):
 		global __a_temperature
 		__a_temperature = random.randint(16, 30)
 		return __a_temperature
+
+	# Get the last reported light value from the light unit
 	def get_light(self):
 		global __a_light
 		return __a_light
+
+	# Get a list of all the temperature values
 	# List structure:
 	#	{
 	#		(datetime, temperature),
@@ -142,6 +162,8 @@ class Arduino(threading.Thread):
 	def get_temperature_list(self):
 		global __a_temperature_list
 		return __a_temperature_list
+
+	# Get a list of all the light values
 	# List structure:
 	#	{
 	#		(datetime, light),
@@ -149,15 +171,157 @@ class Arduino(threading.Thread):
 	#		(datetime, light),
 	#		etc...
 	#	}
-	def get_light_list(sef):
+	def get_light_list(self):
 		global __a_light_list
 		return __a_light_list
-	def get_blinds(self): # False = closed, True = open
-		global __a_blinds_status
-		return __a_blinds_status
+
+	# Get the status of the blinds of the light unit
+	# False = closed, True = open
+	def get_blinds_light(self):
+		global __a_blinds_light
+		return __a_blinds_light
+
+	# Get the status of the blinds of the temperature unit
+	# False = closed, True = open
+	def get_blinds_temperature(self):
+		global __a_blinds_temperature
+		return __a_blinds_temperature
+
+	# Get if the temperature unit is connected
 	def temperature_connected(self):
 		global __a_temperature_connected
 		return __a_temperature_connected
+
+	# Get if the light unit is connected
 	def light_connected(self):
 		global __a_light_connected
 		return __a_light_connected
+
+	# Open the blinds of the light unit
+	def open_blinds_light(self):
+		global __a_send_bytes
+		__a_send_bytes = [
+			10,
+			0
+		]
+
+	# Open the blinsd of the temperature unit
+	def open_blinds_temp(self):
+		global __a_send_bytes
+		__a_send_bytes = [
+			10,
+			1
+		]
+
+	# Close the blinds of the light unit
+	def close_blinds_light(self):
+		global __a_send_bytes
+		__a_send_bytes = [
+			11,
+			0
+		]
+
+	# Close the blinds of the temperature unit
+	def close_blinds_temp(self):
+		global __a_send_bytes
+		__a_send_bytes = [
+			11,
+			1
+		]
+
+	# Set the opening distace of the blinds of the light unit
+	def set_open_distance_light(self, centimeters):
+		global __a_send_bytes
+		val1 = 0
+		val2 = 0
+
+		if centimeters < 0:
+			val1 = 0
+			val2 = 0
+		elif centimeters > 32767:
+			val1 = 127
+			val2 = 255
+		else:
+			val1 = math.floor(centimeters / 256)
+			val2 = centimeters % 256
+		__a_send_bytes = [
+			20,
+			0,
+			val1,
+			val2
+		]
+
+	# Set the opening distance of the blinds of the temperature unit
+	def set_open_distance_temperature(self, centimeters):
+		global __a_send_bytes
+		val1 = 0
+		val2 = 0
+
+		if centimeters < 0:
+			val1 = 0
+			val2 = 0
+		elif centimeters > 32767:
+			val1 = 127
+			val2 = 255
+		else:
+			val1 = math.floor(centimeters / 256)
+			val2 = centimeters % 256
+		__a_send_bytes = [
+			20,
+			1,
+			val1,
+			val2
+		]
+
+	# Set the closing distance of the blinds of the light unit
+	def set_closed_distance_light(self, centimeters):
+		global __a_send_bytes
+		val1 = 0
+		val2 = 0
+
+		if centimeters < 0:
+			val1 = 0
+			val2 = 0
+		elif centimeters > 32767:
+			val1 = 127
+			val2 = 255
+		else:
+			val1 = math.floor(centimeters / 256)
+			val2 = centimeters % 256
+		__a_send_bytes = [
+			21,
+			0,
+			val1,
+			val2
+		]
+
+	# Set the closing distance of the blinds of the temperature unit
+	def set_closed_distance_temperature(self, centimeters):
+		global __a_send_bytes
+		val1 = 0
+		val2 = 0
+
+		if centimeters < 0:
+			val1 = 0
+			val2 = 0
+		elif centimeters > 32767:
+			val1 = 127
+			val2 = 255
+		else:
+			val1 = math.floor(centimeters / 256)
+			val2 = centimeters % 256
+		__a_send_bytes = [
+			21,
+			1,
+			val1,
+			val2
+		]
+
+	def set_max_value_light(self, light):
+		print('do stuff')
+	def set_min_value_light(self, light):
+		print('do stuff')
+	def set_max_value_temperature(self, temperature):
+		print('do stuff')
+	def set_min_value_temperatuer(self, temperatuer):
+		print('do stuff')
