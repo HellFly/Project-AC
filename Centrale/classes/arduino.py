@@ -5,6 +5,7 @@ import serial
 import threading
 import time
 import datetime
+import random
 
 #class for communicating with the arduino
 # http://www.instructables.com/id/Arduino-Python-Communication-via-USB/
@@ -106,7 +107,7 @@ class Arduino(threading.Thread):
 						__a_blinds_status = True
 					self.reset_data()
 				elif p1 == 1: # blinds from temperature unit
-					global __a_blinds_status
+					#global __a_blinds_status
 					if p2 == 0: # blinds are closed
 						__a_blinds_status = False
 					else:
@@ -126,6 +127,7 @@ class Arduino(threading.Thread):
 
 	def get_temperature(self):
 		global __a_temperature
+		__a_temperature = random.randint(16, 30)
 		return __a_temperature
 	def get_light(self):
 		global __a_light

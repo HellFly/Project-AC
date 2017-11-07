@@ -22,9 +22,9 @@ a = f.add_subplot(111)
 ard = Arduino()
 
 #Globals
-global temperature
-temperature = ard.get_temperature()
-
+#global temperature
+#temperature = ard.get_temperature()
+#print(temperature)
 
 def animate(i):
     #Testdata
@@ -44,6 +44,7 @@ def animate(i):
             yList.append(float(y))
     a.clear()
     a.plot(xList, yList)
+
 def doNothing():
     print("Nothing")
 
@@ -100,6 +101,7 @@ class GUI(tk.Tk):
         #statusbar = tk.Frame(self, bg="blue")
         statusLabel = tk.Label(text=statustext, bd=1, relief="sunken", anchor="w", fg="white", bg="blue")
         statusLabel.grid(row=1, column=0, sticky="w")
+
     # **** Switching between frames in tkinter(3) ****
     #Show frame function
     def show_frame(self, cont):
@@ -109,10 +111,11 @@ class GUI(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        global temperature
-        label = ttk.Label(self, text=temperature, font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
+        #global temperature
+        #label = ttk.Label(self, text=temperature, font=LARGE_FONT)
+        #label.pack(pady=10,padx=10)
 
+        #Text Animation test
 
         #Page buttons
         settingsbutton = ttk.Button(self, text="Go to settings", command=lambda: controller.show_frame(Settings))
@@ -161,6 +164,7 @@ class topMenu(tk.Menu):
 
 app = GUI()
 anima = animation.FuncAnimation(f, animate, interval=1000)
+textAnimation = animation.FuncAnimation(f)
 
 #Full screen with start menu
 # app.state('zoomed')
@@ -169,7 +173,7 @@ anima = animation.FuncAnimation(f, animate, interval=1000)
 # app.wm_attributes('-fullscreen', 1)
 for i in range(6):
     sleep(1) # Need this to slow the changes down
-    temperature = ard.get_temperature
+    #temperature = ard.get_temperature
     app.update_idletasks()
 
 app.mainloop()
