@@ -223,6 +223,7 @@ void checkCommand(){
 
 //Stop scrolling the screen and flashing the LEDs
 void checkDistance(){
+	
 	if(distance == MIN_DISTANCE && instruction == SCROLLDOWN && screen == SCROLLING){
 		screen = DOWN;
 		instruction = NEUTRAL; 
@@ -242,7 +243,7 @@ void checkDistance(){
 		SCH_Delete_Task(greenoff);
 		SCH_Delete_Task(yellowoff);
 	}
-	if(distance == MAX_DISTANCE){
+	 else if(distance == MAX_DISTANCE){
 		turnOnGREEN();
 		turnOffYELLOW();
 		turnOffRED();
@@ -273,8 +274,8 @@ int main()
 	unsigned char calctemp = SCH_Add_Task(calculateTemperature, 0, 100); //Read temperature every second
 	unsigned char calcaveragetemp = SCH_Add_Task(calculateAverageTemperature, 1000, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
 	unsigned char tempcheck = SCH_Add_Task(temperatureCheck, 1000, 1000); //What should the screen do?
-	//SCH_Add_Task(transmitDistance, 500, 100);
-	unsigned char checkcomm = SCH_Add_Task(checkCommand, 1000, 1000); //Which Leds have to be flashing?
+	SCH_Add_Task(transmitDistance, 500, 100);
+	unsigned char checkcomm = SCH_Add_Task(checkCommand, 1000, 50); //Which Leds have to be flashing?
 	unsigned char resetaverage = SCH_Add_Task(resetAverageTemperature, 1000, 1000); //reset average temperature
 	unsigned char checkdistance = SCH_Add_Task(checkDistance, 1000, 50); //Screen is done scrolling? Turn off/on the correct leds . 
 
