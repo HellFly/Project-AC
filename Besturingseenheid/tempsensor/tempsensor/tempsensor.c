@@ -55,6 +55,12 @@ void transmit_string(uint8_t *c) {
 	}
 }
 
+// Receives a byte from UART
+uint8_t receive(uint8_t response) {
+	loop_until_bit_is_set(UCSR0A, RXC0);
+	return response;
+}
+
 // Sends the light value via UART
 void send_light(uint8_t light) {
 	uint8_t val1;
