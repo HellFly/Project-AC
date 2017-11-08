@@ -47,24 +47,18 @@ void transmit(uint8_t data)
 	 UDR0 = data;
 }
 
-// Sends a single char (byte) over UART
-void transmit_char(char c) {
-	loop_until_bit_is_set(UCSR0A, UDRE0);
-	UDR0 = c;
-}
-
 // Sends a string of chars (bytes) over UART
-void transmit_string(char *c) {
+void transmit_string(uint8_t *c) {
 	while (*c) {
-		transmit_char(*c);
+		transmit(*c);
 		c++;
 	}
 }
 
 // Sends the light value via UART
 void send_light(uint8_t light) {
-	char val1;
-	char val2;
+	uint8_t val1;
+	uint8_t val2;
 	
 	if (light < 0) {
 		val1 = 0;
@@ -76,11 +70,11 @@ void send_light(uint8_t light) {
 		val2 = 255;
 	}
 	else {
-		val1 = (char)(light / 256);
-		val2 = (char)(light % 256);
+		val1 = (uint8_t)(light / 256);
+		val2 = (uint8_t)(light % 256);
 	}
 
-	char buffer[3];
+	uint8_t buffer[3];
 	buffer[0] = 1;
 	buffer[1] = val1;
 	buffer[2] = val2;
@@ -90,7 +84,7 @@ void send_light(uint8_t light) {
 // Sends the temperature via UART
 void send_temperature(uint8_t temp) {
 	temp += 128;
-	char val;
+	uint8_t val;
 	
 	if (temp < 0) {
 		val = 0;
@@ -99,10 +93,10 @@ void send_temperature(uint8_t temp) {
 		val = 255;
 	}
 	else {
-		val = (char)temp;
+		val = (uint8_t)temp;
 	}
 	
-	char buffer[2];
+	uint8_t buffer[2];
 	buffer[0] = 2;
 	buffer[1] = val;
 	transmit_string(buffer);
@@ -110,11 +104,11 @@ void send_temperature(uint8_t temp) {
 
 // Sends whether the shutter of the light unit is open or closed
 // 1 = open, 0 = closed
-void send_shutter_status_light(char is_open) {
+void send_shutter_status_light(uint8_t is_open) {
 	if (is_open > 1) {
 		is_open = 1;
 	}
-	char buffer[3];
+	uint8_t buffer[3];
 	buffer[0] = 3;
 	buffer[1] = 0;
 	buffer[2] = is_open;
@@ -123,11 +117,11 @@ void send_shutter_status_light(char is_open) {
 
 // Sends whether the shutter of the temperature unit is open or closed
 // 1 = open, 0 = closed
-void send_shutter_status_temp(char is_open) {
+void send_shutter_status_temp(uint8_t is_open) {
 	if (is_open > 1) {
 		is_open = 1;
 	}
-	char buffer[3];
+	uint8_t buffer[3];
 	buffer[0] = 3;
 	buffer[1] = 1;
 	buffer[2] = is_open;
@@ -174,7 +168,7 @@ void calculateTemperature()
 	float temperature = (float)100*voltage;
 	
 	//transmit(temperature); //enable to transmit to screen
-	send_temperature((uint8_t)temperature); //enable to transmit to screen
+	//send_temperature(temperature); //enable to transmit to screen
 	averageTemperature += temperature;
 }
 
