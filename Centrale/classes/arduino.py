@@ -317,11 +317,72 @@ class Arduino(threading.Thread):
 			val2
 		]
 
-	def set_max_value_light(self, light):
-		print('do stuff')
-	def set_min_value_light(self, light):
-		print('do stuff')
-	def set_max_value_temperature(self, temperature):
-		print('do stuff')
-	def set_min_value_temperatuer(self, temperatuer):
-		print('do stuff')
+	# Set the light value threshold to close the blinds
+	def set_light_value_to_close(self, light):
+		global __a_send_bytes
+		val1 = 0
+		val2 = 0
+
+		if light < 0:
+			val1 = 0
+			val2 = 0
+		elif light > 32767:
+			val1 = 127
+			val2 = 255
+		else:
+			val1 = math.floor(light / 256)
+			val2 = centimeters % 256
+		__a_send_bytes = [
+			32,
+			val1,
+			val2
+		]
+
+	# Set the light value threshold to open the blinds
+	def set_light_value_to_open(self, light):
+		global __a_send_bytes
+		val1 = 0
+		val2 = 0
+
+		if light < 0:
+			val1 = 0
+			val2 = 0
+		elif light > 32767:
+			val1 = 127
+			val2 = 255
+		else:
+			val1 = math.floor(light / 256)
+			val2 = centimeters % 256
+		__a_send_bytes = [
+			33,
+			val1,
+			val2
+		]
+
+	# Set the temperature value threshold to close the blinds
+	def set_temerature_value_to_close(self, temperature):
+		global __a_send_bytes
+		temperature -= 128
+
+		if temperature < 0:
+			temperature = 0
+		if temperature > 255:
+			temperature = 255
+		__a_send_bytes = [
+			30,
+			temperature
+		]
+
+	# Set the temperature value threshold to open the blinds
+	def set_temperature_value_to_open(self, temperatuer):
+		global __a_send_bytes
+		temperature -= 128
+
+		if temperature < 0:
+			temperature = 0
+		if temperature > 255:
+			temperature = 255
+		__a_send_bytes = [
+			31,
+			temperature
+		]
