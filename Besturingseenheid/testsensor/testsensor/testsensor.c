@@ -26,14 +26,23 @@ typedef enum {UP=0, SCROLLING=1, DOWN=2} state;
 //Used for sending commands to screen
 typedef enum {SCROLLDOWN=0, NEUTRAL=1, SCROLLUP=2} command;
 	
-static const uint8_t MAX_TEMP = 22; // in degrees celcius
-static const uint8_t MIN_TEMP = 20;
+static const uint8_t MAX_TEMP = 25; // in degrees celcius
+static const uint8_t MIN_TEMP = 22;
 static const uint8_t MAX_DISTANCE = 160; //in centimeters
 static const uint8_t MIN_DISTANCE = 10;
 
 state screen = UP; //screen is up by default 
 command instruction = NEUTRAL;
 uint8_t distance = 160; 
+
+unsigned char redon;
+unsigned char yellowon;
+unsigned char redoff;
+unsigned char yellowoff;
+unsigned char greenon;
+unsigned char greenoff;
+unsigned char lowerscreen;
+unsigned char upscreen;
 
 
 //**********FUNCTIONS TO CONTROL LEDS*****************
@@ -130,12 +139,16 @@ void lowerScreen(){
 	distance -= 10;
 }
 
+void upScreen(){
+	distance += 10;
+}
+
 //Scrolls screen down
 void scrollDown()
 {
 	if(screen == UP){
 		instruction = SCROLLDOWN;
-		unsigned char lowerscreen = SCH_Add_Task(lowerScreen, 0, 50);
+		lowerscreen = SCH_Add_Task(lowerScreen, 0, 50);
 		screen = SCROLLING;
 	}		
 }
@@ -144,16 +157,9 @@ void scrollDown()
 void scrollUp()
 {
 	if(screen == DOWN){
-		screen = SCROLLING;
 		instruction = SCROLLUP;
-		while(distance < MAX_DISTANCE){
-			distance += 10;
-		}
-		screen = UP;
-		instruction = NEUTRAL;
-		turnOnGREEN(); //screen finished scrolling up
-		turnOffRED(); 
-		turnOffYELLOW(); //Just to ensure they will be turned off
+		upscreen = SCH_Add_Task(upScreen, 0, 50);
+		screen = SCROLLING;
 	}
 }
 
@@ -193,37 +199,67 @@ void resetAverageTemperature(){
 void temperatureCheck(){
 	if(averageTemperature >= MAX_TEMP){
 		scrollDown();
+	} else if (averageTemperature <= MIN_TEMP){
+		scrollUp();
 	}
 }
 
 //Mainly used for controlling the LEDS
 void checkCommand(){
 	if(instruction == SCROLLDOWN){
-		unsigned char redon = SCH_Add_Task(turnOnRED, 0, 100);
-		unsigned char yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
-		unsigned char redoff = SCH_Add_Task(turnOffRED, 50, 100);
-		unsigned char yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
+		turnOffAll();
+		redon = SCH_Add_Task(turnOnRED, 0, 100);
+		yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
+		redoff = SCH_Add_Task(turnOffRED, 50, 100);
+		yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
 	} else if(instruction == SCROLLUP){
-		unsigned char greenon = SCH_Add_Task(turnOnGREEN, 0, 100);
-		unsigned char yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
-		unsigned char greenoff = SCH_Add_Task(turnOffGREEN, 50, 100);
-		unsigned char yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
+		turnOffAll();
+		greenon = SCH_Add_Task(turnOnGREEN, 0, 100);
+		yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
+		greenoff = SCH_Add_Task(turnOffGREEN, 50, 100);
+		yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
 	} 
 }
 
 //Stop scrolling the screen and flashing the LEDs
 void checkDistance(){
-	if(distance == MIN_DISTANCE){
+	
+	if(distance == MIN_DISTANCE && instruction == SCROLLDOWN && screen == SCROLLING){
 		screen = DOWN;
 		instruction = NEUTRAL; 
-		SCH_Delete_Task(lowerscreen)
+		turnOffAll();
+		SCH_Delete_Task(lowerscreen);
 		SCH_Delete_Task(redon);
 		SCH_Delete_Task(yellowon);
 		SCH_Delete_Task(redoff);
 		SCH_Delete_Task(yellowoff);
-		SCH_Add_Task()
-		turnOnRED();
+	} else if(distance == MAX_DISTANCE && instruction == SCROLLUP && screen == SCROLLING){
+		screen = UP;
+		instruction = NEUTRAL;
+		turnOffAll();
+		SCH_Delete_Task(upscreen);
+		SCH_Delete_Task(greenon);
+		SCH_Delete_Task(yellowon);
+		SCH_Delete_Task(greenoff);
+		SCH_Delete_Task(yellowoff);
 	}
+	 else if(distance == MAX_DISTANCE){
+		turnOnGREEN();
+		turnOffYELLOW();
+		turnOffRED();
+	} else if(distance == MIN_DISTANCE){
+		turnOffGREEN();
+		turnOffYELLOW();
+		turnOnRED();
+	} else{
+		turnOffAll();
+	}
+}
+
+void turnOffAll(){
+	turnOffYELLOW();
+	turnOffRED();
+	turnOffGREEN();
 }
 
 
@@ -238,16 +274,11 @@ int main()
 	unsigned char calctemp = SCH_Add_Task(calculateTemperature, 0, 100); //Read temperature every second
 	unsigned char calcaveragetemp = SCH_Add_Task(calculateAverageTemperature, 1000, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
 	unsigned char tempcheck = SCH_Add_Task(temperatureCheck, 1000, 1000); //What should the screen do?
-	//SCH_Add_Task(transmitDistance, 1000, 100);
-	unsigned char checkcomm = SCH_Add_Task(checkCommand, 1000, 1000); //Which Leds have to be flashing?
+	SCH_Add_Task(transmitDistance, 500, 100);
+	unsigned char checkcomm = SCH_Add_Task(checkCommand, 1000, 50); //Which Leds have to be flashing?
 	unsigned char resetaverage = SCH_Add_Task(resetAverageTemperature, 1000, 1000); //reset average temperature
 	unsigned char checkdistance = SCH_Add_Task(checkDistance, 1000, 50); //Screen is done scrolling? Turn off/on the correct leds . 
-	
-	/* unsigned char a = SCH_Add_Task(turnOnRED, 0, 100);
-	unsigned char b = SCH_Add_Task(turnOffRED, 50, 100);
-	SCH_Delete_Task(a);
-	SCH_Delete_Task(b); */
-	
+
 	
 	SCH_Start();
 	while(1)
