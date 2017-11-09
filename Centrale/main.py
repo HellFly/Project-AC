@@ -150,15 +150,23 @@ class ControlUnit(tk.Frame):
         label = ttk.Label(self, text="Arduino", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
 
+        connected_label = ttk.Label(self, text="Connected: ")
         light_label = ttk.Label(self, text="Lightvolume: ")
         temperature_label = ttk.Label(self, text="Temperature: ")
+        blinds_label = ttk.Label(self, text="Blind status: ")
+        connected_label.pack()
         light_label.pack()
         temperature_label.pack()
+        blinds_label.pack()
         def clock():
+            connected = "Connected: " + str(ard.arduino_connected())
             light = "Lightvolume: " + str(ard.get_light())
             temperature = "Temperature: " +  str(ard.get_temperature())
+            blinds = "Blind status: " +  str(ard.get_blinds_status())
+            connected_label.config(text=connected)
             light_label.config(text=light)
             temperature_label.config(text=temperature)
+            blinds_label.config(text=blinds)
             self.after(1000, clock)
         clock()
 
