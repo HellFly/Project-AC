@@ -27,6 +27,7 @@ class Arduino(threading.Thread):
 		global __a_light_list
 
 		global __a_arduino_connected
+		global __a_arduino_connected_time
 
 		global __a_send_bytes
 
@@ -39,6 +40,7 @@ class Arduino(threading.Thread):
 		__a_light_list = []
 
 		__a_arduino_connected = False
+		__a_arduino_connected_time = datetime.datetime.now()
 
 		__a_send_bytes = [-1]
 
@@ -67,6 +69,11 @@ class Arduino(threading.Thread):
 					com.write(__a_send_bytes)
 					__a_send_bytes = [-1]
 
+				if __a_arduino_connected_time < datetime.datetime.now()-datetime.timedelta(seconds=10):
+					# Arduino hasnt sent a message for over 10 seconds so is disconnected
+					global __a_arduino_connected
+					__a_arduino_connected = False
+
 	def reset_data(self):
 		self.data = [-1] * 10
 	def add_byte(self, byte):
@@ -85,10 +92,15 @@ class Arduino(threading.Thread):
 		p3 = self.data[3]
 		p4 = self.data[4]
 
+		global __a_arduino_connected
+		global __a_arduino_connected_time
+
 		if c == 1: # report light sensor
 			if p1 != -1 and p2 != -1:
 				global __a_light
 				global __a_light_list
+				__a_arduino_connected = True
+				__a_arduino_connected_time = datetime.datetime.now()
 				__a_light = p1*256 + p2
 				__a_light_list.append([datetime.datetime.now(), __a_light])
 				self.reset_data()
@@ -97,6 +109,8 @@ class Arduino(threading.Thread):
 			if p1 != -1:
 				global __a_temperature
 				global __a_temperature_list
+				__a_arduino_connected = True
+				__a_arduino_connected_time = datetime.datetime.now()
 				__a_temperature = p1-128
 				__a_temperature_list.append([datetime.datetime.now(), __a_temperature])
 				self.reset_data()
@@ -109,6 +123,8 @@ class Arduino(threading.Thread):
 						__a_blinds_status = False
 					else:
 						__a_blinds_status = True
+					__a_arduino_connected = True
+					__a_arduino_connected_time = datetime.datetime.now()
 					self.reset_data()
 				elif p1 == 1: # blinds from temperature unit
 					#global __a_blinds_status
@@ -116,6 +132,8 @@ class Arduino(threading.Thread):
 						__a_blinds_status = False
 					else:
 						__a_blinds_status = True
+					__a_arduino_connected = True
+					__a_arduino_connected_time = datetime.datetime.now()
 					self.reset_data()
 				else: # no valid units to report from so reset the data
 					self.reset_data()
@@ -175,7 +193,7 @@ class Arduino(threading.Thread):
 		global __a_arduino_connected
 		return __a_arduino_connected
 
-	# Open the blinsd of the temperature unit
+	# Open the blinds
 	def open_blinds(self):
 		global __a_send_bytes
 		__a_send_bytes = [
@@ -183,7 +201,7 @@ class Arduino(threading.Thread):
 			1
 		]
 
-	# Close the blinds of the temperature unit
+	# Close the blinds
 	def close_blinds(self):
 		global __a_send_bytes
 		__a_send_bytes = [
