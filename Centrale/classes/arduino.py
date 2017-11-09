@@ -132,7 +132,6 @@ class Arduino(threading.Thread):
 	# Get the last reported temperature from the temperature unit
 	def get_temperature(self):
 		global __a_temperature
-		__a_temperature = random.randint(16, 30)
 		return __a_temperature
 
 	# Get the last reported light value from the light unit
