@@ -18,8 +18,8 @@
 
 //*************SETTING UP AND DEFINING SOME VARIABLES****************
 
-uint8_t averageTemperature = 0;
-uint8_t averageLight = 0;
+uint16_t averageTemperature = 0;
+uint16_t averageLight = 0;
 
 //Will be used to indicate the state of a screen
 typedef enum {UP=0, SCROLLING=1, DOWN=2} state;
@@ -29,11 +29,11 @@ typedef enum {SCROLLDOWN=0, NEUTRAL=1, SCROLLUP=2} command;
 	
 static uint8_t MAX_TEMP = 22; // in degrees celcius
 static uint8_t MIN_TEMP = 20;
-static uint8_t MAX_LIGHT = 250;
-static uint8_t MIN_LIGHT = 100;
+static uint8_t MAX_LIGHT = 80;
+static uint8_t MIN_LIGHT = 20;
 static uint8_t MAX_DISTANCE = 160; //in centimeters. Max value = 255. This is value of distance when screen is UP
 static uint8_t MIN_DISTANCE = 10; //Min possible = 5. This is value of distance when screen is DOWN
-static uint8_t SCROLLSPEED = 1; //(MAX_DISTANCE - MIN_DISTANCE)%SCROLLSPEED HAS TO BE 0 !!!
+static uint8_t SCROLLSPEED = 5; //(MAX_DISTANCE - MIN_DISTANCE)%SCROLLSPEED HAS TO BE 0 !!!
 static const uint8_t DEFAULT_MAX_DISTANCE = 160;
 static const uint8_t DEFAULT_MIN_DISTANCE = 10;
 static const uint8_t DEFAULT_SCROLLSPEED = 5;
@@ -116,12 +116,110 @@ void transmit(uint8_t data)
 	 UDR0 = data;
 }
 
+// Sends a string of chars (bytes) over UART
+void transmit_string(uint8_t *c) {
+	while (*c) {
+		transmit(*c);
+		c++;
+	}
+}
+
+// Receives a byte from UART
+uint8_t receive(uint8_t response) {
+	loop_until_bit_is_set(UCSR0A, RXC0);
+	return response;
+}
+
+// Sends the light value via UART
+void send_light(uint8_t light) {
+	uint8_t val1;
+	uint8_t val2;
+	
+	if (light < 0) {
+		val1 = 0;
+		val2 = 0;
+	}
+	else if (light > 32767) {
+		// if light value > max value able to send
+		val1 = 127;
+		val2 = 255;
+	}
+	else {
+		val1 = (uint8_t)(light / 256);
+		val2 = (uint8_t)(light % 256);
+	}
+
+	uint8_t buffer[3];
+	buffer[0] = 1;
+	buffer[1] = val1;
+	buffer[2] = val2;
+	transmit_string(buffer);
+}
+
+// Sends the temperature via UART
+void send_temperature(uint8_t temp) {
+	temp += 128;
+	uint8_t val;
+	
+	if (temp < 0) {
+		val = 0;
+	}
+	else if (temp > 255) {
+		val = 255;
+	}
+	else {
+		val = (uint8_t)temp;
+	}
+	
+	uint8_t buffer[2];
+	buffer[0] = 2;
+	buffer[1] = val;
+	transmit_string(buffer);
+}
+
+// Sends whether the shutter of the light unit is open or closed
+// 1 = open, 0 = closed
+void send_shutter_status_light(uint8_t is_open) {
+	if (is_open > 1) {
+		is_open = 1;
+	}
+	uint8_t buffer[3];
+	buffer[0] = 3;
+	buffer[1] = 0;
+	buffer[2] = is_open;
+	transmit_string(buffer);
+}
+
+// Sends whether the shutter of the temperature unit is open or closed
+// 1 = open, 0 = closed
+void send_shutter_status_temp(uint8_t is_open) {
+	if (is_open > 1) {
+		is_open = 1;
+	}
+	uint8_t buffer[3];
+	buffer[0] = 3;
+	buffer[1] = 1;
+	buffer[2] = is_open;
+	transmit_string(buffer);
+}
+
 
 //***********FUNCTIONS FOR THE ADC****************
+
+void setChannelZero(){
+	ADMUX &= ~(1 << MUX0); //Set channel to 0
+}
+
+void setChannelOne(){
+	ADMUX |= (1 << MUX0); // set channel to 1
+}
+
 
 //Set up the ADC registers: ADMUX and ADCSRA. We use ADC channel 0.
 void setupADC()
 {
+	//Channel = 0 as of now 
+	//ADMUX |= (1 << MUX0); // set channel to 1
 	ADMUX |= (1 << REFS0); //set reference voltage 
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //set prescaler
 	ADCSRA |= (1 << ADEN); //enable the ADC
@@ -180,20 +278,16 @@ void transmitDistance(){
 	transmit(distance);
 }
 
-//**********FUNCTIONS UNIQUE TO THE TEMPSENSOR****************
+//**********FUNCTIONS FOR TEMPSENSOR****************
 
 //This function translates the voltage value from the ADC into a temperature.
 void calculateTemperature()
 {
+	setChannelZero(); //Channel 0 is used to measure temperature
 	uint16_t reading = adc_read(0); //get the 10 bit return value from the ADC. (0 - 1023)
-	//uint8_t temp = (uint8_t)reading; //force cast it to an 8 bit integer. 16 bit doesnt work with uart for some reason.
-	
-	uint8_t high_byte = (reading >> 8);
-	uint8_t low_byte = reading & 0x00FF;
-	uint16_t number = (high_byte << 8) + low_byte;
 	
 	//Formula to calculate the temperature 
-	float voltage = (float)number/(float)1024; //ADC return a value between 0 and 1023 which is a ratio to the 5V. 
+	float voltage = (float)reading/(float)1024; //ADC return a value between 0 and 1023 which is a ratio to the 5V. 
 	voltage *= 5; //Multiply by 5V
 	voltage -= 0.5; //Deduct the offset ( Offset is 0.5 )
 	float temperature = (float)100*voltage;
@@ -205,8 +299,9 @@ void calculateTemperature()
 //This function is used to calculate the average temperature.
 void calculateAverageTemperature()
 {
-	averageTemperature /= 10; //calculate average from 6 measured values with intervals of 10 seconds.
-	transmit(averageTemperature); //Send average temperature to screen.
+	averageTemperature /= 5; //calculate average from 6 measured values with intervals of 10 seconds.
+	//transmit(averageTemperature); //Send average temperature to screen.
+	send_temperature(averageTemperature);
 }
 
 //reset average temperature back to 0 so next measurement can begin
@@ -217,15 +312,17 @@ void resetAverageTemperature(){
 
 //**********FUNCTIONS FOR LIGHTSENSOR**************
 void calculateLight(){
-	uint16_t reading = adc_read(1); //get the 10 bit return value from the ADC. (0 - 1023)
-	uint8_t high_byte = (reading >> 8);
-	uint8_t low_byte = reading & 0x00FF;
-	uint16_t number = (high_byte << 8) + low_byte;
+	setChannelOne();
+	uint16_t reading = adc_read(1);
+	float temp = (reading/4);
+	//uint8_t high_byte = (reading >> 8);
+	//uint8_t low_byte = reading & 0x00FF;
+	//uint16_t number = (high_byte << 8) + low_byte;
 	
-		
+	float light = 100 - ((temp/(float)255)*100);
 	//transmit(light);
 		
-	averageLight += (uint8_t)number;
+	averageLight += (uint8_t)light;
 } 
 
 void resetAverageLight(){
@@ -235,18 +332,27 @@ void resetAverageLight(){
 //This function is used to calculate the average temperature.
 void calculateAverageLight()
 {
-	averageLight /= 10; //calculate average from 3 measured values with intervals of 10 seconds.
-	transmit(averageLight); //Send average to screen.
-	averageLight = 0; //reset average light.
+	averageLight /= 5; //calculate average from 10 measured values 
+	//transmit(averageLight); //Send average to screen.
+	send_light((uint8_t)averageLight);
 }
 
 
 //***********FUNCTIONS TO CHECK VALUES**************
-//Adjusts the screen based on the measured temperature value. Either scroll up or down
+//Adjusts the screen based on the measured temperature value. Either scroll up or down if possible
 void temperatureCheck(){
 	if(averageTemperature >= MAX_TEMP){
 		scrollDown();
 	} else if (averageTemperature <= MIN_TEMP){
+		scrollUp();
+	}
+}
+
+//Adjusts the screen based on the measured light value. Either scroll up or down if possible
+void lightCheck(){
+	if(averageLight >= MAX_LIGHT){
+		scrollDown();
+	} else if (averageLight <= MIN_LIGHT){
 		scrollUp();
 	}
 }
@@ -319,13 +425,14 @@ int main()
 	SCH_Init_T1();
 	unsigned char scrollspeedcheck = SCH_Add_Task(scrollSpeedCheck, 0, 1); //Make sure settings are valid and correct at all times
 	unsigned char startpos = SCH_Add_Task(setStartingPosition, 5, 0); //Set starting pos of screen and light starting led
-	unsigned char calctemp = SCH_Add_Task(calculateTemperature, 0, 100); //Read temperature every second
-	//unsigned char calclight = SCH_Add_Task(calculateLight, 0, 100); //Read light every second
+	unsigned char calctemp = SCH_Add_Task(calculateTemperature, 0, 200); //Read temperature every second
+	unsigned char calclight = SCH_Add_Task(calculateLight, 100, 200); //Read light every second
 	unsigned char calcaveragetemp = SCH_Add_Task(calculateAverageTemperature, 1000, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
-	//unsigned char calcaveragelight = SCH_Add_Task(calculateAverageLight, 1000, 1000); //Calculate average light every 10 seconds.
-	unsigned char tempcheck = SCH_Add_Task(temperatureCheck, 1000, 1000); //What instruction should we send to screen?
+	unsigned char calcaveragelight = SCH_Add_Task(calculateAverageLight, 1100, 1000); //Calculate average light every 10 seconds.
+	unsigned char tempcheck = SCH_Add_Task(temperatureCheck, 1100, 1000); //What instruction should we send to screen?
+	unsigned char lightcheck = SCH_Add_Task(lightCheck, 1100, 1000);
 	unsigned char resetaveragetemp = SCH_Add_Task(resetAverageTemperature, 1000, 1000); //reset average temperature
-	//unsigned char resetaveragelight = SCH_Add_Task(resetAverageLight, 1000, 1000);
+	unsigned char resetaveragelight = SCH_Add_Task(resetAverageLight, 1100, 1000);
 	//unsigned char transmitdistance = SCH_Add_Task(transmitDistance, 1000, 50); //Used for debugging
 	unsigned char checkcomm = SCH_Add_Task(checkCommand, 1000, 10); //What leds should be flashing and what should the screen do?
 
