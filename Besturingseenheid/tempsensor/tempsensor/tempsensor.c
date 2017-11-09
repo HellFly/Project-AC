@@ -119,11 +119,11 @@ void send_temperature(int temp) {
 	transmit_string(buffer);
 }
 
-// Sends whether the shutter is open or closed
-// 1 = open, 0 = closed
+// Sends whether the blinds are open or closed
+// 0 = closed, 1 = moving, 2 = open
 void send_blinds_status(uint8_t is_open) {
-	if (is_open > 1) {
-		is_open = 1;
+	if (is_open > 2) {
+		is_open = 2;
 	}
 	int buffer[4];
 	buffer[0] = 3;

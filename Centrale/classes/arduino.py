@@ -34,7 +34,8 @@ class Arduino(threading.Thread):
 		__a_running = True
 		__a_temperature = 0
 		__a_light = 0
-		__a_blinds_status = False
+		# 0 = closed, 1 = scrolling, 2 = open
+		__a_blinds_status = 0
 
 		__a_temperature_list = []
 		__a_light_list = []
@@ -119,19 +120,12 @@ class Arduino(threading.Thread):
 			if p1 != -1 and p2 != -1:
 				global __a_blinds_status
 				if p1 == 0: # blinds from light unit
-					if p2 == 0: # blinds are closed
-						__a_blinds_status = False
-					else:
-						__a_blinds_status = True
+					__a_blinds_status = p2
 					__a_arduino_connected = True
 					__a_arduino_connected_time = datetime.datetime.now()
 					self.reset_data()
 				elif p1 == 1: # blinds from temperature unit
-					#global __a_blinds_status
-					if p2 == 0: # blinds are closed
-						__a_blinds_status = False
-					else:
-						__a_blinds_status = True
+					__a_blinds_status = p2
 					__a_arduino_connected = True
 					__a_arduino_connected_time = datetime.datetime.now()
 					self.reset_data()
@@ -182,7 +176,7 @@ class Arduino(threading.Thread):
 		return __a_light_list
 
 	# Get the status of the blinds
-	# False = closed, True = open
+	# 0 = closed, 1 = moving, 2 = open
 	def get_blinds_status(self):
 		global __a_blinds_status
 		return __a_blinds_status
