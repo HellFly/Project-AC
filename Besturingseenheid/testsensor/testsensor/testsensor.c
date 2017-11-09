@@ -241,7 +241,11 @@ void receiveMessages() {
             if (p1 == 1) {
                 // OPEN THE BLINDS
                 instruction = SCROLLUP;
+<<<<<<< HEAD
 
+=======
+               
+>>>>>>> d86e3b6e1040ac051d3d45a21dd2d00cd12c5735
                 // End do stuff
                 reset_buffer();
             }
@@ -255,7 +259,11 @@ void receiveMessages() {
             if (p1 == 1) {
                 // CLOSE THE BLINDS
                 instruction = SCROLLDOWN;
+<<<<<<< HEAD
 
+=======
+               
+>>>>>>> d86e3b6e1040ac051d3d45a21dd2d00cd12c5735
                 // End do stuff
                 reset_buffer();
             }
@@ -449,7 +457,11 @@ void calculateLight(){
 	//uint8_t high_byte = (reading >> 8);
 	//uint8_t low_byte = reading & 0x00FF;
 	//uint16_t number = (high_byte << 8) + low_byte;
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> d86e3b6e1040ac051d3d45a21dd2d00cd12c5735
 	float light = 100 - ((temp/(float)255)*100); //Light is a percentage. 0 = dark. 100 = bright
 	//transmit(light);
 
@@ -572,9 +584,15 @@ int main()
 	//SCH_Add_Task(transmitDistance, 1000, 50); //Used for debugging
 	SCH_Add_Task(checkCommand, 1000, 10); //What leds should be flashing and what should the screen do?
 
+<<<<<<< HEAD
 
 	SCH_Start();
 
+=======
+	
+	SCH_Start();
+	
+>>>>>>> d86e3b6e1040ac051d3d45a21dd2d00cd12c5735
 	while(1)
 	{
 		SCH_Dispatch_Tasks();
