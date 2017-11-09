@@ -4,6 +4,8 @@ import matplotlib.animation as animation
 import matplotlib
 matplotlib.use("TkAgg")
 import random
+import datetime
+
 from classes.arduino import Arduino
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
@@ -22,9 +24,9 @@ a = f.add_subplot(111)
 ard = Arduino()
 
 #Globals
-global temperature
-temperature = ard.get_temperature()
-
+#global temperature
+#temperature = ard.get_temperature()
+#print(temperature)
 
 def animate(i):
     #Testdata
@@ -44,6 +46,7 @@ def animate(i):
             yList.append(float(y))
     a.clear()
     a.plot(xList, yList)
+
 def doNothing():
     print("Nothing")
 
@@ -78,7 +81,7 @@ class GUI(tk.Tk):
         # **** Switching between frames in tkinter(1) ****
         # Source: https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
         #Container
-        container = tk.Frame(self, width=400, height=200)
+        container = tk.Frame(self)
         container.grid()
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
@@ -96,10 +99,11 @@ class GUI(tk.Tk):
 
 
         #Status bar
-        statustext = "ASDASDASDAD"
+        #statustext = "ASDASDASDAD"
         #statusbar = tk.Frame(self, bg="blue")
-        statusLabel = tk.Label(text=statustext, bd=1, relief="sunken", anchor="w", fg="white", bg="blue")
-        statusLabel.grid(row=1, column=0, sticky="w")
+        #statusLabel = tk.Label(text=statustext, bd=1, relief="sunken", anchor="w", fg="white", bg="blue")
+        #statusLabel.grid(row=1, column=0, sticky="w")
+
     # **** Switching between frames in tkinter(3) ****
     #Show frame function
     def show_frame(self, cont):
@@ -109,9 +113,19 @@ class GUI(tk.Tk):
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        global temperature
-        label = ttk.Label(self, text=temperature, font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
+        #global temperature
+        #label = ttk.Label(self, text=temperature, font=LARGE_FONT)
+        #label.pack(pady=10,padx=10)
+
+        #Text Animation test
+        label = ttk.Label(self, text="Not connected")
+        label.pack()
+        def check():
+            label.config(text="Checking")
+
+        checkBtn = ttk.Button(self, text="Check arduino", command=check)
+        checkBtn.pack()
+
 
 
         #Page buttons
@@ -133,8 +147,22 @@ class Settings(tk.Frame):
 class ControlUnit(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = ttk.Label(self, text="Unit Name (unit.Name from arduino file)", font=LARGE_FONT)
+        label = ttk.Label(self, text="Arduino", font=LARGE_FONT)
         label.pack(pady=10,padx=10)
+
+        light_label = ttk.Label(self, text="Lightvolume: ")
+        temperature_label = ttk.Label(self, text="Temperature: ")
+        light_label.pack()
+        temperature_label.pack()
+        def clock():
+            light = "Lightvolume: " + str(ard.get_light())
+            temperature = "Temperature: " +  str(ard.get_temperature())
+            light_label.config(text=light)
+            temperature_label.config(text=temperature)
+            self.after(1000, clock)
+        clock()
+
+        #Back button
         backbutton = ttk.Button(self, text="Go back", command=lambda: controller.show_frame(StartPage))
         backbutton.pack()
 
@@ -163,14 +191,10 @@ app = GUI()
 anima = animation.FuncAnimation(f, animate, interval=1000)
 
 #Full screen with start menu
-# app.state('zoomed')
+#app.state('zoomed')
 
 #Full screen without start menu
 # app.wm_attributes('-fullscreen', 1)
-for i in range(6):
-    sleep(1) # Need this to slow the changes down
-    temperature = ard.get_temperature
-    app.update_idletasks()
 
 app.mainloop()
 ard.stop()
