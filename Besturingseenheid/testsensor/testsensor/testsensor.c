@@ -116,9 +116,8 @@ void transmit(uint8_t data)
 	 UDR0 = data;
 }
 
-// Sends a string of chars (bytes) over UART
-void transmit_string(uint8_t *c) {
-	while (*c) {
+void transmit_string(int *c) {
+	while (*c != -1) {
 		transmit(*c);
 		c++;
 	}
@@ -130,77 +129,209 @@ uint8_t receive(uint8_t response) {
 	return response;
 }
 
+// Returns what's received, if nothing is received, return -1
+// This is non-blocking
+int receive_non_blocking() {
+	if (UCSR0A & 1<RXC0) { // is the received data bit set in the UCSR0A register?
+	return (int) UDR0;
+}
+return -1;
+}
+ 
 // Sends the light value via UART
-void send_light(uint8_t light) {
-	uint8_t val1;
-	uint8_t val2;
-	
-	if (light < 0) {
-		val1 = 0;
-		val2 = 0;
-	}
-	else if (light > 32767) {
-		// if light value > max value able to send
-		val1 = 127;
-		val2 = 255;
-	}
-	else {
-		val1 = (uint8_t)(light / 256);
-		val2 = (uint8_t)(light % 256);
-	}
-
-	uint8_t buffer[3];
-	buffer[0] = 1;
-	buffer[1] = val1;
-	buffer[2] = val2;
-	transmit_string(buffer);
+void send_light(int light) {
+    uint8_t val1;
+    uint8_t val2;
+   
+    if (light < 0) {
+        val1 = 0;
+        val2 = 0;
+    }
+    else if (light > 32767) {
+        // if light value > max value able to send
+        val1 = 127;
+        val2 = 255;
+    }
+    else {
+        val1 = (uint8_t)floor(light / 256);
+        val2 = (uint8_t)(light % 256);
+    }
+ 
+    int buffer[4];
+    buffer[0] = 1;
+    buffer[1] = val1;
+    buffer[2] = val2;
+    buffer[3] = -1;
+    transmit_string(buffer);
 }
-
+ 
 // Sends the temperature via UART
-void send_temperature(uint8_t temp) {
-	temp += 128;
-	uint8_t val;
-	
-	if (temp < 0) {
-		val = 0;
-	}
-	else if (temp > 255) {
-		val = 255;
-	}
-	else {
-		val = (uint8_t)temp;
-	}
-	
-	uint8_t buffer[2];
-	buffer[0] = 2;
-	buffer[1] = val;
-	transmit_string(buffer);
+void send_temperature(int temp) {
+    temp += 128;
+    uint8_t val;
+   
+    if (temp < 0) {
+        val = 0;
+    }
+    else if (temp > 255) {
+        val = 255;
+    }
+    else {
+        val = (uint8_t)temp;
+    }
+   
+    int buffer[3];
+    buffer[0] = 2;
+    buffer[1] = val;
+    buffer[2] = -1;
+    transmit_string(buffer);
 }
-
-// Sends whether the shutter of the light unit is open or closed
+ 
+// Sends whether the shutter is open or closed
 // 1 = open, 0 = closed
-void send_shutter_status_light(uint8_t is_open) {
-	if (is_open > 1) {
-		is_open = 1;
-	}
-	uint8_t buffer[3];
-	buffer[0] = 3;
-	buffer[1] = 0;
-	buffer[2] = is_open;
-	transmit_string(buffer);
+void send_blinds_status(uint8_t is_open) {
+    if (is_open > 1) {
+        is_open = 1;
+    }
+    int buffer[4];
+    buffer[0] = 3;
+    buffer[1] = 0;
+    buffer[2] = is_open;
+    buffer[3] = -1;
+    transmit_string(buffer);
 }
-
-// Sends whether the shutter of the temperature unit is open or closed
-// 1 = open, 0 = closed
-void send_shutter_status_temp(uint8_t is_open) {
-	if (is_open > 1) {
-		is_open = 1;
-	}
-	uint8_t buffer[3];
-	buffer[0] = 3;
-	buffer[1] = 1;
-	buffer[2] = is_open;
-	transmit_string(buffer);
+ 
+// Reset the buffer of incoming messages
+int receive_buffer[20];
+void reset_buffer() {
+    for(uint8_t i = 0; i < sizeof(receive_buffer); i++) {
+        receive_buffer[i] = -1;
+    }
+}
+ 
+// Add a byte to the buffer of incoming messages
+void add_to_buffer(uint8_t c) {
+    uint8_t i = 0;
+    while (receive_buffer[i] != -1) {
+        i++;
+    }
+    receive_buffer[i] = c;
+}
+ 
+//Receive messages
+// This should be in the scheduler
+// TODO edit this to do the stuff it has to do
+void receiveMessages() {
+    int b = receive_non_blocking();
+    while (b != -1) {
+        add_to_buffer((uint8_t) b);
+        b = receive_non_blocking();
+    }
+   
+    int c = receive_buffer[0];
+    int p1 = receive_buffer[1];
+    int p2 = receive_buffer[2];
+    int p3 = receive_buffer[3];
+   
+    switch (c) {
+        case -1:
+        break;
+        case 10:
+        if (p1 != -1) {
+            if (p1 == 1) {
+                // OPEN THE BLINDS
+                // Do stuff here
+               
+                // End do stuff
+                reset_buffer();
+            }
+            else {
+                reset_buffer();
+            }
+        }
+        break;
+        case 11:
+        if (p1 != -1) {
+            if (p1 == 1) {
+                // CLOSE THE BLINDS
+                // Do stuff here
+               
+                // End do stuff
+                reset_buffer();
+            }
+            else {
+                reset_buffer();
+            }
+        }
+        break;
+        case 20:
+        if (p1 != -1 && p2 != -1 && p3 != -1) {
+            if (p1 == 1) {
+                int blinds_open_distance = p2 * 256 + p3; // The new blinds open distance
+                // Do stuff here
+               
+                // End do stuff
+                reset_buffer();
+            }
+            else {
+                reset_buffer();
+            }
+        }
+        break;
+        case 21:
+        if (p1 != -1 && p2 != -1 && p3 != -1) {
+            if (p1 == 1) {
+                int blinds_closed_distance = p2 * 256 + p3; // The new blinds closed distance
+                // Do stuff here
+               
+                // End do stuff
+                reset_buffer();
+            }
+            else {
+                reset_buffer();
+            }
+        }
+        break;
+        case 30:
+        if (p1 != -1) {
+            int temperature_to_close = p1 + 128; // The new temperature threshold to close the blinds at
+            // Do stuff here
+           
+            // End do stuff
+            reset_buffer();
+        }
+        break;
+        case 31:
+        if (p1 != -1) {
+            int temperature_to_open = p1 + 128; // The new temperature threshold to open the blinds at
+            // Do stuff here
+           
+            // End do stuff
+            reset_buffer();
+        }
+        break;
+        case 32:
+        if (p1 != -1 && p2 != -1) {
+            int light_to_close = p1 * 256 + p2; // The new light threshold to close the blinds at
+            // Do stuff here
+           
+            // End do stuff
+            reset_buffer();
+        }
+        break;
+        case 33:
+        if (p1 != -1 && p2 != -1) {
+            int light_to_open = p1 * 256 + p2; // The new light threshold to open the blinds at
+            // Do stuff here
+           
+            // End do stuff
+            reset_buffer();
+        }
+        break;
+        default:
+            reset_buffer();
+        break;
+    }
 }
 
 
@@ -383,6 +514,7 @@ void checkCommand(){
 		SCH_Delete_Task(yellowon);
 		SCH_Delete_Task(yellowoff);
 		turnOnRED();
+		send_blinds_status(0);
 	} else if(distance == MAX_DISTANCE && instruction == SCROLLUP && screen == SCROLLING){
 		screen = UP;
 		instruction = NEUTRAL;
@@ -391,6 +523,7 @@ void checkCommand(){
 		SCH_Delete_Task(yellowon);
 		SCH_Delete_Task(yellowoff);
 		turnOnGREEN();
+		send_blinds_status(1);
 	}
 }
 
