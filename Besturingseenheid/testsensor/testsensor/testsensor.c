@@ -3,7 +3,7 @@
  *
  * Created: 24-10-2017 1:30:05
  *  Author: Roy
- */ 
+ */
 
 #include <avr/io.h>
 #include <stdint.h>
@@ -23,10 +23,10 @@ uint16_t averageLight = 0;
 
 //Will be used to indicate the state of a screen
 typedef enum {UP=0, SCROLLING=1, DOWN=2} state;
-	
+
 //Used for sending commands to screen
 typedef enum {SCROLLDOWN=0, NEUTRAL=1, SCROLLUP=2} command;
-	
+
 static uint8_t MAX_TEMP = 22; // in degrees celcius
 static uint8_t MIN_TEMP = 20;
 static uint8_t MAX_LIGHT = 80;
@@ -38,7 +38,7 @@ static const uint8_t DEFAULT_MAX_DISTANCE = 160;
 static const uint8_t DEFAULT_MIN_DISTANCE = 10;
 static const uint8_t DEFAULT_SCROLLSPEED = 5;
 
-state screen = DOWN; //screen is up by default 
+state screen = DOWN; //screen is up by default
 command instruction = NEUTRAL;
 uint8_t distance;
 
@@ -74,7 +74,7 @@ void turnOnYELLOW(){
 
 void turnOffYELLOW(){
 	PORTB &= ~_BV(PORTB3);
-}	
+}
 
 void turnOnGREEN(){
 	PORTB |= _BV(PORTB1);
@@ -111,8 +111,8 @@ void transmit(uint8_t data)
 {
 	 // wait for an empty transmit buffer
 	 // UDRE is set when the transmit buffer is empty
-	 
-	 loop_until_bit_is_set(UCSR0A, UDRE0);   
+
+	 loop_until_bit_is_set(UCSR0A, UDRE0);
 	 UDR0 = data;
 }
 
@@ -137,12 +137,12 @@ int receive_non_blocking() {
 }
 return -1;
 }
- 
+
 // Sends the light value via UART
 void send_light(int light) {
     uint8_t val1;
     uint8_t val2;
-   
+
     if (light < 0) {
         val1 = 0;
         val2 = 0;
@@ -156,7 +156,7 @@ void send_light(int light) {
         val1 = (uint8_t)floor(light / 256);
         val2 = (uint8_t)(light % 256);
     }
- 
+
     int buffer[4];
     buffer[0] = 1;
     buffer[1] = val1;
@@ -164,12 +164,12 @@ void send_light(int light) {
     buffer[3] = -1;
     transmit_string(buffer);
 }
- 
+
 // Sends the temperature via UART
 void send_temperature(int temp) {
     temp += 128;
     uint8_t val;
-   
+
     if (temp < 0) {
         val = 0;
     }
@@ -179,28 +179,28 @@ void send_temperature(int temp) {
     else {
         val = (uint8_t)temp;
     }
-   
+
     int buffer[3];
     buffer[0] = 2;
     buffer[1] = val;
     buffer[2] = -1;
     transmit_string(buffer);
 }
- 
+
 // Sends whether the shutter is open or closed
 // 1 = open, 0 = closed
-void send_blinds_status(uint8_t is_open) {
-    if (is_open > 1) {
-        is_open = 1;
-    }
-    int buffer[4];
-    buffer[0] = 3;
-    buffer[1] = 0;
-    buffer[2] = is_open;
-    buffer[3] = -1;
-    transmit_string(buffer);
+void send_blinds_status(uint8_t status) {
+	if (status > 2) {
+		status = 2;
+	}
+	int buffer[4];
+	buffer[0] = 3;
+	buffer[1] = 0;
+	buffer[2] = status;
+	buffer[3] = -1;
+	transmit_string(buffer);
 }
- 
+
 // Reset the buffer of incoming messages
 int receive_buffer[20];
 void reset_buffer() {
@@ -208,7 +208,7 @@ void reset_buffer() {
         receive_buffer[i] = -1;
     }
 }
- 
+
 // Add a byte to the buffer of incoming messages
 void add_to_buffer(uint8_t c) {
     uint8_t i = 0;
@@ -217,7 +217,7 @@ void add_to_buffer(uint8_t c) {
     }
     receive_buffer[i] = c;
 }
- 
+
 //Receive messages
 // This should be in the scheduler
 // TODO edit this to do the stuff it has to do
@@ -227,12 +227,12 @@ void receiveMessages() {
         add_to_buffer((uint8_t) b);
         b = receive_non_blocking();
     }
-   
+
     int c = receive_buffer[0];
     int p1 = receive_buffer[1];
     int p2 = receive_buffer[2];
     int p3 = receive_buffer[3];
-   
+
     switch (c) {
         case -1:
         break;
@@ -240,8 +240,8 @@ void receiveMessages() {
         if (p1 != -1) {
             if (p1 == 1) {
                 // OPEN THE BLINDS
-                // Do stuff here
-               
+                instruction = SCROLLUP;
+
                 // End do stuff
                 reset_buffer();
             }
@@ -254,8 +254,8 @@ void receiveMessages() {
         if (p1 != -1) {
             if (p1 == 1) {
                 // CLOSE THE BLINDS
-                // Do stuff here
-               
+                instruction = SCROLLDOWN;
+
                 // End do stuff
                 reset_buffer();
             }
@@ -269,7 +269,7 @@ void receiveMessages() {
             if (p1 == 1) {
                 int blinds_open_distance = p2 * 256 + p3; // The new blinds open distance
                 // Do stuff here
-               
+                MAX_DISTANCE = blinds_open_distance;
                 // End do stuff
                 reset_buffer();
             }
@@ -283,7 +283,7 @@ void receiveMessages() {
             if (p1 == 1) {
                 int blinds_closed_distance = p2 * 256 + p3; // The new blinds closed distance
                 // Do stuff here
-               
+                MIN_DISTANCE = blinds_closed_distance;
                 // End do stuff
                 reset_buffer();
             }
@@ -296,7 +296,7 @@ void receiveMessages() {
         if (p1 != -1) {
             int temperature_to_close = p1 + 128; // The new temperature threshold to close the blinds at
             // Do stuff here
-           
+            MAX_TEMP = temperature_to_close;
             // End do stuff
             reset_buffer();
         }
@@ -305,7 +305,7 @@ void receiveMessages() {
         if (p1 != -1) {
             int temperature_to_open = p1 + 128; // The new temperature threshold to open the blinds at
             // Do stuff here
-           
+           MIN_TEMP = temperature_to_open;
             // End do stuff
             reset_buffer();
         }
@@ -314,7 +314,7 @@ void receiveMessages() {
         if (p1 != -1 && p2 != -1) {
             int light_to_close = p1 * 256 + p2; // The new light threshold to close the blinds at
             // Do stuff here
-           
+           MAX_LIGHT = light_to_close;
             // End do stuff
             reset_buffer();
         }
@@ -323,7 +323,7 @@ void receiveMessages() {
         if (p1 != -1 && p2 != -1) {
             int light_to_open = p1 * 256 + p2; // The new light threshold to open the blinds at
             // Do stuff here
-           
+           MIN_LIGHT = light_to_open;
             // End do stuff
             reset_buffer();
         }
@@ -349,9 +349,9 @@ void setChannelOne(){
 //Set up the ADC registers: ADMUX and ADCSRA. We use ADC channel 0.
 void setupADC()
 {
-	//Channel = 0 as of now 
+	//Channel = 0 as of now
 	//ADMUX |= (1 << MUX0); // set channel to 1
-	ADMUX |= (1 << REFS0); //set reference voltage 
+	ADMUX |= (1 << REFS0); //set reference voltage
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //set prescaler
 	ADCSRA |= (1 << ADEN); //enable the ADC
 }
@@ -359,20 +359,20 @@ void setupADC()
 uint16_t adc_read(uint8_t ch)
 {
 	// select the corresponding channel 0~7
-	// ANDing with ’7? will always keep the value
-	// of ‘ch’ between 0 and 7
+	// ANDing with â€™7? will always keep the value
+	// of â€˜châ€™ between 0 and 7
 	ch &= 0b00000111;  // AND operation with 7
 	ADMUX = (ADMUX & 0xF8)|ch; // clears the bottom 3 bits before ORing
-	
+
 	// start the conversion
 	ADCSRA |= (1<<ADSC);
-	
+
 	// wait for conversion to complete
-	// ADSC becomes ’0? again
+	// ADSC becomes â€™0? again
 	// till then, run loop continuously
 	while(ADCSRA & (1<<ADSC));
-	
-	return (ADC); 
+
+	return (ADC);
 }
 
 
@@ -393,7 +393,7 @@ void scrollDown()
 {
 	if(screen == UP){
 		instruction = SCROLLDOWN;
-	}		
+	}
 }
 
 //Scroll screen up if it is DOWN. Set instruction to SCROLLUP to tell CheckCommand() and CheckDistance() what they should do.
@@ -416,13 +416,13 @@ void calculateTemperature()
 {
 	setChannelZero(); //Channel 0 is used to measure temperature
 	uint16_t reading = adc_read(0); //get the 10 bit return value from the ADC. (0 - 1023)
-	
-	//Formula to calculate the temperature 
-	float voltage = (float)reading/(float)1024; //ADC return a value between 0 and 1023 which is a ratio to the 5V. 
+
+	//Formula to calculate the temperature
+	float voltage = (float)reading/(float)1024; //ADC return a value between 0 and 1023 which is a ratio to the 5V.
 	voltage *= 5; //Multiply by 5V
 	voltage -= 0.5; //Deduct the offset ( Offset is 0.5 )
 	float temperature = (float)100*voltage;
-	
+
 	//transmit(number); //enable to transmit to screen
 	averageTemperature += (uint8_t)temperature;
 }
@@ -449,12 +449,12 @@ void calculateLight(){
 	//uint8_t high_byte = (reading >> 8);
 	//uint8_t low_byte = reading & 0x00FF;
 	//uint16_t number = (high_byte << 8) + low_byte;
-	
-	float light = 100 - ((temp/(float)255)*100);
+
+	float light = 100 - ((temp/(float)255)*100); //Light is a percentage. 0 = dark. 100 = bright
 	//transmit(light);
-		
+
 	averageLight += (uint8_t)light;
-} 
+}
 
 void resetAverageLight(){
 	averageLight = 0; //reset average temperature.
@@ -463,7 +463,7 @@ void resetAverageLight(){
 //This function is used to calculate the average temperature.
 void calculateAverageLight()
 {
-	averageLight /= 5; //calculate average from 10 measured values 
+	averageLight /= 5; //calculate average from 10 measured values
 	//transmit(averageLight); //Send average to screen.
 	send_light((uint8_t)averageLight);
 }
@@ -492,6 +492,7 @@ void lightCheck(){
 void checkCommand(){
 	if(instruction == SCROLLDOWN && screen != SCROLLING){
 		screen = SCROLLING;
+		send_blinds_status(2);
 		turnOffAll();
 		lowerscreen = SCH_Add_Task(lowerScreen, 0, 50);
 		yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
@@ -499,13 +500,14 @@ void checkCommand(){
 		turnOnRED();
 	} else if(instruction == SCROLLUP && screen != SCROLLING){
 		screen = SCROLLING;
+		send_blinds_status(2);
 		turnOffAll();
 		upscreen = SCH_Add_Task(upScreen, 0, 50);
 		yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
 		yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
 		turnOnGREEN();
 	}
-	
+
 	if(distance == MIN_DISTANCE && instruction == SCROLLDOWN && screen == SCROLLING){
 		screen = DOWN;
 		instruction = NEUTRAL;
@@ -544,37 +546,39 @@ void scrollSpeedCheck(){
 		MAX_DISTANCE = DEFAULT_MAX_DISTANCE;
 		MIN_DISTANCE = DEFAULT_MIN_DISTANCE;
 		SCROLLSPEED = DEFAULT_SCROLLSPEED;
-		//TODO: TRANSMIT SOME ERROR MESSAGE 
+		//TODO: TRANSMIT SOME ERROR MESSAGE
 	}
 }
 
 //******MAIN********
 
-int main()                     
+int main()
 {
-	setupADC(); 
+	setupADC();
 	setupLeds();
 	uart_init();
 	SCH_Init_T1();
-	unsigned char scrollspeedcheck = SCH_Add_Task(scrollSpeedCheck, 0, 1); //Make sure settings are valid and correct at all times
-	unsigned char startpos = SCH_Add_Task(setStartingPosition, 5, 0); //Set starting pos of screen and light starting led
-	unsigned char calctemp = SCH_Add_Task(calculateTemperature, 0, 200); //Read temperature every second
-	unsigned char calclight = SCH_Add_Task(calculateLight, 100, 200); //Read light every second
-	unsigned char calcaveragetemp = SCH_Add_Task(calculateAverageTemperature, 1000, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
-	unsigned char calcaveragelight = SCH_Add_Task(calculateAverageLight, 1100, 1000); //Calculate average light every 10 seconds.
-	unsigned char tempcheck = SCH_Add_Task(temperatureCheck, 1100, 1000); //What instruction should we send to screen?
-	unsigned char lightcheck = SCH_Add_Task(lightCheck, 1100, 1000);
-	unsigned char resetaveragetemp = SCH_Add_Task(resetAverageTemperature, 1000, 1000); //reset average temperature
-	unsigned char resetaveragelight = SCH_Add_Task(resetAverageLight, 1100, 1000);
-	//unsigned char transmitdistance = SCH_Add_Task(transmitDistance, 1000, 50); //Used for debugging
-	unsigned char checkcomm = SCH_Add_Task(checkCommand, 1000, 10); //What leds should be flashing and what should the screen do?
+	SCH_Add_Task(scrollSpeedCheck, 0, 1); //Make sure settings are valid and correct at all times
+	SCH_Add_Task(setStartingPosition, 500, 0); //Set starting pos of screen and light starting led
+	SCH_Add_Task(receiveMessages, 0, 1);
+	SCH_Add_Task(calculateTemperature, 0, 200); //Read temperature every second
+	SCH_Add_Task(calculateLight, 100, 200); //Read light every second
+	SCH_Add_Task(calculateAverageTemperature, 1000, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
+	SCH_Add_Task(calculateAverageLight, 1100, 1000); //Calculate average light every 10 seconds.
+	SCH_Add_Task(temperatureCheck, 1001, 1000); //What instruction should we send to screen?
+	SCH_Add_Task(lightCheck, 1101, 1000);
+	SCH_Add_Task(resetAverageTemperature, 1002, 1000); //reset average temperature
+	SCH_Add_Task(resetAverageLight, 1102, 1000);
+	//SCH_Add_Task(transmitDistance, 1000, 50); //Used for debugging
+	SCH_Add_Task(checkCommand, 1000, 10); //What leds should be flashing and what should the screen do?
 
-	
+
 	SCH_Start();
+
 	while(1)
 	{
 		SCH_Dispatch_Tasks();
 	}
-	               
+
 	return 0;
 }

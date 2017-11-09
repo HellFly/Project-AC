@@ -71,78 +71,127 @@ class GUI(tk.Tk):
         subMenu.add_command(label="Exit", command=self.destroy)
 
         #Title bar
-        #top = tk.Frame(self, bg="black")
-        #top.grid(row=0, column=0, sticky="w")
-        #Title
-        title = tk.Label(text="Central unit control", font=LARGE_FONT, bg="black", fg="white")
-        title.grid(row=0, column=0, sticky="w")
+        top = tk.Frame(self, bg="black", relief="raised")
+        top.grid(row=0, column=0, sticky="w")
+        title = tk.Label(top, text="JRM - Domotica", font=LARGE_FONT, bg="black", fg="white")
+        title.grid(row=0, column=0, sticky="nsew")
 
 
         # **** Switching between frames in tkinter(1) ****
         # Source: https://stackoverflow.com/questions/7546050/switch-between-two-frames-in-tkinter
         #Container
         container = tk.Frame(self)
-        container.grid()
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-
+        #container.pack(side="top", fill="both", expand=True)
+        container.grid(row=1, column=0)
+        #container.grid_rowconfigure(0, minsize=600)
+        #container.grid_columnconfigure(0, minsize=800)
+        #print(container.grid_location(x,y))
         # **** Switching between frames in tkinter(2) ****
         #Different pages library method
         self.frames = {}
         #Add pages (classes) to tuple in loop
-        for F in (StartPage, Settings, ControlUnit, Graph):
+        for F in (StartPage, Settings, ControlUnit, Graph): # Settings, ControlUnit, Graph
             frame = F(container, self)
             self.frames[F] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
+            frame.grid(row=1, column=0, sticky="nsew")
         #Initialise screen
+        #frame = self.frames[StartPage]
+        #frame.tkraise()
         self.show_frame(StartPage)
-
-
         #Status bar
         #statustext = "ASDASDASDAD"
         #statusbar = tk.Frame(self, bg="blue")
         #statusLabel = tk.Label(text=statustext, bd=1, relief="sunken", anchor="w", fg="white", bg="blue")
         #statusLabel.grid(row=1, column=0, sticky="w")
-
+        print(self.frames)
     # **** Switching between frames in tkinter(3) ****
     #Show frame function
-    def show_frame(self, cont):
-        frame = self.frames[cont]
+    def show_frame(self, page):
+        frame = self.frames[page]
+        #frame.grid(row=1, column=0, sticky="nsew")
+        #container.grid_remove
+        #self.container = frame
+        #frame.grid(row=1, column=0, sticky="w")
+        #container.grid_rowconfigure(0, weight=1, minsize=600)
+        #container.grid_columnconfigure(0, weight=1, minsize=800)
         frame.tkraise()
 
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        #global temperature
-        #label = ttk.Label(self, text=temperature, font=LARGE_FONT)
-        #label.pack(pady=10,padx=10)
-
+        #parent.grid_remove()
+        #tempUnit = tk.Frame(parent, relief="sunken", bg="blue")
+        #tempUnit.grid(row=1, column=0)
         #Text Animation test
         label = ttk.Label(self, text="Not connected")
-        label.pack()
+        label.grid(row=1, column=0)
+        label.grid_columnconfigure(0, minsize=50)
+        label.grid_rowconfigure(0, minsize=50)
         def check():
             label.config(text="Checking")
 
         checkBtn = ttk.Button(self, text="Check arduino", command=check)
-        checkBtn.pack()
+        checkBtn.grid()
 
 
 
         #Page buttons
         settingsbutton = ttk.Button(self, text="Go to settings", command=lambda: controller.show_frame(Settings))
-        settingsbutton.pack()
+        settingsbutton.grid()
         controlunitbutton = ttk.Button(self, text="Go to control unit", command=lambda: controller.show_frame(ControlUnit))
         graphbutton = ttk.Button(self, text="Graphs", command=lambda: controller.show_frame(Graph))
-        controlunitbutton.pack()
-        graphbutton.pack()
+        controlunitbutton.grid()
+        graphbutton.grid()
 
 class Settings(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        def save_settings():
+            maxtemp = maxtemp_entry.get()
+            maxlight = maxlight_entry.get()
+            maxdistance = maxdistance_entry.get()
+            mintemp = mintemp_entry.get()
+            minlight = minlight_entry.get()
+            mindistance = mindistance_entry.get()
+            print(maxtemp)
+
         label = ttk.Label(self, text="Settings", font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
+        label.grid(row=0, column=0, pady=10,padx=10)
+
+        maxtemp_setting_label = ttk.Label(self, text="Max temp: ")
+        maxtemp_setting_label.grid(row=1, column=0)
+        maxtemp_entry = ttk.Entry(self)
+        maxtemp_entry.grid(row=1, column=1)
+
+        mintemp_setting_label = ttk.Label(self, text="Min temp: ")
+        mintemp_setting_label.grid(row=2, column=0)
+        mintemp_entry = ttk.Entry(self)
+        mintemp_entry.grid(row=2, column=1)
+
+        maxlight_setting_label = ttk.Label(self, text="Max light: ")
+        maxlight_setting_label.grid(row=3, column=0)
+        maxlight_entry = ttk.Entry(self)
+        maxlight_entry.grid(row=3, column=1)
+
+        minlight_setting_label = ttk.Label(self, text="Min light: ")
+        minlight_setting_label.grid(row=4, column=0)
+        minlight_entry = ttk.Entry(self)
+        minlight_entry.grid(row=4, column=1)
+
+        maxdistance_setting_label = ttk.Label(self, text="Max distance: ")
+        maxdistance_setting_label.grid(row=5, column=0)
+        maxdistance_entry = ttk.Entry(self)
+        maxdistance_entry.grid(row=5, column=1)
+
+        mindistance_setting_label = ttk.Label(self, text="Min distance: ")
+        mindistance_setting_label.grid(row=6, column=0)
+        mindistance_entry = ttk.Entry(self)
+        mindistance_entry.grid(row=6, column=1)
+
+        savebutton = ttk.Button(self, text="Save settings", command=save_settings)
+        savebutton.grid(row=7,column=0)
         backbutton = ttk.Button(self, text="Go back", command=lambda: controller.show_frame(StartPage))
-        backbutton.pack()
+        backbutton.grid(row=7, column=1)
 
 class ControlUnit(tk.Frame):
     def __init__(self, parent, controller):
@@ -159,14 +208,7 @@ class ControlUnit(tk.Frame):
         temperature_label.pack()
         blinds_label.pack()
         def clock():
-            connected = "Connected: " + str(ard.arduino_connected())
-            if ard.arduino_connected() is False:
-                try:
-            
-                    ard.run()
-                except:
-                    connected = "Connected: " + str(ard.arduino_connected())
-                    self.after(100, clock)
+            connected = "Connected: True"
 
             light = "Lightvolume: " + str(ard.get_light())
             temperature = "Temperature: " +  str(ard.get_temperature())
@@ -178,21 +220,6 @@ class ControlUnit(tk.Frame):
             self.after(1000, clock)
         clock()
 
-        maxtemp_setting_label = ttk.Label(self, text="Max temp: ")
-        maxentry = ttk.Entry(self)
-        mintemp_setting_label = ttk.Label(self, text="Min temp: ")
-        maxlight_setting_label = ttk.Label(self, text="Max light: ")
-        minlight_setting_label = ttk.Label(self, text="Min light: ")
-        maxdistance_setting_label = ttk.Label(self, text="Max distance: ")
-        mindistance_setting_label = ttk.Label(self, text="Min distance: ")
-
-        maxtemp_setting_label.pack()
-        maxentry.pack()
-        mintemp_setting_label.pack()
-        maxlight_setting_label.pack()
-        minlight_setting_label.pack()
-        maxdistance_setting_label.pack()
-        mindistance_setting_label.pack()
 
 
 
@@ -209,12 +236,12 @@ class Graph(tk.Frame):
         backbutton.pack()
 
 
-        canvas = FigureCanvasTkAgg(f, self)
+        #canvas = FigureCanvasTkAgg(f, self)
         #canvas.show()
-        toolbar = NavigationToolbar2TkAgg(canvas, self)
-        toolbar.update()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        canvas._tkcanvas.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        #toolbar = NavigationToolbar2TkAgg(canvas, self)
+        #toolbar.update()
+        #canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        #canvas._tkcanvas.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
 class topMenu(tk.Menu):
     def __init__(self):
@@ -222,7 +249,7 @@ class topMenu(tk.Menu):
 
 
 app = GUI()
-anima = animation.FuncAnimation(f, animate, interval=1000)
+#anima = animation.FuncAnimation(f, animate, interval=1000)
 
 #Full screen with start menu
 #app.state('zoomed')
