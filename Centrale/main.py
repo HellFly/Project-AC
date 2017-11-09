@@ -160,6 +160,14 @@ class ControlUnit(tk.Frame):
         blinds_label.pack()
         def clock():
             connected = "Connected: " + str(ard.arduino_connected())
+            if ard.arduino_connected() is False:
+                try:
+            
+                    ard.run()
+                except:
+                    connected = "Connected: " + str(ard.arduino_connected())
+                    self.after(100, clock)
+
             light = "Lightvolume: " + str(ard.get_light())
             temperature = "Temperature: " +  str(ard.get_temperature())
             blinds = "Blind status: " +  str(ard.get_blinds_status())
@@ -169,6 +177,24 @@ class ControlUnit(tk.Frame):
             blinds_label.config(text=blinds)
             self.after(1000, clock)
         clock()
+
+        maxtemp_setting_label = ttk.Label(self, text="Max temp: ")
+        maxentry = ttk.Entry(self)
+        mintemp_setting_label = ttk.Label(self, text="Min temp: ")
+        maxlight_setting_label = ttk.Label(self, text="Max light: ")
+        minlight_setting_label = ttk.Label(self, text="Min light: ")
+        maxdistance_setting_label = ttk.Label(self, text="Max distance: ")
+        mindistance_setting_label = ttk.Label(self, text="Min distance: ")
+
+        maxtemp_setting_label.pack()
+        maxentry.pack()
+        mintemp_setting_label.pack()
+        maxlight_setting_label.pack()
+        minlight_setting_label.pack()
+        maxdistance_setting_label.pack()
+        mindistance_setting_label.pack()
+
+
 
         #Back button
         backbutton = ttk.Button(self, text="Go back", command=lambda: controller.show_frame(StartPage))
