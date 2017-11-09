@@ -160,13 +160,6 @@ class ControlUnit(tk.Frame):
         blinds_label.pack()
         def clock():
             connected = "Connected: " + str(ard.arduino_connected())
-            if ard.arduino_connected() is False:
-                try:
-            
-                    ard.run()
-                except:
-                    connected = "Connected: " + str(ard.arduino_connected())
-                    self.after(100, clock)
 
             light = "Lightvolume: " + str(ard.get_light())
             temperature = "Temperature: " +  str(ard.get_temperature())

@@ -59,13 +59,22 @@ class Arduino(threading.Thread):
 		self.com = serial.Serial(comport , baudrate, timeout=.001)
 
 		while __a_running:
+			global __a_arduino_connected
+			global __a_arduino_connected_time
 
 			if self.com != None:
+				byte = None
+
 				try:
 					byte = self.com.read()
 				except:
-					self.stop()
-				if byte:
+					print('Arduino connection lost')
+					__a_arduino_connected = False
+					byte = None
+					self.com.close()
+					self.com = None
+
+				if byte != None and byte:
 					self.add_byte(ord(byte))
 					self.parse_data()
 
@@ -76,8 +85,18 @@ class Arduino(threading.Thread):
 
 				if __a_arduino_connected_time < datetime.datetime.now()-datetime.timedelta(seconds=10):
 					# Arduino hasnt sent a message for over 10 seconds so is disconnected
-					global __a_arduino_connected
+
 					__a_arduino_connected = False
+
+			else:
+				try:
+					self.com = serial.Serial(comport , baudrate, timeout=.001)
+					if self.com != None:
+						print('Reconnected arduino')
+						__a_arduino_connected = True
+						__a_arduino_connected_time = datetime.datetime.now()
+				except:
+					self.com = None
 
 	def reset_data(self):
 		self.data = [-1] * 10
