@@ -23,9 +23,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  00000270  00000000  00000000  000048b8  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000375  00000000  00000000  00004b28  2**0
+ 10 .debug_str    0000036d  00000000  00000000  00004b28  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    000009ef  00000000  00000000  00004e9d  2**0
+ 11 .debug_loc    000009ef  00000000  00000000  00004e95  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -653,7 +653,7 @@ void calculateAverageTemperature()
 
 // Sends whether the blinds are open or closed
 // 0 = closed, 1 = moving, 2 = open
-void send_blinds_status(uint8_t is_open) {
+void send_blinds_status(uint8_t status) {
  3e8:	cf 93       	push	r28
  3ea:	df 93       	push	r29
  3ec:	cd b7       	in	r28, 0x3d	; 61
@@ -664,8 +664,8 @@ void send_blinds_status(uint8_t is_open) {
  3f6:	de bf       	out	0x3e, r29	; 62
  3f8:	0f be       	out	0x3f, r0	; 63
  3fa:	cd bf       	out	0x3d, r28	; 61
-	if (is_open > 2) {
-		is_open = 2;
+	if (status > 2) {
+		status = 2;
 	}
 	int buffer[4];
 	buffer[0] = 3;
@@ -676,7 +676,7 @@ void send_blinds_status(uint8_t is_open) {
 	buffer[1] = 0;
  404:	1c 82       	std	Y+4, r1	; 0x04
  406:	1b 82       	std	Y+3, r1	; 0x03
-	buffer[2] = is_open;
+	buffer[2] = status;
  408:	83 30       	cpi	r24, 0x03	; 3
  40a:	08 f0       	brcs	.+2      	; 0x40e <send_blinds_status+0x26>
  40c:	82 e0       	ldi	r24, 0x02	; 2

@@ -121,14 +121,14 @@ void send_temperature(int temp) {
 
 // Sends whether the blinds are open or closed
 // 0 = closed, 1 = moving, 2 = open
-void send_blinds_status(uint8_t is_open) {
-	if (is_open > 2) {
-		is_open = 2;
+void send_blinds_status(uint8_t status) {
+	if (status > 2) {
+		status = 2;
 	}
 	int buffer[4];
 	buffer[0] = 3;
 	buffer[1] = 0;
-	buffer[2] = is_open;
+	buffer[2] = status;
 	buffer[3] = -1;
 	transmit_string(buffer);
 }
