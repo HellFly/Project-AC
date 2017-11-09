@@ -59,8 +59,12 @@ class Arduino(threading.Thread):
 		self.com = serial.Serial(comport , baudrate, timeout=.001)
 
 		while __a_running:
+
 			if self.com != None:
-				byte = self.com.read()
+				try:
+					byte = self.com.read()
+				except:
+					self.stop()
 				if byte:
 					self.add_byte(ord(byte))
 					self.parse_data()
@@ -303,7 +307,7 @@ class Arduino(threading.Thread):
 		]
 
 	# Set the temperature value threshold to open the blinds
-	def set_temperature_value_to_open(self, temperatuer):
+	def set_temperature_value_to_open(self, temperature):
 		global __a_send_bytes
 		temperature -= 128
 
