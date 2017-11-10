@@ -43,7 +43,7 @@ class Arduino(threading.Thread):
 		__a_arduino_connected = False
 		__a_arduino_connected_time = datetime.datetime.now()
 
-		__a_send_bytes = [-1]
+		__a_send_bytes = -1
 
 		self.start()
 	def run(self):
@@ -79,13 +79,13 @@ class Arduino(threading.Thread):
 					self.parse_data()
 
 				global __a_send_bytes
-				if __a_send_bytes[0] != -1:
-					com.write(__a_send_bytes)
-					__a_send_bytes = [-1]
+				if __a_send_bytes != -1:
+					#print("Sending data")
+					self.com.write(__a_send_bytes)
+					__a_send_bytes = -1
 
 				if __a_arduino_connected_time < datetime.datetime.now()-datetime.timedelta(seconds=10):
 					# Arduino hasnt sent a message for over 10 seconds so is disconnected
-
 					__a_arduino_connected = False
 
 			else:
@@ -216,6 +216,7 @@ class Arduino(threading.Thread):
 			10,
 			1
 		]
+		__a_send_bytes = bytes(__a_send_bytes)
 
 	# Close the blinds
 	def close_blinds(self):
@@ -224,6 +225,7 @@ class Arduino(threading.Thread):
 			11,
 			1
 		]
+		__a_send_bytes = bytes(__a_send_bytes)
 
 	# Set the opening distance of the blinds
 	def set_open_distance(self, centimeters):
@@ -242,10 +244,10 @@ class Arduino(threading.Thread):
 			val2 = centimeters % 256
 		__a_send_bytes = [
 			20,
-			1,
 			val1,
 			val2
 		]
+		__a_send_bytes = bytes(__a_send_bytes)
 
 	# Set the closing distance of the blinds
 	def set_closed_distance(self, centimeters):
@@ -264,10 +266,10 @@ class Arduino(threading.Thread):
 			val2 = centimeters % 256
 		__a_send_bytes = [
 			21,
-			1,
 			val1,
 			val2
 		]
+		__a_send_bytes = bytes(__a_send_bytes)
 
 	# Set the light value threshold to close the blinds
 	def set_light_value_to_close(self, light):
@@ -289,6 +291,7 @@ class Arduino(threading.Thread):
 			val1,
 			val2
 		]
+		__a_send_bytes = bytes(__a_send_bytes)
 
 	# Set the light value threshold to open the blinds
 	def set_light_value_to_open(self, light):
@@ -310,6 +313,7 @@ class Arduino(threading.Thread):
 			val1,
 			val2
 		]
+		__a_send_bytes = bytes(__a_send_bytes)
 
 	# Set the temperature value threshold to close the blinds
 	def set_temerature_value_to_close(self, temperature):
@@ -324,6 +328,7 @@ class Arduino(threading.Thread):
 			30,
 			temperature
 		]
+		__a_send_bytes = bytes(__a_send_bytes)
 
 	# Set the temperature value threshold to open the blinds
 	def set_temperature_value_to_open(self, temperature):
@@ -338,3 +343,4 @@ class Arduino(threading.Thread):
 			31,
 			temperature
 		]
+		__a_send_bytes = bytes(__a_send_bytes)
