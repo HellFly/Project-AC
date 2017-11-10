@@ -4,3 +4,6 @@ Centrale/classes/__pycache__/
 *.pyc
 Centrale/config.ini
 Centrale/testdata.txt
+Centrale\classes\__pycache__\
+Centrale\config.ini
+Centrale\testdata.txt

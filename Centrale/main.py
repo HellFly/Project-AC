@@ -208,11 +208,7 @@ class ControlUnit(tk.Frame):
         temperature_label.pack()
         blinds_label.pack()
         def clock():
-<<<<<<< HEAD
-            connected = "Connected: True"
-=======
             connected = "Connected: " + str(ard.arduino_connected())
->>>>>>> d86e3b6e1040ac051d3d45a21dd2d00cd12c5735
 
             light = "Lightvolume: " + str(ard.get_light())
             temperature = "Temperature: " +  str(ard.get_temperature())
