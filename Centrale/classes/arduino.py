@@ -80,7 +80,7 @@ class Arduino(threading.Thread):
 
 				global __a_send_bytes
 				if __a_send_bytes[0] != -1:
-					com.write(__a_send_bytes)
+					self.com.write(__a_send_bytes)
 					__a_send_bytes = [-1]
 
 				if __a_arduino_connected_time < datetime.datetime.now()-datetime.timedelta(seconds=10):
