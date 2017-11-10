@@ -26,25 +26,25 @@ typedef enum {DOWN=0, SCROLLING=1, UP=2} state;
 //Initialize UART.
 void uart_init()
 {
-	 // set the baud rate
-	 UBRR0H = 0;
-	 UBRR0L = UBBRVAL;
-	 // disable U2X mode
-	 UCSR0A = 0;
-	 // enable transmitter
-	 UCSR0B = _BV(TXEN0);
-	 // set frame format : asynchronous, 8 data bits, 1 stop bit, no parity
-	 UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
+	// set the baud rate
+	UBRR0H = 0;
+	UBRR0L = UBBRVAL;
+	// disable U2X mode
+	UCSR0A = 0;
+	// enable transmitter AND RECEIVER
+	UCSR0B = _BV(TXEN0) | _BV(RXEN0);
+	// set frame format : asynchronous, 8 data bits, 1 stop bit, no parity
+	UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
 }
 
 //Transmit to UART
-void transmit(uint16_t data)
+void transmit(uint8_t data)
 {
-	 // wait for an empty transmit buffer
-	 // UDRE is set when the transmit buffer is empty
-	 
-	 loop_until_bit_is_set(UCSR0A, UDRE0);   
-	 UDR0 = data;
+	// wait for an empty transmit buffer
+	// UDRE is set when the transmit buffer is empty
+	
+	loop_until_bit_is_set(UCSR0A, UDRE0);
+	UDR0 = data;
 }
 
 // Sends a string of chars (bytes) over UART
@@ -64,7 +64,7 @@ uint8_t receive(uint8_t response) {
 // Returns what's received, if nothing is received, return -1
 // This is non-blocking
 int receive_non_blocking() {
-	if (UCSR0A & 1<RXC0) { // is the received data bit set in the UCSR0A register?
+	if (UCSR0A & (1<<RXC0)) { // is the received data bit set in the UCSR0A register?
 	return (int) UDR0;
 }
 return -1;
@@ -135,6 +135,7 @@ void send_blinds_status(uint8_t status) {
 
 // Reset the buffer of incoming messages
 int receive_buffer[20];
+uint8_t buffer_reset = 0;
 void reset_buffer() {
 	for(uint8_t i = 0; i < sizeof(receive_buffer); i++) {
 		receive_buffer[i] = -1;
@@ -154,6 +155,10 @@ void add_to_buffer(uint8_t c) {
 // This should be in the scheduler
 // TODO edit this to do the stuff it has to do
 void receiveMessages() {
+	if (buffer_reset != 123) {
+		reset_buffer();
+		buffer_reset = 123;
+	}
 	int b = receive_non_blocking();
 	while (b != -1) {
 		add_to_buffer((uint8_t) b);
@@ -165,66 +170,49 @@ void receiveMessages() {
 	int p2 = receive_buffer[2];
 	int p3 = receive_buffer[3];
 	
-	switch (c) {
-		case -1:
-		break;
-		case 10:
-		if (p1 != -1) {
-			if (p1 == 1) {
-				// OPEN THE BLINDS
-				// Do stuff here
-				
-				// End do stuff
-				reset_buffer();
-			}
-			else {
-				reset_buffer();
-			}
+	if (c == 10) { // Open blinds
+		if (p1 == 1) {
+			// OPEN THE BLINDS
+			// Do stuff here
+			
+			// End do stuff
+			reset_buffer();
 		}
-		break;
-		case 11:
-		if (p1 != -1) {
-			if (p1 == 1) {
-				// CLOSE THE BLINDS
-				// Do stuff here
-				
-				// End do stuff
-				reset_buffer();
-			}
-			else {
-				reset_buffer();
-			}
+		else if (p1 != -1) {
+			reset_buffer();
 		}
-		break;
-		case 20:
-		if (p1 != -1 && p2 != -1 && p3 != -1) {
-			if (p1 == 1) {
-				int blinds_open_distance = p2 * 256 + p3; // The new blinds open distance
-				// Do stuff here
-				
-				// End do stuff
-				reset_buffer();
-			}
-			else {
-				reset_buffer();
-			}
+	}
+	else if (c == 11) { // Close blinds
+		if (p1 == 1) {
+			// CLOSE THE BLINDS
+			// Do stuff here
+			
+			// End do stuff
+			reset_buffer();
 		}
-		break;
-		case 21:
-		if (p1 != -1 && p2 != -1 && p3 != -1) {
-			if (p1 == 1) {
-				int blinds_closed_distance = p2 * 256 + p3; // The new blinds closed distance
-				// Do stuff here
-				
-				// End do stuff
-				reset_buffer();
-			}
-			else {
-				reset_buffer();
-			}
+		else if (p1 != -1) {
+			reset_buffer();
 		}
-		break;
-		case 30:
+	}
+	else if (c == 20) { // Set blinds open distance
+		if (p1 != -1 && p2 != -1) {
+			int blinds_open_distance = p1 * 256 + p2; // The new blinds open distance
+			// Do stuff here
+			
+			// End do stuff
+			reset_buffer();
+		}
+	}
+	else if (c == 21) { // Set blinds closed distance
+		if (p1 != -1 && p2 != -1) {
+			int blinds_closed_distance = p1 * 256 + p2; // The new blinds closed distance
+			// Do stuff here
+			
+			// End do stuff
+			reset_buffer();
+		}			
+	}
+	else if (c == 30) { // Set temperature to close
 		if (p1 != -1) {
 			int temperature_to_close = p1 + 128; // The new temperature threshold to close the blinds at
 			// Do stuff here
@@ -232,8 +220,8 @@ void receiveMessages() {
 			// End do stuff
 			reset_buffer();
 		}
-		break;
-		case 31:
+	}
+	else if (c == 31) { // Set temperature to open
 		if (p1 != -1) {
 			int temperature_to_open = p1 + 128; // The new temperature threshold to open the blinds at
 			// Do stuff here
@@ -241,8 +229,8 @@ void receiveMessages() {
 			// End do stuff
 			reset_buffer();
 		}
-		break;
-		case 32:
+	}
+	else if (c == 32) { // Set light to close
 		if (p1 != -1 && p2 != -1) {
 			int light_to_close = p1 * 256 + p2; // The new light threshold to close the blinds at
 			// Do stuff here
@@ -250,8 +238,8 @@ void receiveMessages() {
 			// End do stuff
 			reset_buffer();
 		}
-		break;
-		case 33:
+	}
+	else if (c == 33) { // Set light to open
 		if (p1 != -1 && p2 != -1) {
 			int light_to_open = p1 * 256 + p2; // The new light threshold to open the blinds at
 			// Do stuff here
@@ -259,10 +247,9 @@ void receiveMessages() {
 			// End do stuff
 			reset_buffer();
 		}
-		break;
-		default:
-			reset_buffer();
-		break;
+	}
+	else if (c != -1) { // Command is not empty and not recognized, so something went wrong, reset buffer
+		reset_buffer();
 	}
 }
 
@@ -319,6 +306,7 @@ int main()
 	setup(); 
 	uart_init();
 	SCH_Init_T1();
+	SCH_Add_Task(receiveMessages, 0, 100); //Receive stuff every second
 	SCH_Add_Task(calculateLight, 0, 1000); //Read lightintensity every 10 seconds
 	SCH_Add_Task(calculateAverageLight, 1000, 3000); //Calculate average every 30 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
 	SCH_Start();
