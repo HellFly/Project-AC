@@ -28,6 +28,12 @@ ard = Arduino()
 #temperature = ard.get_temperature()
 #print(temperature)
 
+def open_blinds():
+    ard.open_blinds()
+
+def close_blinds():
+    ard.close_blinds()
+
 def animate(i):
     #Testdata
     x = i
@@ -148,22 +154,24 @@ class Settings(tk.Frame):
         tk.Frame.__init__(self, parent)
         def save_settings():
             maxtemp = maxtemp_entry.get()
-            maxlight = maxlight_entry.get()
-            maxdistance = maxdistance_entry.get()
+            #maxlight = maxlight_entry.get()
+            #maxdistance = maxdistance_entry.get()
             mintemp = mintemp_entry.get()
-            minlight = minlight_entry.get()
-            mindistance = mindistance_entry.get()
-            print(maxtemp)
+            #minlight = minlight_entry.get()
+            #mindistance = mindistance_entry.get()
+            ard.set_temerature_value_to_close(int(maxtemp))
+            ard.set_temperature_value_to_open(int(mintemp))
+            #ard.set_open_distance(mindistance)
 
         label = ttk.Label(self, text="Settings", font=LARGE_FONT)
         label.grid(row=0, column=0, pady=10,padx=10)
 
-        maxtemp_setting_label = ttk.Label(self, text="Max temp: ")
+        maxtemp_setting_label = ttk.Label(self, text="(Temp to close)Max temp: ")
         maxtemp_setting_label.grid(row=1, column=0)
         maxtemp_entry = ttk.Entry(self)
         maxtemp_entry.grid(row=1, column=1)
 
-        mintemp_setting_label = ttk.Label(self, text="Min temp: ")
+        mintemp_setting_label = ttk.Label(self, text="(Temp to open)Min temp: ")
         mintemp_setting_label.grid(row=2, column=0)
         mintemp_entry = ttk.Entry(self)
         mintemp_entry.grid(row=2, column=1)
@@ -188,11 +196,15 @@ class Settings(tk.Frame):
         mindistance_entry = ttk.Entry(self)
         mindistance_entry.grid(row=6, column=1)
 
+
         savebutton = ttk.Button(self, text="Save settings", command=save_settings)
         savebutton.grid(row=7,column=0)
         backbutton = ttk.Button(self, text="Go back", command=lambda: controller.show_frame(StartPage))
         backbutton.grid(row=7, column=1)
-
+        openblinds = ttk.Button(self, text="Open blinds", command=open_blinds)
+        openblinds.grid(row=7,column=2)
+        closeblinds = ttk.Button(self, text="Close blinds", command=close_blinds)
+        closeblinds.grid(row=7,column=3)
 class ControlUnit(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -208,11 +220,18 @@ class ControlUnit(tk.Frame):
         temperature_label.pack()
         blinds_label.pack()
         def clock():
+            connected = "Connected: True"
             connected = "Connected: " + str(ard.arduino_connected())
 
             light = "Lightvolume: " + str(ard.get_light())
             temperature = "Temperature: " +  str(ard.get_temperature())
-            blinds = "Blind status: " +  str(ard.get_blinds_status())
+            if ard.get_blinds_status() is 0:
+                status = "closed"
+            elif ard.get_blinds_status() is 1:
+                status = "open"
+            elif ard.get_blinds_status() is 2:
+                status = "scrolling"
+            blinds = "Blind status: " + status
             connected_label.config(text=connected)
             light_label.config(text=light)
             temperature_label.config(text=temperature)
