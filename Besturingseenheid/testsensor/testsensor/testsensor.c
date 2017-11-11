@@ -124,6 +124,10 @@ void transmit_string(int *c) {
 	}
 }
 
+
+void transmit_max_temp(){
+	transmit_string(MAX_TEMP);
+}
 // Receives a byte from UART
 uint8_t receive(uint8_t response) {
 	loop_until_bit_is_set(UCSR0A, RXC0);
@@ -243,7 +247,7 @@ void receiveMessages() {
 		if (p1 == 1) {
 			// OPEN THE BLINDS
 			// Do stuff here
-			instruction = SCROLLUP;
+			scrollUp();
 			// End do stuff
 			reset_buffer();
 		}
@@ -255,7 +259,7 @@ void receiveMessages() {
 		if (p1 == 1) {
 			// CLOSE THE BLINDS
 			// Do stuff here
-			instruction = SCROLLDOWN;
+			scrollDown();
 			// End do stuff
 			reset_buffer();
 		}
@@ -504,6 +508,7 @@ void checkCommand(){
 		SCH_Delete_Task(yellowoff);
 		turnOnRED();
 		send_blinds_status(0);
+
 	} else if(distance == MAX_DISTANCE && instruction == SCROLLUP && screen == SCROLLING){
 		screen = UP;
 		instruction = NEUTRAL;
@@ -545,9 +550,9 @@ int main()
 	setupLeds();
 	uart_init();
 	SCH_Init_T1();
-	SCH_Add_Task(scrollSpeedCheck, 0, 1); //Make sure settings are valid and correct at all times
+	//SCH_Add_Task(scrollSpeedCheck, 0, 1); //Make sure settings are valid and correct at all times
 	SCH_Add_Task(setStartingPosition, 500, 0); //Set starting pos of screen and light starting led
-	SCH_Add_Task(receiveMessages, 0, 50); // Receive every half second, is more than enough
+	SCH_Add_Task(receiveMessages, 1000, 50); // Receive every half second, is more than enough
 	SCH_Add_Task(calculateTemperature, 0, 200); //Read temperature every second
 	SCH_Add_Task(calculateLight, 100, 200); //Read light every second
 	SCH_Add_Task(calculateAverageTemperature, 1000, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
@@ -556,7 +561,8 @@ int main()
 	SCH_Add_Task(lightCheck, 1101, 1000);
 	SCH_Add_Task(resetAverageTemperature, 1002, 1000); //reset average temperature
 	SCH_Add_Task(resetAverageLight, 1102, 1000);
-	//SCH_Add_Task(transmitDistance, 1000, 50); //Used for debugging
+	
+	//SCH_Add_Task(transmitDistance, 1000, 100); //Used for debugging
 	SCH_Add_Task(checkCommand, 1000, 10); //What leds should be flashing and what should the screen do?
 	
 	SCH_Start();

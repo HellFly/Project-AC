@@ -126,28 +126,22 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         #parent.grid_remove()
-        #tempUnit = tk.Frame(parent, relief="sunken", bg="blue")
-        #tempUnit.grid(row=1, column=0)
+        tempUnit = tk.Frame(self, relief="sunken", bg="black")
+        tempUnit.grid(row=1, column=0)
         #Text Animation test
-        label = ttk.Label(self, text="Not connected")
-        label.grid(row=1, column=0)
-        label.grid_columnconfigure(0, minsize=50)
-        label.grid_rowconfigure(0, minsize=50)
-        def check():
-            label.config(text="Checking")
-
-        checkBtn = ttk.Button(self, text="Check arduino", command=check)
-        checkBtn.grid()
-
+        label = ttk.Label(tempUnit, text="Not connected")
+        label.grid(row=0, column=0)
+        label.grid_columnconfigure(0)
+        label.grid_rowconfigure(0)
 
 
         #Page buttons
-        settingsbutton = ttk.Button(self, text="Go to settings", command=lambda: controller.show_frame(Settings))
-        settingsbutton.grid()
-        controlunitbutton = ttk.Button(self, text="Go to control unit", command=lambda: controller.show_frame(ControlUnit))
-        graphbutton = ttk.Button(self, text="Graphs", command=lambda: controller.show_frame(Graph))
-        controlunitbutton.grid()
-        graphbutton.grid()
+        settingsbutton = ttk.Button(tempUnit, text="Go to settings", command=lambda: controller.show_frame(Settings))
+        settingsbutton.grid(row=1, column=0)
+        controlunitbutton = ttk.Button(tempUnit, text="Go to control unit", command=lambda: controller.show_frame(ControlUnit))
+        graphbutton = ttk.Button(tempUnit, text="Graphs", command=lambda: controller.show_frame(Graph))
+        controlunitbutton.grid(row=2, column=0)
+        graphbutton.grid(row=3, column=0)
 
 class Settings(tk.Frame):
     def __init__(self, parent, controller):
@@ -198,9 +192,9 @@ class Settings(tk.Frame):
 
 
         savebutton = ttk.Button(self, text="Save settings", command=save_settings)
-        savebutton.grid(row=7,column=0)
+        savebutton.grid(row=6,column=2)
         backbutton = ttk.Button(self, text="Go back", command=lambda: controller.show_frame(StartPage))
-        backbutton.grid(row=7, column=1)
+        backbutton.grid(row=6, column=3)
         openblinds = ttk.Button(self, text="Open blinds", command=open_blinds)
         openblinds.grid(row=7,column=2)
         closeblinds = ttk.Button(self, text="Close blinds", command=close_blinds)
