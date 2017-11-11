@@ -84,8 +84,8 @@ class Arduino(threading.Thread):
 					self.com.write(__a_send_bytes)
 					__a_send_bytes = -1
 
-				if __a_arduino_connected_time < datetime.datetime.now()-datetime.timedelta(seconds=10):
-					# Arduino hasnt sent a message for over 10 seconds so is disconnected
+				if __a_arduino_connected_time < datetime.datetime.now()-datetime.timedelta(seconds=40):
+					# Arduino hasnt sent a message for over 40 seconds so is disconnected
 					__a_arduino_connected = False
 
 			else:
@@ -318,7 +318,7 @@ class Arduino(threading.Thread):
 	# Set the temperature value threshold to close the blinds
 	def set_temerature_value_to_close(self, temperature):
 		global __a_send_bytes
-		temperature -= 128
+		temperature += 128
 
 		if temperature < 0:
 			temperature = 0
@@ -333,7 +333,7 @@ class Arduino(threading.Thread):
 	# Set the temperature value threshold to open the blinds
 	def set_temperature_value_to_open(self, temperature):
 		global __a_send_bytes
-		temperature -= 128
+		temperature += 128
 
 		if temperature < 0:
 			temperature = 0

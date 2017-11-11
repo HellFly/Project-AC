@@ -283,7 +283,7 @@ void receiveMessages() {
 	}
 	else if (c == 30) { // Set temperature to close
 		if (p1 != -1) {
-			int temperature_to_close = p1 + 128; // The new temperature threshold to close the blinds at
+			int temperature_to_close = p1 - 128; // The new temperature threshold to close the blinds at
 			// Do stuff here
 			MAX_TEMP = temperature_to_close;
 			// End do stuff
@@ -292,7 +292,7 @@ void receiveMessages() {
 	}
 	else if (c == 31) { // Set temperature to open
 		if (p1 != -1) {
-			int temperature_to_open = p1 + 128; // The new temperature threshold to open the blinds at
+			int temperature_to_open = p1 - 128; // The new temperature threshold to open the blinds at
 			// Do stuff here
 			MIN_TEMP = temperature_to_open;
 			// End do stuff

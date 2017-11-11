@@ -1335,9 +1335,9 @@ void receiveMessages() {
  7a8:	2f 3f       	cpi	r18, 0xFF	; 255
  7aa:	38 07       	cpc	r19, r24
  7ac:	d9 f1       	breq	.+118    	; 0x824 <receiveMessages+0x160>
-			int temperature_to_close = p1 + 128; // The new temperature threshold to close the blinds at
+			int temperature_to_close = p1 - 128; // The new temperature threshold to close the blinds at
  7ae:	20 58       	subi	r18, 0x80	; 128
- 7b0:	3f 4f       	sbci	r19, 0xFF	; 255
+ 7b0:	30 40       	sbci	r19, 0x00	; 0
 			// Do stuff here
 			MAX_TEMP = temperature_to_close;
  7b2:	20 93 04 01 	sts	0x0104, r18
@@ -1356,9 +1356,9 @@ void receiveMessages() {
  7c4:	2f 3f       	cpi	r18, 0xFF	; 255
  7c6:	38 07       	cpc	r19, r24
  7c8:	69 f1       	breq	.+90     	; 0x824 <receiveMessages+0x160>
-			int temperature_to_open = p1 + 128; // The new temperature threshold to open the blinds at
+			int temperature_to_open = p1 - 128; // The new temperature threshold to open the blinds at
  7ca:	20 58       	subi	r18, 0x80	; 128
- 7cc:	3f 4f       	sbci	r19, 0xFF	; 255
+ 7cc:	30 40       	sbci	r19, 0x00	; 0
 			// Do stuff here
 			MIN_TEMP = temperature_to_open;
  7ce:	20 93 05 01 	sts	0x0105, r18
