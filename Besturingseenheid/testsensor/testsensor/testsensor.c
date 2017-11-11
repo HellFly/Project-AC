@@ -1,5 +1,5 @@
 /*
- * tempsensor.c
+ * testsensor.c
  *
  * Created: 24-10-2017 1:30:05
  *  Author: Roy
@@ -34,9 +34,6 @@ static uint8_t MIN_LIGHT = 20;
 static uint8_t MAX_DISTANCE = 160; //in centimeters. Max value = 255. This is value of distance when screen is UP
 static uint8_t MIN_DISTANCE = 10; //Min possible = 5. This is value of distance when screen is DOWN
 static uint8_t SCROLLSPEED = 5; //(MAX_DISTANCE - MIN_DISTANCE)%SCROLLSPEED HAS TO BE 0 !!!
-static const uint8_t DEFAULT_MAX_DISTANCE = 160;
-static const uint8_t DEFAULT_MIN_DISTANCE = 10;
-static const uint8_t DEFAULT_SCROLLSPEED = 5;
 
 state screen = DOWN; //screen is up by default
 command instruction = NEUTRAL;
@@ -111,7 +108,7 @@ void transmit(uint8_t data)
 {
 	// wait for an empty transmit buffer
 	// UDRE is set when the transmit buffer is empty
-	
+
 	loop_until_bit_is_set(UCSR0A, UDRE0);
 	UDR0 = data;
 }
@@ -147,7 +144,7 @@ return -1;
 void send_light(int light) {
 	uint8_t val1;
 	uint8_t val2;
-	
+
 	if (light < 0) {
 		val1 = 0;
 		val2 = 0;
@@ -174,7 +171,7 @@ void send_light(int light) {
 void send_temperature(int temp) {
 	temp += 128;
 	uint8_t val;
-	
+
 	if (temp < 0) {
 		val = 0;
 	}
@@ -184,7 +181,7 @@ void send_temperature(int temp) {
 	else {
 		val = (uint8_t)temp;
 	}
-	
+
 	int buffer[3];
 	buffer[0] = 2;
 	buffer[1] = val;
@@ -237,17 +234,17 @@ void receiveMessages() {
 		add_to_buffer((uint8_t) b);
 		b = receive_non_blocking();
 	}
-	
+
 	int c = receive_buffer[0];
 	int p1 = receive_buffer[1];
 	int p2 = receive_buffer[2];
 	int p3 = receive_buffer[3];
-	
+
 	if (c == 10) { // Open blinds
 		if (p1 == 1) {
 			// OPEN THE BLINDS
 			// Do stuff here
-			scrollUp();
+			ScrollUp();
 			// End do stuff
 			reset_buffer();
 		}
@@ -259,7 +256,7 @@ void receiveMessages() {
 		if (p1 == 1) {
 			// CLOSE THE BLINDS
 			// Do stuff here
-			scrollDown();
+			ScrollDown();
 			// End do stuff
 			reset_buffer();
 		}
@@ -283,7 +280,7 @@ void receiveMessages() {
 			MIN_DISTANCE = blinds_closed_distance;
 			// End do stuff
 			reset_buffer();
-		}			
+		}
 	}
 	else if (c == 30) { // Set temperature to close
 		if (p1 != -1) {
@@ -342,7 +339,6 @@ void setChannelOne(){
 void setupADC()
 {
 	//Channel = 0 as of now
-	//ADMUX |= (1 << MUX0); // set channel to 1
 	ADMUX |= (1 << REFS0); //set reference voltage
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //set prescaler
 	ADCSRA |= (1 << ADEN); //enable the ADC
@@ -350,18 +346,13 @@ void setupADC()
 
 uint16_t adc_read(uint8_t ch)
 {
-	// select the corresponding channel 0~7
-	// ANDing with ’7? will always keep the value
-	// of ‘ch’ between 0 and 7
-	ch &= 0b00000111;  // AND operation with 7
+	ch &= 0b00000111;  // AND operation with 7 to keep channel < 7 always
 	ADMUX = (ADMUX & 0xF8)|ch; // clears the bottom 3 bits before ORing
 
 	// start the conversion
 	ADCSRA |= (1<<ADSC);
 
 	// wait for conversion to complete
-	// ADSC becomes ’0? again
-	// till then, run loop continuously
 	while(ADCSRA & (1<<ADSC));
 
 	return (ADC);
@@ -370,29 +361,43 @@ uint16_t adc_read(uint8_t ch)
 
 //********FUNCTIONS TO CONTROL THE SCREEN*************
 
-//Actually lowers the screen
+//Actually physically lowers the screen
 void lowerScreen(){
 	distance -= SCROLLSPEED;
 }
 
-//Actually rises the screen
+//Actually physically rises the screen
 void upScreen(){
 	distance += SCROLLSPEED;
 }
 
-//Scroll screen down if it is UP. Set instruction to SCROLLDOWN to tell CheckCommand() and CheckDistance() what they should do.
-void scrollDown()
+//Set instruction to SCROLLDOWN, scroll the screen and light correct leds
+void ScrollDown()
 {
-	if(screen == UP){
+	if(screen == UP && instruction == NEUTRAL){ // Only scroll down if it is UP and hasnt received other instruction before
 		instruction = SCROLLDOWN;
+		screen = SCROLLING;
+		send_blinds_status(2);
+		turnOffAll();
+		lowerscreen = SCH_Add_Task(lowerScreen, 0, 50);
+		yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
+		yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
+		turnOnRED();
 	}
 }
 
-//Scroll screen up if it is DOWN. Set instruction to SCROLLUP to tell CheckCommand() and CheckDistance() what they should do.
-void scrollUp()
+//Set instruction to SCROLLUP, scroll the screen, and light correct leds
+void ScrollUp()
 {
-	if(screen == DOWN){
+	if(screen == DOWN && instruction == NEUTRAL){ // Only scroll up if it is DOWN and hasnt received other instruction before
 		instruction = SCROLLUP;
+		screen = SCROLLING;
+		send_blinds_status(2);
+		turnOffAll();
+		upscreen = SCH_Add_Task(upScreen, 0, 50);
+		yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
+		yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
+		turnOnGREEN();
 	}
 }
 
@@ -438,9 +443,6 @@ void calculateLight(){
 	setChannelOne();
 	uint16_t reading = adc_read(1);
 	float temp = (reading/4);
-	//uint8_t high_byte = (reading >> 8);
-	//uint8_t low_byte = reading & 0x00FF;
-	//uint16_t number = (high_byte << 8) + low_byte;
 	float light = 100 - ((temp/(float)255)*100); //Light is a percentage. 0 = dark. 100 = bright
 	//transmit(light);
 
@@ -464,42 +466,23 @@ void calculateAverageLight()
 //Adjusts the screen based on the measured temperature value. Either scroll up or down if possible
 void temperatureCheck(){
 	if(averageTemperature >= MAX_TEMP){
-		scrollDown();
+		ScrollDown();
 	} else if (averageTemperature <= MIN_TEMP){
-		scrollUp();
+		ScrollUp();
 	}
 }
 
 //Adjusts the screen based on the measured light value. Either scroll up or down if possible
 void lightCheck(){
 	if(averageLight >= MAX_LIGHT){
-		scrollDown();
+		ScrollDown();
 	} else if (averageLight <= MIN_LIGHT){
-		scrollUp();
+		ScrollUp();
 	}
 }
 
-//This function uses the instruction from the ScrollDown/Up functions to flash the leds and scroll the screen.
-void checkCommand(){
-	if(instruction == SCROLLDOWN && screen != SCROLLING){
-		screen = SCROLLING;
-		send_blinds_status(2);
-		turnOffAll();
-		lowerscreen = SCH_Add_Task(lowerScreen, 0, 50);
-		yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
-		yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
-		turnOnRED();
-	} else if(instruction == SCROLLUP && screen != SCROLLING){
-		screen = SCROLLING;
-		send_blinds_status(2);
-		turnOffAll();
-		upscreen = SCH_Add_Task(upScreen, 0, 50);
-		yellowon = SCH_Add_Task(turnOnYELLOW, 0, 100);
-		yellowoff = SCH_Add_Task(turnOffYELLOW, 50, 100);
-		turnOnGREEN();
-	}
-
-	if(distance == MIN_DISTANCE && instruction == SCROLLDOWN && screen == SCROLLING){
+void checkDistance(){
+	if(distance == MIN_DISTANCE && instruction == SCROLLDOWN){ //we finished scrolling down
 		screen = DOWN;
 		instruction = NEUTRAL;
 		turnOffAll();
@@ -508,8 +491,7 @@ void checkCommand(){
 		SCH_Delete_Task(yellowoff);
 		turnOnRED();
 		send_blinds_status(0);
-
-	} else if(distance == MAX_DISTANCE && instruction == SCROLLUP && screen == SCROLLING){
+	} else if(distance == MAX_DISTANCE && instruction == SCROLLUP){ //we finished scrolling up
 		screen = UP;
 		instruction = NEUTRAL;
 		turnOffAll();
@@ -532,16 +514,6 @@ void setStartingPosition(){
 	}
 }
 
-//Makes sure all settings are valid and will not mess with the program. If settings are invalid, use the default settings.
-void scrollSpeedCheck(){
-	if((MAX_DISTANCE - MIN_DISTANCE)%SCROLLSPEED != 0 || MAX_DISTANCE > 255 || MIN_DISTANCE < 5 || MIN_DISTANCE >= MAX_DISTANCE){
-		MAX_DISTANCE = DEFAULT_MAX_DISTANCE;
-		MIN_DISTANCE = DEFAULT_MIN_DISTANCE;
-		SCROLLSPEED = DEFAULT_SCROLLSPEED;
-		//TODO: TRANSMIT SOME ERROR MESSAGE
-	}
-}
-
 //******MAIN********
 
 int main()
@@ -550,23 +522,26 @@ int main()
 	setupLeds();
 	uart_init();
 	SCH_Init_T1();
-	//SCH_Add_Task(scrollSpeedCheck, 0, 1); //Make sure settings are valid and correct at all times
 	SCH_Add_Task(setStartingPosition, 500, 0); //Set starting pos of screen and light starting led
-	SCH_Add_Task(receiveMessages, 1000, 50); // Receive every half second, is more than enough
-	SCH_Add_Task(calculateTemperature, 0, 200); //Read temperature every second
-	SCH_Add_Task(calculateLight, 100, 200); //Read light every second
-	SCH_Add_Task(calculateAverageTemperature, 1000, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
-	SCH_Add_Task(calculateAverageLight, 1100, 1000); //Calculate average light every 10 seconds.
-	SCH_Add_Task(temperatureCheck, 1001, 1000); //What instruction should we send to screen?
-	SCH_Add_Task(lightCheck, 1101, 1000);
-	SCH_Add_Task(resetAverageTemperature, 1002, 1000); //reset average temperature
-	SCH_Add_Task(resetAverageLight, 1102, 1000);
-	
-	//SCH_Add_Task(transmitDistance, 1000, 100); //Used for debugging
-	SCH_Add_Task(checkCommand, 1000, 10); //What leds should be flashing and what should the screen do?
-	
+	SCH_Add_Task(receiveMessages, 0, 50); // Receive every half second, is more than enough
+
+	SCH_Add_Task(calculateTemperature, 0, 200); //Read temperature every 2 seconds
+	SCH_Add_Task(calculateLight, 100, 200); //Read light every 2 seconds
+
+	SCH_Add_Task(calculateAverageTemperature, 1001, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
+	SCH_Add_Task(calculateAverageLight, 1101, 1000); //Calculate average light every 10 seconds.
+
+	SCH_Add_Task(temperatureCheck, 1002, 1000); //What instruction should we send to screen?
+	SCH_Add_Task(lightCheck, 1102, 1000);
+
+	SCH_Add_Task(resetAverageTemperature, 1003, 1000); //reset average temperature
+	SCH_Add_Task(resetAverageLight, 1103, 1000); //reset average light
+
+	//SCH_Add_Task(transmitDistance, 1000, 50); //Used for debugging
+	SCH_Add_Task(checkDistance, 1004, 1);
+
 	SCH_Start();
-	
+
 	while(1)
 	{
 		SCH_Dispatch_Tasks();
