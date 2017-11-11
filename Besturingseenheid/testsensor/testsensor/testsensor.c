@@ -230,97 +230,99 @@ void receiveMessages() {
 		buffer_reset = 123;
 	}
 	int b = receive_non_blocking();
-	while (b != -1) {
-		add_to_buffer((uint8_t) b);
-		b = receive_non_blocking();
-	}
+	if (b != -1) { // If no messages were received at all there's no need to check everything again
+		while (b != -1) {
+			add_to_buffer((uint8_t) b);
+			b = receive_non_blocking();
+		}
 
-	int c = receive_buffer[0];
-	int p1 = receive_buffer[1];
-	int p2 = receive_buffer[2];
-	int p3 = receive_buffer[3];
+		int c = receive_buffer[0];
+		int p1 = receive_buffer[1];
+		int p2 = receive_buffer[2];
+		int p3 = receive_buffer[3];
 
-	if (c == 10) { // Open blinds
-		if (p1 == 1) {
-			// OPEN THE BLINDS
-			// Do stuff here
-			ScrollUp();
-			// End do stuff
+		if (c == 10) { // Open blinds
+			if (p1 == 1) {
+				// OPEN THE BLINDS
+				// Do stuff here
+				ScrollUp();
+				// End do stuff
+				reset_buffer();
+			}
+			else if (p1 != -1) {
+				reset_buffer();
+			}
+		}
+		else if (c == 11) { // Close blinds
+			if (p1 == 1) {
+				// CLOSE THE BLINDS
+				// Do stuff here
+				ScrollDown();
+				// End do stuff
+				reset_buffer();
+			}
+			else if (p1 != -1) {
+				reset_buffer();
+			}
+		}
+		else if (c == 20) { // Set blinds open distance
+			if (p1 != -1 && p2 != -1) {
+				int blinds_open_distance = p1 * 256 + p2; // The new blinds open distance
+				// Do stuff here
+				MAX_DISTANCE = blinds_open_distance;
+				// End do stuff
+				reset_buffer();
+			}
+		}
+		else if (c == 21) { // Set blinds closed distance
+			if (p1 != -1 && p2 != -1) {
+				int blinds_closed_distance = p1 * 256 + p2; // The new blinds closed distance
+				// Do stuff here
+				MIN_DISTANCE = blinds_closed_distance;
+				// End do stuff
+				reset_buffer();
+			}
+		}
+		else if (c == 30) { // Set temperature to close
+			if (p1 != -1) {
+				int temperature_to_close = p1 - 128; // The new temperature threshold to close the blinds at
+				// Do stuff here
+				MAX_TEMP = temperature_to_close;
+				// End do stuff
+				reset_buffer();
+			}
+		}
+		else if (c == 31) { // Set temperature to open
+			if (p1 != -1) {
+				int temperature_to_open = p1 - 128; // The new temperature threshold to open the blinds at
+				// Do stuff here
+				MIN_TEMP = temperature_to_open;
+				// End do stuff
+				reset_buffer();
+			}
+		}
+		else if (c == 32) { // Set light to close
+			if (p1 != -1 && p2 != -1) {
+				int light_to_close = p1 * 256 + p2; // The new light threshold to close the blinds at
+				// Do stuff here
+				MAX_LIGHT = light_to_close;
+				// End do stuff
+				reset_buffer();
+			}
+		}
+		else if (c == 33) { // Set light to open
+			if (p1 != -1 && p2 != -1) {
+				int light_to_open = p1 * 256 + p2; // The new light threshold to open the blinds at
+				// Do stuff here
+				MIN_LIGHT = light_to_open;
+				// End do stuff
+				reset_buffer();
+			}
+		}
+		else if (c != -1) { // Command is not empty and not recognized, so something went wrong, reset buffer
 			reset_buffer();
 		}
-		else if (p1 != -1) {
-			reset_buffer();
-		}
-	}
-	else if (c == 11) { // Close blinds
-		if (p1 == 1) {
-			// CLOSE THE BLINDS
-			// Do stuff here
-			ScrollDown();
-			// End do stuff
-			reset_buffer();
-		}
-		else if (p1 != -1) {
-			reset_buffer();
-		}
-	}
-	else if (c == 20) { // Set blinds open distance
-		if (p1 != -1 && p2 != -1) {
-			int blinds_open_distance = p1 * 256 + p2; // The new blinds open distance
-			// Do stuff here
-			MAX_DISTANCE = blinds_open_distance;
-			// End do stuff
-			reset_buffer();
-		}
-	}
-	else if (c == 21) { // Set blinds closed distance
-		if (p1 != -1 && p2 != -1) {
-			int blinds_closed_distance = p1 * 256 + p2; // The new blinds closed distance
-			// Do stuff here
-			MIN_DISTANCE = blinds_closed_distance;
-			// End do stuff
-			reset_buffer();
-		}
-	}
-	else if (c == 30) { // Set temperature to close
-		if (p1 != -1) {
-			int temperature_to_close = p1 - 128; // The new temperature threshold to close the blinds at
-			// Do stuff here
-			MAX_TEMP = temperature_to_close;
-			// End do stuff
-			reset_buffer();
-		}
-	}
-	else if (c == 31) { // Set temperature to open
-		if (p1 != -1) {
-			int temperature_to_open = p1 - 128; // The new temperature threshold to open the blinds at
-			// Do stuff here
-			MIN_TEMP = temperature_to_open;
-			// End do stuff
-			reset_buffer();
-		}
-	}
-	else if (c == 32) { // Set light to close
-		if (p1 != -1 && p2 != -1) {
-			int light_to_close = p1 * 256 + p2; // The new light threshold to close the blinds at
-			// Do stuff here
-			MAX_LIGHT = light_to_close;
-			// End do stuff
-			reset_buffer();
-		}
-	}
-	else if (c == 33) { // Set light to open
-		if (p1 != -1 && p2 != -1) {
-			int light_to_open = p1 * 256 + p2; // The new light threshold to open the blinds at
-			// Do stuff here
-			MIN_LIGHT = light_to_open;
-			// End do stuff
-			reset_buffer();
-		}
-	}
-	else if (c != -1) { // Command is not empty and not recognized, so something went wrong, reset buffer
-		reset_buffer();
-	}
+	}	
 }
 
 
@@ -523,7 +525,7 @@ int main()
 	uart_init();
 	SCH_Init_T1();
 	SCH_Add_Task(setStartingPosition, 500, 0); //Set starting pos of screen and light starting led
-	SCH_Add_Task(receiveMessages, 0, 50); // Receive every half second, is more than enough
+	SCH_Add_Task(receiveMessages, 25, 50); // Receive every half second, is more than enough
 
 	SCH_Add_Task(calculateTemperature, 0, 200); //Read temperature every 2 seconds
 	SCH_Add_Task(calculateLight, 100, 200); //Read light every 2 seconds
