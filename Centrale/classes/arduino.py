@@ -285,7 +285,7 @@ class Arduino(threading.Thread):
 			val2 = 255
 		else:
 			val1 = math.floor(light / 256)
-			val2 = centimeters % 256
+			val2 = light % 256
 		__a_send_bytes = [
 			32,
 			val1,
@@ -307,7 +307,7 @@ class Arduino(threading.Thread):
 			val2 = 255
 		else:
 			val1 = math.floor(light / 256)
-			val2 = centimeters % 256
+			val2 = light % 256
 		__a_send_bytes = [
 			33,
 			val1,
@@ -316,7 +316,7 @@ class Arduino(threading.Thread):
 		__a_send_bytes = bytes(__a_send_bytes)
 
 	# Set the temperature value threshold to close the blinds
-	def set_temerature_value_to_close(self, temperature):
+	def set_temperature_value_to_close(self, temperature):
 		global __a_send_bytes
 		temperature += 128
 
