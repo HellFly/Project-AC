@@ -22,6 +22,12 @@ class Arduino(threading.Thread):
 		global __a_temperature
 		global __a_light
 		global __a_blinds_status
+		global __a_set_temperature_value_to_close
+		global __a_set_temperature_value_to_open
+		global __a_set_light_value_to_close
+		global __a_set_light_value_to_open
+		global __a_set_closed_distance
+		global __a_set_open_distance
 
 		global __a_temperature_list
 		global __a_light_list

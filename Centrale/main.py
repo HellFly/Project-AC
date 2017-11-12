@@ -146,59 +146,93 @@ class StartPage(tk.Frame):
 class Settings(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        def save_settings():
+
+        def save_max_temp():
             maxtemp = maxtemp_entry.get()
-            #maxlight = maxlight_entry.get()
-            #maxdistance = maxdistance_entry.get()
+            ard.set_temperature_value_to_close(int(maxtemp))
+
+        def save_min_temp():
             mintemp = mintemp_entry.get()
-            #minlight = minlight_entry.get()
-            #mindistance = mindistance_entry.get()
-            ard.set_temerature_value_to_close(int(maxtemp))
             ard.set_temperature_value_to_open(int(mintemp))
-            #ard.set_open_distance(mindistance)
+
+        def save_max_light():
+            maxlight = maxlight_entry.get()
+            ard.set_light_value_to_close(int(maxlight))
+
+        def save_min_light():
+            minlight = minlight_entry.get()
+            ard.set_light_value_to_open(int(minlight))
+
+        def save_max_distance():
+            maxdistance = maxdistance_entry.get()
+            ard.set_closed_distance(int(maxdistance))
+
+        def save_min_distance():
+            mindistance = mindistance_entry.get()
+            ard.set_open_distance(int(mindistance))
+
 
         label = ttk.Label(self, text="Settings", font=LARGE_FONT)
         label.grid(row=0, column=0, pady=10,padx=10)
 
-        maxtemp_setting_label = ttk.Label(self, text="(Temp to close)Max temp: ")
+        maxtemp_setting_label = ttk.Label(self, text="(To close)Max temp: ")
         maxtemp_setting_label.grid(row=1, column=0)
         maxtemp_entry = ttk.Entry(self)
         maxtemp_entry.grid(row=1, column=1)
 
-        mintemp_setting_label = ttk.Label(self, text="(Temp to open)Min temp: ")
+        mintemp_setting_label = ttk.Label(self, text="(To open)Min temp: ")
         mintemp_setting_label.grid(row=2, column=0)
         mintemp_entry = ttk.Entry(self)
         mintemp_entry.grid(row=2, column=1)
 
-        maxlight_setting_label = ttk.Label(self, text="Max light: ")
+        maxlight_setting_label = ttk.Label(self, text="(To close)Max light: ")
         maxlight_setting_label.grid(row=3, column=0)
         maxlight_entry = ttk.Entry(self)
         maxlight_entry.grid(row=3, column=1)
 
-        minlight_setting_label = ttk.Label(self, text="Min light: ")
+        minlight_setting_label = ttk.Label(self, text="(To open)Min light: ")
         minlight_setting_label.grid(row=4, column=0)
         minlight_entry = ttk.Entry(self)
         minlight_entry.grid(row=4, column=1)
 
-        maxdistance_setting_label = ttk.Label(self, text="Max distance: ")
+        maxdistance_setting_label = ttk.Label(self, text="(closed)Max distance: ")
         maxdistance_setting_label.grid(row=5, column=0)
         maxdistance_entry = ttk.Entry(self)
         maxdistance_entry.grid(row=5, column=1)
 
-        mindistance_setting_label = ttk.Label(self, text="Min distance: ")
+        mindistance_setting_label = ttk.Label(self, text="(open)Min distance: ")
         mindistance_setting_label.grid(row=6, column=0)
         mindistance_entry = ttk.Entry(self)
         mindistance_entry.grid(row=6, column=1)
 
 
-        savebutton = ttk.Button(self, text="Save settings", command=save_settings)
-        savebutton.grid(row=6,column=2)
+        saveMaxTempbutton = ttk.Button(self, text="Save", command=save_max_temp)
+        saveMaxTempbutton.grid(row=1,column=2)
+
+        saveMinTempbutton = ttk.Button(self, text="Save", command=save_min_temp)
+        saveMinTempbutton.grid(row=2,column=2)
+
+        saveMaxLightbutton = ttk.Button(self, text="Save", command=save_max_light)
+        saveMaxLightbutton.grid(row=3,column=2)
+
+        saveMinLightbutton = ttk.Button(self, text="Save", command=save_min_light)
+        saveMinLightbutton.grid(row=4,column=2)
+
+        saveMaxDistancebutton = ttk.Button(self, text="Save", command=save_max_distance)
+        saveMaxDistancebutton.grid(row=5,column=2)
+
+        saveMinDistancebutton = ttk.Button(self, text="Save", command=save_min_distance)
+        saveMinDistancebutton.grid(row=6,column=2)
+
         backbutton = ttk.Button(self, text="Go back", command=lambda: controller.show_frame(StartPage))
         backbutton.grid(row=6, column=3)
+
         openblinds = ttk.Button(self, text="Open blinds", command=open_blinds)
         openblinds.grid(row=7,column=2)
+
         closeblinds = ttk.Button(self, text="Close blinds", command=close_blinds)
         closeblinds.grid(row=7,column=3)
+
 class ControlUnit(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)

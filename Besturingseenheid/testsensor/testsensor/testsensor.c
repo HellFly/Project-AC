@@ -31,11 +31,11 @@ static uint8_t MAX_TEMP = 22; // in degrees celcius
 static uint8_t MIN_TEMP = 20;
 static uint8_t MAX_LIGHT = 70;
 static uint8_t MIN_LIGHT = 30;
-static uint8_t MAX_DISTANCE = 110; //in centimeters. Max value = 255. This is value of distance when screen is UP / OPEN
-static uint8_t MIN_DISTANCE = 10; //Min possible = 5. This is value of distance when screen is DOWN / CLOSED
-static uint8_t SCROLLSPEED = 20; //(MAX_DISTANCE - MIN_DISTANCE)%SCROLLSPEED HAS TO BE 0 !!!
+static uint8_t OPEN_DISTANCE = 10; //in centimeters. Max value = 255. This is value of distance when screen is OPEN
+static uint8_t CLOSED_DISTANCE = 110; //Min possible = 5. This is value of distance when screen is CLOSED
+static uint8_t SCROLLSPEED = 10; //(MAX_DISTANCE - MIN_DISTANCE)%SCROLLSPEED HAS TO BE 0 !!!
 
-state screen = DOWN; //screen is down by default
+state screen = UP; //screen is up by default
 command instruction = NEUTRAL;
 uint16_t distance = 0;
 
@@ -49,7 +49,6 @@ unsigned char greenoff;
 unsigned char lowerscreen;
 unsigned char upscreen;
 
-uint8_t ready = 1;
 
 //**********FUNCTIONS TO CONTROL LEDS*****************
 void setupLeds(){
@@ -271,7 +270,10 @@ void receiveMessages() {
 		if (p1 != -1 && p2 != -1) {
 			int blinds_open_distance = p1 * 256 + p2; // The new blinds open distance
 			// Do stuff here
-			MAX_DISTANCE = blinds_open_distance;
+			OPEN_DISTANCE = blinds_open_distance;
+			if(screen == UP){
+				distance = OPEN_DISTANCE;
+			}
 			// End do stuff
 			reset_buffer();
 		}
@@ -280,7 +282,10 @@ void receiveMessages() {
 		if (p1 != -1 && p2 != -1) {
 			int blinds_closed_distance = p1 * 256 + p2; // The new blinds closed distance
 			// Do stuff here
-			MIN_DISTANCE = blinds_closed_distance;
+			CLOSED_DISTANCE = blinds_closed_distance;
+			if(screen == DOWN){
+				distance = CLOSED_DISTANCE;
+			}
 			// End do stuff
 			reset_buffer();
 		}
@@ -366,12 +371,12 @@ uint16_t adc_read(uint8_t ch)
 
 //Actually physically lowers the screen
 void lowerScreen(){
-	distance -= SCROLLSPEED;
+	distance += SCROLLSPEED;
 }
 
 //Actually physically rises the screen
 void upScreen(){
-	distance += SCROLLSPEED;
+	distance -= SCROLLSPEED;
 }
 
 //Set instruction to SCROLLDOWN, scroll the screen and light correct leds
@@ -406,7 +411,8 @@ void ScrollUp()
 
 //Used for debugging. Sends value of distance to UART.
 void transmitDistance(){
-	send_temperature(distance);
+	send_temperature(MAX_TEMP);
+	send_temperature(MIN_TEMP);
 }
 
 //**********FUNCTIONS FOR TEMPSENSOR****************
@@ -465,36 +471,36 @@ void calculateAverageLight()
 
 //Check to see if we are finished scrolling
 void checkDistance(){
-	if(distance <= MIN_DISTANCE && instruction == SCROLLDOWN && screen == SCROLLING){ //we finished scrolling down
-		SCH_Delete_Task(lowerscreen);
-		SCH_Delete_Task(yellowon);
-		SCH_Delete_Task(yellowoff);
-		distance = MIN_DISTANCE;
-		screen = DOWN;
-		instruction = NEUTRAL;
-		turnOffAll();
-		turnOnRED();
-		send_blinds_status(0);
-	} else if(distance >= MAX_DISTANCE && instruction == SCROLLUP && screen == SCROLLING){ //we finished scrolling up
+	if(distance <= OPEN_DISTANCE && instruction == SCROLLUP && screen == SCROLLING){ 
 		SCH_Delete_Task(upscreen);
 		SCH_Delete_Task(yellowon);
 		SCH_Delete_Task(yellowoff);
-		distance = MAX_DISTANCE;
+		distance = OPEN_DISTANCE;
 		screen = UP;
 		instruction = NEUTRAL;
 		turnOffAll();
 		turnOnGREEN();
 		send_blinds_status(1);
+	} else if(distance >= CLOSED_DISTANCE && instruction == SCROLLDOWN && screen == SCROLLING){
+		SCH_Delete_Task(lowerscreen);
+		SCH_Delete_Task(yellowon);
+		SCH_Delete_Task(yellowoff);
+		distance = CLOSED_DISTANCE;
+		screen = DOWN;
+		instruction = NEUTRAL;
+		turnOffAll();
+		turnOnRED();
+		send_blinds_status(0);
 	}
 }
 
 //Sets starting position of the screen and turns on the corresponding led
 void setStartingPosition(){
 	if(screen == UP){
-		distance = MAX_DISTANCE;
+		distance = OPEN_DISTANCE;
 		turnOnGREEN();
 	} else {
-		distance = MIN_DISTANCE;
+		distance = CLOSED_DISTANCE;
 		turnOnRED();
 	}
 }
@@ -522,7 +528,7 @@ int main()
 	SCH_Add_Task(calculateAverageLight, 1110, 1000); //Calculate average light every 10 seconds.
 	
 	SCH_Add_Task(checkDistance, 1002, 50); //Check if we are finished scrolling
-	//SCH_Add_Task(receiveMessages, 1003, 50); // Receive commands/settings from GUI 
+	SCH_Add_Task(receiveMessages, 1003, 50); // Receive commands/settings from GUI 
 	//SCH_Add_Task(transmitDistance, 1004, 100); //enable to transmit height of screen to cmd
 	
 	SCH_Start();
