@@ -1,0 +1,40 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>images/png/001-down-arrow.png</file>
+    <file>images/png/002-up-arrow.png</file>
+    <file>images/png/003-cogwheel.png</file>
+    <file>images/png/004-idea.png</file>
+    <file>images/png/005-gear.png</file>
+    <file>images/143768-weather-collection/png/bolt.png</file>
+    <file>images/143768-weather-collection/png/celsius.png</file>
+    <file>images/143768-weather-collection/png/cloud.png</file>
+    <file>images/143768-weather-collection/png/cloud-1.png</file>
+    <file>images/143768-weather-collection/png/clouds.png</file>
+    <file>images/143768-weather-collection/png/cloudy.png</file>
+    <file>images/143768-weather-collection/png/drop.png</file>
+    <file>images/143768-weather-collection/png/eclipse.png</file>
+    <file>images/143768-weather-collection/png/fahrenheit.png</file>
+    <file>images/143768-weather-collection/png/hail.png</file>
+    <file>images/143768-weather-collection/png/moon.png</file>
+    <file>images/143768-weather-collection/png/moon-1.png</file>
+    <file>images/143768-weather-collection/png/moon-2.png</file>
+    <file>images/143768-weather-collection/png/moon-3.png</file>
+    <file>images/143768-weather-collection/png/moon-4.png</file>
+    <file>images/143768-weather-collection/png/moon-5.png</file>
+    <file>images/143768-weather-collection/png/moon-6.png</file>
+    <file>images/143768-weather-collection/png/planet-earth.png</file>
+    <file>images/143768-weather-collection/png/rain.png</file>
+    <file>images/143768-weather-collection/png/rain-1.png</file>
+    <file>images/143768-weather-collection/png/rain-2.png</file>
+    <file>images/143768-weather-collection/png/rain-3.png</file>
+    <file>images/143768-weather-collection/png/snowflake.png</file>
+    <file>images/143768-weather-collection/png/storm.png</file>
+    <file>images/143768-weather-collection/png/sun.png</file>
+    <file>images/143768-weather-collection/png/thermometer.png</file>
+    <file>images/143768-weather-collection/png/thermometer-1.png</file>
+    <file>images/143768-weather-collection/png/thermometer-2.png</file>
+    <file>images/143768-weather-collection/png/tornado.png</file>
+    <file>images/143768-weather-collection/png/wind.png</file>
+    <file>images/background.png</file>
+  </qresource>
+</RCC>

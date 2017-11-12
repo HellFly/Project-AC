@@ -1,0 +1,99 @@
+    /*
+    Flaticon icon font: Flaticon
+    Creation date: 22/06/2016 15:39
+    */
+
+    @font-face {
+  font-family: "Flaticon";
+  src: url("./Flaticon.eot");
+  src: url("./Flaticon.eot?#iefix") format("embedded-opentype"),
+       url("./Flaticon.woff") format("woff"),
+       url("./Flaticon.ttf") format("truetype"),
+       url("./Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("./Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+    .fi:before{
+        display: inline-block;
+  font-family: "Flaticon";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-decoration: inherit;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+    }
+
+    .flaticon-bolt:before { content: "\f100"; }
+.flaticon-celsius:before { content: "\f101"; }
+.flaticon-cloud:before { content: "\f102"; }
+.flaticon-cloud-1:before { content: "\f103"; }
+.flaticon-clouds:before { content: "\f104"; }
+.flaticon-cloudy:before { content: "\f105"; }
+.flaticon-drop:before { content: "\f106"; }
+.flaticon-eclipse:before { content: "\f107"; }
+.flaticon-fahrenheit:before { content: "\f108"; }
+.flaticon-hail:before { content: "\f109"; }
+.flaticon-moon:before { content: "\f10a"; }
+.flaticon-moon-1:before { content: "\f10b"; }
+.flaticon-moon-2:before { content: "\f10c"; }
+.flaticon-moon-3:before { content: "\f10d"; }
+.flaticon-moon-4:before { content: "\f10e"; }
+.flaticon-moon-5:before { content: "\f10f"; }
+.flaticon-moon-6:before { content: "\f110"; }
+.flaticon-planet-earth:before { content: "\f111"; }
+.flaticon-rain:before { content: "\f112"; }
+.flaticon-rain-1:before { content: "\f113"; }
+.flaticon-rain-2:before { content: "\f114"; }
+.flaticon-rain-3:before { content: "\f115"; }
+.flaticon-snowflake:before { content: "\f116"; }
+.flaticon-storm:before { content: "\f117"; }
+.flaticon-sun:before { content: "\f118"; }
+.flaticon-thermometer:before { content: "\f119"; }
+.flaticon-thermometer-1:before { content: "\f11a"; }
+.flaticon-thermometer-2:before { content: "\f11b"; }
+.flaticon-tornado:before { content: "\f11c"; }
+.flaticon-wind:before { content: "\f11d"; }
+    
+    $font-Flaticon-bolt: "\f100";
+    $font-Flaticon-celsius: "\f101";
+    $font-Flaticon-cloud: "\f102";
+    $font-Flaticon-cloud-1: "\f103";
+    $font-Flaticon-clouds: "\f104";
+    $font-Flaticon-cloudy: "\f105";
+    $font-Flaticon-drop: "\f106";
+    $font-Flaticon-eclipse: "\f107";
+    $font-Flaticon-fahrenheit: "\f108";
+    $font-Flaticon-hail: "\f109";
+    $font-Flaticon-moon: "\f10a";
+    $font-Flaticon-moon-1: "\f10b";
+    $font-Flaticon-moon-2: "\f10c";
+    $font-Flaticon-moon-3: "\f10d";
+    $font-Flaticon-moon-4: "\f10e";
+    $font-Flaticon-moon-5: "\f10f";
+    $font-Flaticon-moon-6: "\f110";
+    $font-Flaticon-planet-earth: "\f111";
+    $font-Flaticon-rain: "\f112";
+    $font-Flaticon-rain-1: "\f113";
+    $font-Flaticon-rain-2: "\f114";
+    $font-Flaticon-rain-3: "\f115";
+    $font-Flaticon-snowflake: "\f116";
+    $font-Flaticon-storm: "\f117";
+    $font-Flaticon-sun: "\f118";
+    $font-Flaticon-thermometer: "\f119";
+    $font-Flaticon-thermometer-1: "\f11a";
+    $font-Flaticon-thermometer-2: "\f11b";
+    $font-Flaticon-tornado: "\f11c";
+    $font-Flaticon-wind: "\f11d";

@@ -109,7 +109,7 @@ void transmit(uint8_t data)
 {
 	// wait for an empty transmit buffer
 	// UDRE is set when the transmit buffer is empty
-	
+
 	loop_until_bit_is_set(UCSR0A, UDRE0);
 	UDR0 = data;
 }
@@ -122,6 +122,10 @@ void transmit_string(int *c) {
 	}
 }
 
+
+void transmit_max_temp(){
+	transmit_string(MAX_TEMP);
+}
 // Receives a byte from UART
 uint8_t receive(uint8_t response) {
 	loop_until_bit_is_set(UCSR0A, RXC0);
@@ -141,7 +145,7 @@ return -1;
 void send_light(int light) {
 	uint8_t val1;
 	uint8_t val2;
-	
+
 	if (light < 0) {
 		val1 = 0;
 		val2 = 0;
@@ -168,7 +172,7 @@ void send_light(int light) {
 void send_temperature(int temp) {
 	temp += 128;
 	uint8_t val;
-	
+
 	if (temp < 0) {
 		val = 0;
 	}
@@ -178,7 +182,7 @@ void send_temperature(int temp) {
 	else {
 		val = (uint8_t)temp;
 	}
-	
+
 	int buffer[3];
 	buffer[0] = 2;
 	buffer[1] = val;
@@ -232,12 +236,12 @@ void receiveMessages() {
 		add_to_buffer((uint8_t) b);
 		b = receive_non_blocking();
 	}
-	
+
 	int c = receive_buffer[0];
 	int p1 = receive_buffer[1];
 	int p2 = receive_buffer[2];
 	int p3 = receive_buffer[3];
-	
+
 	if (c == 10) { // Open blinds
 		if (p1 == 1) {
 			// OPEN THE BLINDS
@@ -279,7 +283,7 @@ void receiveMessages() {
 			MIN_DISTANCE = blinds_closed_distance;
 			// End do stuff
 			reset_buffer();
-		}			
+		}
 	}
 	else if (c == 30) { // Set temperature to close
 		if (p1 != -1) {
@@ -503,6 +507,7 @@ int main()
 	setupLeds();
 	uart_init();
 	SCH_Init_T1();
+<<<<<<< HEAD
 	setStartingPosition();
 	
 	/*
@@ -521,8 +526,28 @@ int main()
 	//SCH_Add_Task(receiveMessages, 1003, 50); // Receive commands/settings from GUI 
 	//SCH_Add_Task(transmitDistance, 1004, 100); //enable to transmit height of screen to cmd
 	
+=======
+	SCH_Add_Task(setStartingPosition, 500, 0); //Set starting pos of screen and light starting led
+	SCH_Add_Task(receiveMessages, 0, 50); // Receive every half second, is more than enough
+
+	SCH_Add_Task(calculateTemperature, 0, 200); //Read temperature every 2 seconds
+	SCH_Add_Task(calculateLight, 100, 200); //Read light every 2 seconds
+
+	SCH_Add_Task(calculateAverageTemperature, 1001, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
+	SCH_Add_Task(calculateAverageLight, 1101, 1000); //Calculate average light every 10 seconds.
+
+	SCH_Add_Task(temperatureCheck, 1002, 1000); //What instruction should we send to screen?
+	SCH_Add_Task(lightCheck, 1102, 1000);
+
+	SCH_Add_Task(resetAverageTemperature, 1003, 1000); //reset average temperature
+	SCH_Add_Task(resetAverageLight, 1103, 1000); //reset average light
+
+	//SCH_Add_Task(transmitDistance, 1000, 50); //Used for debugging
+	SCH_Add_Task(checkDistance, 1004, 1);
+
+>>>>>>> origin/Roy
 	SCH_Start();
-	
+
 	while(1)
 	{
 		SCH_Dispatch_Tasks();
