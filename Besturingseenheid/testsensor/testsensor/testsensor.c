@@ -507,7 +507,6 @@ int main()
 	setupLeds();
 	uart_init();
 	SCH_Init_T1();
-<<<<<<< HEAD
 	setStartingPosition();
 	
 	/*
@@ -526,26 +525,6 @@ int main()
 	//SCH_Add_Task(receiveMessages, 1003, 50); // Receive commands/settings from GUI 
 	//SCH_Add_Task(transmitDistance, 1004, 100); //enable to transmit height of screen to cmd
 	
-=======
-	SCH_Add_Task(setStartingPosition, 500, 0); //Set starting pos of screen and light starting led
-	SCH_Add_Task(receiveMessages, 0, 50); // Receive every half second, is more than enough
-
-	SCH_Add_Task(calculateTemperature, 0, 200); //Read temperature every 2 seconds
-	SCH_Add_Task(calculateLight, 100, 200); //Read light every 2 seconds
-
-	SCH_Add_Task(calculateAverageTemperature, 1001, 1000); //Calculate average every 10 seconds. Delay it by 10 seconds to prevent incomplete average measurements.
-	SCH_Add_Task(calculateAverageLight, 1101, 1000); //Calculate average light every 10 seconds.
-
-	SCH_Add_Task(temperatureCheck, 1002, 1000); //What instruction should we send to screen?
-	SCH_Add_Task(lightCheck, 1102, 1000);
-
-	SCH_Add_Task(resetAverageTemperature, 1003, 1000); //reset average temperature
-	SCH_Add_Task(resetAverageLight, 1103, 1000); //reset average light
-
-	//SCH_Add_Task(transmitDistance, 1000, 50); //Used for debugging
-	SCH_Add_Task(checkDistance, 1004, 1);
-
->>>>>>> origin/Roy
 	SCH_Start();
 
 	while(1)
