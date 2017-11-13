@@ -528,9 +528,11 @@ void setStartingPosition(){
 	if(screen == UP){
 		distance = OPEN_DISTANCE;
 		turnOnGREEN();
+		send_blinds_status(1);
 	} else {
 		distance = CLOSED_DISTANCE;
 		turnOnRED();
+		send_blinds_status(0);
 	}
 }
 
