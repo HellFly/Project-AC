@@ -1,0 +1,787 @@
+
+afstandsensor.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000000  00800100  0000034a  000003de  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         0000034a  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          0000008d  00800100  00800100  000003de  2**0
+                  ALLOC
+  3 .stab         000006cc  00000000  00000000  000003e0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  4 .stabstr      00000085  00000000  00000000  00000aac  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_aranges 000000a0  00000000  00000000  00000b38  2**3
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   00000833  00000000  00000000  00000bd8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 0000034e  00000000  00000000  0000140b  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   000004ea  00000000  00000000  00001759  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  00000240  00000000  00000000  00001c44  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    000002ff  00000000  00000000  00001e84  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    0000030a  00000000  00000000  00002183  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 34 00 	jmp	0x68	; 0x68 <__ctors_end>
+   4:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   8:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+   c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  10:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  14:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  18:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  1c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  20:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  24:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  28:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  2c:	0c 94 64 01 	jmp	0x2c8	; 0x2c8 <__vector_11>
+  30:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  34:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  38:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  3c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  40:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  44:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  48:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  4c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  50:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  54:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  58:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  5c:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  60:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+  64:	0c 94 51 00 	jmp	0xa2	; 0xa2 <__bad_interrupt>
+
+00000068 <__ctors_end>:
+  68:	11 24       	eor	r1, r1
+  6a:	1f be       	out	0x3f, r1	; 63
+  6c:	cf ef       	ldi	r28, 0xFF	; 255
+  6e:	d8 e0       	ldi	r29, 0x08	; 8
+  70:	de bf       	out	0x3e, r29	; 62
+  72:	cd bf       	out	0x3d, r28	; 61
+
+00000074 <__do_copy_data>:
+  74:	11 e0       	ldi	r17, 0x01	; 1
+  76:	a0 e0       	ldi	r26, 0x00	; 0
+  78:	b1 e0       	ldi	r27, 0x01	; 1
+  7a:	ea e4       	ldi	r30, 0x4A	; 74
+  7c:	f3 e0       	ldi	r31, 0x03	; 3
+  7e:	02 c0       	rjmp	.+4      	; 0x84 <__do_copy_data+0x10>
+  80:	05 90       	lpm	r0, Z+
+  82:	0d 92       	st	X+, r0
+  84:	a0 30       	cpi	r26, 0x00	; 0
+  86:	b1 07       	cpc	r27, r17
+  88:	d9 f7       	brne	.-10     	; 0x80 <__do_copy_data+0xc>
+
+0000008a <__do_clear_bss>:
+  8a:	11 e0       	ldi	r17, 0x01	; 1
+  8c:	a0 e0       	ldi	r26, 0x00	; 0
+  8e:	b1 e0       	ldi	r27, 0x01	; 1
+  90:	01 c0       	rjmp	.+2      	; 0x94 <.do_clear_bss_start>
+
+00000092 <.do_clear_bss_loop>:
+  92:	1d 92       	st	X+, r1
+
+00000094 <.do_clear_bss_start>:
+  94:	ad 38       	cpi	r26, 0x8D	; 141
+  96:	b1 07       	cpc	r27, r17
+  98:	e1 f7       	brne	.-8      	; 0x92 <.do_clear_bss_loop>
+  9a:	0e 94 b9 00 	call	0x172	; 0x172 <main>
+  9e:	0c 94 a3 01 	jmp	0x346	; 0x346 <_exit>
+
+000000a2 <__bad_interrupt>:
+  a2:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+000000a6 <clearEcho>:
+void setTrigger(){
+	PORTD |= _BV(PORTD2);
+}
+
+void clearEcho(){
+	PORTD &= ~_BV(PORTD3);
+  a6:	5b 98       	cbi	0x0b, 3	; 11
+}
+  a8:	08 95       	ret
+
+000000aa <setupLeds>:
+
+
+
+//**********FUNCTIONS TO CONTROL LEDS*****************
+void setupLeds(){
+	DDRB |= _BV(DDB5); //red led pin 5
+  aa:	25 9a       	sbi	0x04, 5	; 4
+	DDRB |= _BV(DDB3); //yellow led pin 3
+  ac:	23 9a       	sbi	0x04, 3	; 4
+	DDRB |= _BV(DDB1); //green led pin 1
+  ae:	21 9a       	sbi	0x04, 1	; 4
+}
+  b0:	08 95       	ret
+
+000000b2 <turnOnRED>:
+
+void turnOnRED(){
+	 PORTB |= _BV(PORTB5);
+  b2:	2d 9a       	sbi	0x05, 5	; 5
+}
+  b4:	08 95       	ret
+
+000000b6 <turnOffRED>:
+
+void turnOffRED(){
+	PORTB &= ~_BV(PORTB5);
+  b6:	2d 98       	cbi	0x05, 5	; 5
+}
+  b8:	08 95       	ret
+
+000000ba <turnOnYELLOW>:
+
+void turnOnYELLOW(){
+	PORTB |= _BV(PORTB3);
+  ba:	2b 9a       	sbi	0x05, 3	; 5
+}
+  bc:	08 95       	ret
+
+000000be <turnOffYELLOW>:
+
+void turnOffYELLOW(){
+	PORTB &= ~_BV(PORTB3);
+  be:	2b 98       	cbi	0x05, 3	; 5
+}	
+  c0:	08 95       	ret
+
+000000c2 <turnOnGREEN>:
+
+void turnOnGREEN(){
+	PORTB |= _BV(PORTB1);
+  c2:	29 9a       	sbi	0x05, 1	; 5
+}
+  c4:	08 95       	ret
+
+000000c6 <turnOffGREEN>:
+
+void turnOffGREEN(){
+	PORTB &= ~_BV(PORTB1);
+  c6:	29 98       	cbi	0x05, 1	; 5
+}
+  c8:	08 95       	ret
+
+000000ca <turnOffAll>:
+
+void turnOffAll(){
+	turnOffYELLOW();
+  ca:	0e 94 5f 00 	call	0xbe	; 0xbe <turnOffYELLOW>
+	turnOffRED();
+  ce:	0e 94 5b 00 	call	0xb6	; 0xb6 <turnOffRED>
+	turnOffGREEN();
+  d2:	0e 94 63 00 	call	0xc6	; 0xc6 <turnOffGREEN>
+}
+  d6:	08 95       	ret
+
+000000d8 <uart_init>:
+
+//Initialize UART.
+void uart_init()
+{
+	 // set the baud rate
+	 UBRR0H = 0;
+  d8:	10 92 c5 00 	sts	0x00C5, r1
+	 UBRR0L = UBBRVAL;
+  dc:	83 e3       	ldi	r24, 0x33	; 51
+  de:	80 93 c4 00 	sts	0x00C4, r24
+	 // disable U2X mode
+	 UCSR0A = 0;
+  e2:	10 92 c0 00 	sts	0x00C0, r1
+	 // enable transmitter
+	 UCSR0B = _BV(TXEN0);
+  e6:	88 e0       	ldi	r24, 0x08	; 8
+  e8:	80 93 c1 00 	sts	0x00C1, r24
+	 //enable receiver
+	// UCSR0B = _BV(RXEN0);
+	 // set frame format : asynchronous, 8 data bits, 1 stop bit, no parity
+	 UCSR0C = _BV(UCSZ01) | _BV(UCSZ00);
+  ec:	86 e0       	ldi	r24, 0x06	; 6
+  ee:	80 93 c2 00 	sts	0x00C2, r24
+}
+  f2:	08 95       	ret
+
+000000f4 <transmit>:
+void transmit(uint8_t data)
+{
+	 // wait for an empty transmit buffer
+	 // UDRE is set when the transmit buffer is empty
+	 
+	 loop_until_bit_is_set(UCSR0A, UDRE0);   
+  f4:	e0 ec       	ldi	r30, 0xC0	; 192
+  f6:	f0 e0       	ldi	r31, 0x00	; 0
+  f8:	90 81       	ld	r25, Z
+  fa:	95 ff       	sbrs	r25, 5
+  fc:	fd cf       	rjmp	.-6      	; 0xf8 <transmit+0x4>
+	 UDR0 = data;
+  fe:	80 93 c6 00 	sts	0x00C6, r24
+}
+ 102:	08 95       	ret
+
+00000104 <transmit_string>:
+
+void transmit_string(int *c) {
+ 104:	cf 93       	push	r28
+ 106:	df 93       	push	r29
+ 108:	ec 01       	movw	r28, r24
+	while (*c != -1) {
+ 10a:	88 81       	ld	r24, Y
+ 10c:	99 81       	ldd	r25, Y+1	; 0x01
+ 10e:	2f ef       	ldi	r18, 0xFF	; 255
+ 110:	8f 3f       	cpi	r24, 0xFF	; 255
+ 112:	92 07       	cpc	r25, r18
+ 114:	49 f0       	breq	.+18     	; 0x128 <transmit_string+0x24>
+	 
+	 loop_until_bit_is_set(UCSR0A, UDRE0);   
+	 UDR0 = data;
+}
+
+void transmit_string(int *c) {
+ 116:	22 96       	adiw	r28, 0x02	; 2
+	while (*c != -1) {
+		transmit(*c);
+ 118:	0e 94 7a 00 	call	0xf4	; 0xf4 <transmit>
+	 loop_until_bit_is_set(UCSR0A, UDRE0);   
+	 UDR0 = data;
+}
+
+void transmit_string(int *c) {
+	while (*c != -1) {
+ 11c:	89 91       	ld	r24, Y+
+ 11e:	99 91       	ld	r25, Y+
+ 120:	2f ef       	ldi	r18, 0xFF	; 255
+ 122:	8f 3f       	cpi	r24, 0xFF	; 255
+ 124:	92 07       	cpc	r25, r18
+ 126:	c1 f7       	brne	.-16     	; 0x118 <transmit_string+0x14>
+		transmit(*c);
+		c++;
+	}
+}
+ 128:	df 91       	pop	r29
+ 12a:	cf 91       	pop	r28
+ 12c:	08 95       	ret
+
+0000012e <receive>:
+
+// Receives a byte from UART
+uint8_t receive(uint8_t response) {
+	loop_until_bit_is_set(UCSR0A, RXC0);
+ 12e:	e0 ec       	ldi	r30, 0xC0	; 192
+ 130:	f0 e0       	ldi	r31, 0x00	; 0
+ 132:	90 81       	ld	r25, Z
+ 134:	99 23       	and	r25, r25
+ 136:	ec f7       	brge	.-6      	; 0x132 <receive+0x4>
+	return response;
+}
+ 138:	08 95       	ret
+
+0000013a <setupUltrasonic>:
+
+
+//**************FUNCTIONS FOR DISTANCE SENSOR*************
+
+void setupUltrasonic(){
+	clearEcho();
+ 13a:	0e 94 53 00 	call	0xa6	; 0xa6 <clearEcho>
+	DDRD |= _BV(DDD2); //Trig as output
+ 13e:	52 9a       	sbi	0x0a, 2	; 10
+	DDRD &= ~_BV(DDD3); //Echo as input
+ 140:	53 98       	cbi	0x0a, 3	; 10
+	//transmit(DDRD);
+}
+ 142:	08 95       	ret
+
+00000144 <clearTrigger>:
+
+
+void clearTrigger(){
+	PORTD &= ~_BV(PORTD2);
+ 144:	5a 98       	cbi	0x0b, 2	; 11
+}
+ 146:	08 95       	ret
+
+00000148 <setTrigger>:
+
+void setTrigger(){
+	PORTD |= _BV(PORTD2);
+ 148:	5a 9a       	sbi	0x0b, 2	; 11
+}
+ 14a:	08 95       	ret
+
+0000014c <setEcho>:
+void clearEcho(){
+	PORTD &= ~_BV(PORTD3);
+}
+
+void setEcho(){
+	PORTD |= _BV(PORTD3);
+ 14c:	5b 9a       	sbi	0x0b, 3	; 11
+}
+ 14e:	08 95       	ret
+
+00000150 <calcDistance>:
+
+uint8_t calcDistance()
+{
+	int counter = 0;
+	clearEcho();
+ 150:	0e 94 53 00 	call	0xa6	; 0xa6 <clearEcho>
+	clearTrigger(); 
+ 154:	0e 94 a2 00 	call	0x144	; 0x144 <clearTrigger>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 158:	8a e0       	ldi	r24, 0x0A	; 10
+ 15a:	8a 95       	dec	r24
+ 15c:	f1 f7       	brne	.-4      	; 0x15a <calcDistance+0xa>
+ 15e:	00 c0       	rjmp	.+0      	; 0x160 <calcDistance+0x10>
+	_delay_us(2);
+	setTrigger();
+ 160:	0e 94 a4 00 	call	0x148	; 0x148 <setTrigger>
+ 164:	85 e3       	ldi	r24, 0x35	; 53
+ 166:	8a 95       	dec	r24
+ 168:	f1 f7       	brne	.-4      	; 0x166 <calcDistance+0x16>
+ 16a:	00 00       	nop
+	_delay_us(10);
+	clearTrigger();
+ 16c:	0e 94 a2 00 	call	0x144	; 0x144 <clearTrigger>
+ 170:	ff cf       	rjmp	.-2      	; 0x170 <calcDistance+0x20>
+
+00000172 <main>:
+
+//******MAIN********
+
+int main()                     
+{
+	setupLeds();
+ 172:	0e 94 55 00 	call	0xaa	; 0xaa <setupLeds>
+	setupUltrasonic();
+ 176:	0e 94 9d 00 	call	0x13a	; 0x13a <setupUltrasonic>
+	uart_init();
+ 17a:	0e 94 6c 00 	call	0xd8	; 0xd8 <uart_init>
+	while(1){
+		calcDistance();
+ 17e:	0e 94 a8 00 	call	0x150	; 0x150 <calcDistance>
+
+00000182 <SCH_Add_Task>:
+  Task will be first executed at T = 300 ticks, then 1300, 2300, etc.            
+ 
+-*------------------------------------------------------------------*/
+
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+ 182:	0f 93       	push	r16
+ 184:	1f 93       	push	r17
+ 186:	cf 93       	push	r28
+ 188:	df 93       	push	r29
+ 18a:	ec 01       	movw	r28, r24
+ 18c:	db 01       	movw	r26, r22
+ 18e:	8a 01       	movw	r16, r20
+   unsigned char Index = 0;
+
+   // First find a gap in the array (if there is one)
+   while((SCH_tasks_G[Index].pTask != 0) && (Index < SCH_MAX_TASKS))
+ 190:	80 91 01 01 	lds	r24, 0x0101
+ 194:	90 91 02 01 	lds	r25, 0x0102
+ 198:	00 97       	sbiw	r24, 0x00	; 0
+ 19a:	b1 f0       	breq	.+44     	; 0x1c8 <SCH_Add_Task+0x46>
+ 19c:	e8 e0       	ldi	r30, 0x08	; 8
+ 19e:	f1 e0       	ldi	r31, 0x01	; 1
+ 1a0:	21 e0       	ldi	r18, 0x01	; 1
+ 1a2:	30 e0       	ldi	r19, 0x00	; 0
+   {
+      Index++;
+ 1a4:	42 2f       	mov	r20, r18
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+   unsigned char Index = 0;
+
+   // First find a gap in the array (if there is one)
+   while((SCH_tasks_G[Index].pTask != 0) && (Index < SCH_MAX_TASKS))
+ 1a6:	b9 01       	movw	r22, r18
+ 1a8:	80 81       	ld	r24, Z
+ 1aa:	91 81       	ldd	r25, Z+1	; 0x01
+ 1ac:	00 97       	sbiw	r24, 0x00	; 0
+ 1ae:	41 f0       	breq	.+16     	; 0x1c0 <SCH_Add_Task+0x3e>
+ 1b0:	2f 5f       	subi	r18, 0xFF	; 255
+ 1b2:	3f 4f       	sbci	r19, 0xFF	; 255
+ 1b4:	37 96       	adiw	r30, 0x07	; 7
+ 1b6:	25 31       	cpi	r18, 0x15	; 21
+ 1b8:	31 05       	cpc	r19, r1
+ 1ba:	a1 f7       	brne	.-24     	; 0x1a4 <SCH_Add_Task+0x22>
+   {
+      Index++;
+ 1bc:	84 2f       	mov	r24, r20
+ 1be:	01 c0       	rjmp	.+2      	; 0x1c2 <SCH_Add_Task+0x40>
+ 1c0:	82 2f       	mov	r24, r18
+   }
+
+   // Have we reached the end of the list?   
+   if(Index == SCH_MAX_TASKS)
+ 1c2:	84 31       	cpi	r24, 0x14	; 20
+ 1c4:	21 f4       	brne	.+8      	; 0x1ce <SCH_Add_Task+0x4c>
+ 1c6:	17 c0       	rjmp	.+46     	; 0x1f6 <SCH_Add_Task+0x74>
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+   unsigned char Index = 0;
+
+   // First find a gap in the array (if there is one)
+   while((SCH_tasks_G[Index].pTask != 0) && (Index < SCH_MAX_TASKS))
+ 1c8:	60 e0       	ldi	r22, 0x00	; 0
+ 1ca:	70 e0       	ldi	r23, 0x00	; 0
+ 
+-*------------------------------------------------------------------*/
+
+unsigned char SCH_Add_Task(void (*pFunction)(), const unsigned int DELAY, const unsigned int PERIOD)
+{
+   unsigned char Index = 0;
+ 1cc:	40 e0       	ldi	r20, 0x00	; 0
+      // Task list is full, return an error code
+      return SCH_MAX_TASKS;  
+   }
+
+   // If we're here, there is a space in the task array
+   SCH_tasks_G[Index].pTask = pFunction;
+ 1ce:	cb 01       	movw	r24, r22
+ 1d0:	88 0f       	add	r24, r24
+ 1d2:	99 1f       	adc	r25, r25
+ 1d4:	88 0f       	add	r24, r24
+ 1d6:	99 1f       	adc	r25, r25
+ 1d8:	88 0f       	add	r24, r24
+ 1da:	99 1f       	adc	r25, r25
+ 1dc:	86 1b       	sub	r24, r22
+ 1de:	97 0b       	sbc	r25, r23
+ 1e0:	fc 01       	movw	r30, r24
+ 1e2:	ef 5f       	subi	r30, 0xFF	; 255
+ 1e4:	fe 4f       	sbci	r31, 0xFE	; 254
+ 1e6:	d1 83       	std	Z+1, r29	; 0x01
+ 1e8:	c0 83       	st	Z, r28
+   SCH_tasks_G[Index].Delay =DELAY;
+ 1ea:	b3 83       	std	Z+3, r27	; 0x03
+ 1ec:	a2 83       	std	Z+2, r26	; 0x02
+   SCH_tasks_G[Index].Period = PERIOD;
+ 1ee:	15 83       	std	Z+5, r17	; 0x05
+ 1f0:	04 83       	std	Z+4, r16	; 0x04
+   SCH_tasks_G[Index].RunMe = 0;
+ 1f2:	16 82       	std	Z+6, r1	; 0x06
+
+   // return position of task (to allow later deletion)
+   return Index;
+ 1f4:	84 2f       	mov	r24, r20
+}
+ 1f6:	df 91       	pop	r29
+ 1f8:	cf 91       	pop	r28
+ 1fa:	1f 91       	pop	r17
+ 1fc:	0f 91       	pop	r16
+ 1fe:	08 95       	ret
+
+00000200 <SCH_Delete_Task>:
+unsigned char SCH_Delete_Task(const unsigned char TASK_INDEX)
+{
+   // Return_code can be used for error reporting, NOT USED HERE THOUGH!
+   unsigned char Return_code = 0;
+
+   SCH_tasks_G[TASK_INDEX].pTask = 0;
+ 200:	90 e0       	ldi	r25, 0x00	; 0
+ 202:	fc 01       	movw	r30, r24
+ 204:	ee 0f       	add	r30, r30
+ 206:	ff 1f       	adc	r31, r31
+ 208:	ee 0f       	add	r30, r30
+ 20a:	ff 1f       	adc	r31, r31
+ 20c:	ee 0f       	add	r30, r30
+ 20e:	ff 1f       	adc	r31, r31
+ 210:	e8 1b       	sub	r30, r24
+ 212:	f9 0b       	sbc	r31, r25
+ 214:	ef 5f       	subi	r30, 0xFF	; 255
+ 216:	fe 4f       	sbci	r31, 0xFE	; 254
+ 218:	11 82       	std	Z+1, r1	; 0x01
+ 21a:	10 82       	st	Z, r1
+   SCH_tasks_G[TASK_INDEX].Delay = 0;
+ 21c:	13 82       	std	Z+3, r1	; 0x03
+ 21e:	12 82       	std	Z+2, r1	; 0x02
+   SCH_tasks_G[TASK_INDEX].Period = 0;
+ 220:	15 82       	std	Z+5, r1	; 0x05
+ 222:	14 82       	std	Z+4, r1	; 0x04
+   SCH_tasks_G[TASK_INDEX].RunMe = 0;
+ 224:	16 82       	std	Z+6, r1	; 0x06
+
+   return Return_code;
+}
+ 226:	80 e0       	ldi	r24, 0x00	; 0
+ 228:	08 95       	ret
+
+0000022a <SCH_Dispatch_Tasks>:
+  This function must be called (repeatedly) from the main loop.
+
+-*------------------------------------------------------------------*/
+
+void SCH_Dispatch_Tasks(void)
+{
+ 22a:	cf 92       	push	r12
+ 22c:	df 92       	push	r13
+ 22e:	ef 92       	push	r14
+ 230:	ff 92       	push	r15
+ 232:	1f 93       	push	r17
+ 234:	cf 93       	push	r28
+ 236:	df 93       	push	r29
+   unsigned char Index;
+
+   // Dispatches (runs) the next task (if one is ready)
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+ 238:	c7 e0       	ldi	r28, 0x07	; 7
+ 23a:	d1 e0       	ldi	r29, 0x01	; 1
+ 23c:	0f 2e       	mov	r0, r31
+ 23e:	fa ef       	ldi	r31, 0xFA	; 250
+ 240:	ef 2e       	mov	r14, r31
+ 242:	ff ef       	ldi	r31, 0xFF	; 255
+ 244:	ff 2e       	mov	r15, r31
+ 246:	f0 2d       	mov	r31, r0
+ 248:	ec 0e       	add	r14, r28
+ 24a:	fd 1e       	adc	r15, r29
+ 24c:	10 e0       	ldi	r17, 0x00	; 0
+   {
+      if((SCH_tasks_G[Index].RunMe > 0) && (SCH_tasks_G[Index].pTask != 0))
+ 24e:	88 81       	ld	r24, Y
+ 250:	88 23       	and	r24, r24
+ 252:	91 f0       	breq	.+36     	; 0x278 <SCH_Dispatch_Tasks+0x4e>
+ 254:	d7 01       	movw	r26, r14
+ 256:	ed 91       	ld	r30, X+
+ 258:	fc 91       	ld	r31, X
+ 25a:	11 97       	sbiw	r26, 0x01	; 1
+ 25c:	30 97       	sbiw	r30, 0x00	; 0
+ 25e:	61 f0       	breq	.+24     	; 0x278 <SCH_Dispatch_Tasks+0x4e>
+      {
+         (*SCH_tasks_G[Index].pTask)();  // Run the task
+ 260:	09 95       	icall
+         SCH_tasks_G[Index].RunMe -= 1;   // Reset / reduce RunMe flag
+ 262:	88 81       	ld	r24, Y
+ 264:	81 50       	subi	r24, 0x01	; 1
+ 266:	88 83       	st	Y, r24
+
+         // Periodic tasks will automatically run again
+         // - if this is a 'one shot' task, remove it from the array
+         if(SCH_tasks_G[Index].Period == 0)
+ 268:	f7 01       	movw	r30, r14
+ 26a:	84 81       	ldd	r24, Z+4	; 0x04
+ 26c:	95 81       	ldd	r25, Z+5	; 0x05
+ 26e:	00 97       	sbiw	r24, 0x00	; 0
+ 270:	19 f4       	brne	.+6      	; 0x278 <SCH_Dispatch_Tasks+0x4e>
+         {
+            SCH_Delete_Task(Index);
+ 272:	81 2f       	mov	r24, r17
+ 274:	0e 94 00 01 	call	0x200	; 0x200 <SCH_Delete_Task>
+void SCH_Dispatch_Tasks(void)
+{
+   unsigned char Index;
+
+   // Dispatches (runs) the next task (if one is ready)
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+ 278:	1f 5f       	subi	r17, 0xFF	; 255
+ 27a:	27 96       	adiw	r28, 0x07	; 7
+ 27c:	87 e0       	ldi	r24, 0x07	; 7
+ 27e:	90 e0       	ldi	r25, 0x00	; 0
+ 280:	e8 0e       	add	r14, r24
+ 282:	f9 1e       	adc	r15, r25
+ 284:	14 31       	cpi	r17, 0x14	; 20
+ 286:	19 f7       	brne	.-58     	; 0x24e <SCH_Dispatch_Tasks+0x24>
+         {
+            SCH_Delete_Task(Index);
+         }
+      }
+   }
+}
+ 288:	df 91       	pop	r29
+ 28a:	cf 91       	pop	r28
+ 28c:	1f 91       	pop	r17
+ 28e:	ff 90       	pop	r15
+ 290:	ef 90       	pop	r14
+ 292:	df 90       	pop	r13
+ 294:	cf 90       	pop	r12
+ 296:	08 95       	ret
+
+00000298 <SCH_Init_T1>:
+  You must call this function before using the scheduler.  
+
+-*------------------------------------------------------------------*/
+
+void SCH_Init_T1(void)
+{
+ 298:	cf 93       	push	r28
+   unsigned char i;
+
+   for(i = 0; i < SCH_MAX_TASKS; i++)
+ 29a:	c0 e0       	ldi	r28, 0x00	; 0
+   {
+      SCH_Delete_Task(i);
+ 29c:	8c 2f       	mov	r24, r28
+ 29e:	0e 94 00 01 	call	0x200	; 0x200 <SCH_Delete_Task>
+
+void SCH_Init_T1(void)
+{
+   unsigned char i;
+
+   for(i = 0; i < SCH_MAX_TASKS; i++)
+ 2a2:	cf 5f       	subi	r28, 0xFF	; 255
+ 2a4:	c4 31       	cpi	r28, 0x14	; 20
+ 2a6:	d1 f7       	brne	.-12     	; 0x29c <SCH_Init_T1+0x4>
+
+   // Set up Timer 1
+   // Values for 1ms and 10ms ticks are provided for various crystals
+
+   // Hier moet de timer periode worden aangepast ....!
+   OCR1A = (uint16_t)625;   		     // 10ms = (256/16.000.000) * 625
+ 2a8:	81 e7       	ldi	r24, 0x71	; 113
+ 2aa:	92 e0       	ldi	r25, 0x02	; 2
+ 2ac:	90 93 89 00 	sts	0x0089, r25
+ 2b0:	80 93 88 00 	sts	0x0088, r24
+   TCCR1B = (1 << CS12) | (1 << WGM12);  // prescale op 64, top counter = value OCR1A (CTC mode)
+ 2b4:	8c e0       	ldi	r24, 0x0C	; 12
+ 2b6:	80 93 81 00 	sts	0x0081, r24
+   TIMSK1 = 1 << OCIE1A;   		     // Timer 1 Output Compare A Match Interrupt Enable
+ 2ba:	82 e0       	ldi	r24, 0x02	; 2
+ 2bc:	80 93 6f 00 	sts	0x006F, r24
+}
+ 2c0:	cf 91       	pop	r28
+ 2c2:	08 95       	ret
+
+000002c4 <SCH_Start>:
+ 
+-*------------------------------------------------------------------*/
+
+void SCH_Start(void)
+{
+      sei();
+ 2c4:	78 94       	sei
+}
+ 2c6:	08 95       	ret
+
+000002c8 <__vector_11>:
+  determined by the timer settings in SCH_Init_T1().
+
+-*------------------------------------------------------------------*/
+
+ISR(TIMER1_COMPA_vect)
+{
+ 2c8:	1f 92       	push	r1
+ 2ca:	0f 92       	push	r0
+ 2cc:	0f b6       	in	r0, 0x3f	; 63
+ 2ce:	0f 92       	push	r0
+ 2d0:	11 24       	eor	r1, r1
+ 2d2:	2f 93       	push	r18
+ 2d4:	3f 93       	push	r19
+ 2d6:	8f 93       	push	r24
+ 2d8:	9f 93       	push	r25
+ 2da:	af 93       	push	r26
+ 2dc:	bf 93       	push	r27
+ 2de:	cf 93       	push	r28
+ 2e0:	df 93       	push	r29
+ 2e2:	ef 93       	push	r30
+ 2e4:	ff 93       	push	r31
+ 2e6:	e1 e0       	ldi	r30, 0x01	; 1
+ 2e8:	f1 e0       	ldi	r31, 0x01	; 1
+ 2ea:	df 01       	movw	r26, r30
+ 2ec:	16 96       	adiw	r26, 0x06	; 6
+  This is the scheduler ISR.  It is called at a rate 
+  determined by the timer settings in SCH_Init_T1().
+
+-*------------------------------------------------------------------*/
+
+ISR(TIMER1_COMPA_vect)
+ 2ee:	2d e8       	ldi	r18, 0x8D	; 141
+ 2f0:	31 e0       	ldi	r19, 0x01	; 1
+{
+   unsigned char Index;
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+   {
+      // Check if there is a task at this location
+      if(SCH_tasks_G[Index].pTask)
+ 2f2:	80 81       	ld	r24, Z
+ 2f4:	91 81       	ldd	r25, Z+1	; 0x01
+ 2f6:	00 97       	sbiw	r24, 0x00	; 0
+ 2f8:	91 f0       	breq	.+36     	; 0x31e <__vector_11+0x56>
+      {
+         if(SCH_tasks_G[Index].Delay == 0)
+ 2fa:	82 81       	ldd	r24, Z+2	; 0x02
+ 2fc:	93 81       	ldd	r25, Z+3	; 0x03
+ 2fe:	00 97       	sbiw	r24, 0x00	; 0
+ 300:	59 f4       	brne	.+22     	; 0x318 <__vector_11+0x50>
+         {
+            // The task is due to run, Inc. the 'RunMe' flag
+            SCH_tasks_G[Index].RunMe += 1;
+ 302:	8c 91       	ld	r24, X
+ 304:	8f 5f       	subi	r24, 0xFF	; 255
+ 306:	8c 93       	st	X, r24
+
+            if(SCH_tasks_G[Index].Period)
+ 308:	84 81       	ldd	r24, Z+4	; 0x04
+ 30a:	95 81       	ldd	r25, Z+5	; 0x05
+ 30c:	00 97       	sbiw	r24, 0x00	; 0
+ 30e:	39 f0       	breq	.+14     	; 0x31e <__vector_11+0x56>
+            {
+               // Schedule periodic tasks to run again
+               SCH_tasks_G[Index].Delay = SCH_tasks_G[Index].Period;
+               SCH_tasks_G[Index].Delay -= 1;
+ 310:	01 97       	sbiw	r24, 0x01	; 1
+ 312:	93 83       	std	Z+3, r25	; 0x03
+ 314:	82 83       	std	Z+2, r24	; 0x02
+ 316:	03 c0       	rjmp	.+6      	; 0x31e <__vector_11+0x56>
+            }
+         }
+         else
+         {
+            // Not yet ready to run: just decrement the delay
+            SCH_tasks_G[Index].Delay -= 1;
+ 318:	01 97       	sbiw	r24, 0x01	; 1
+ 31a:	93 83       	std	Z+3, r25	; 0x03
+ 31c:	82 83       	std	Z+2, r24	; 0x02
+ 31e:	37 96       	adiw	r30, 0x07	; 7
+ 320:	17 96       	adiw	r26, 0x07	; 7
+-*------------------------------------------------------------------*/
+
+ISR(TIMER1_COMPA_vect)
+{
+   unsigned char Index;
+   for(Index = 0; Index < SCH_MAX_TASKS; Index++)
+ 322:	e2 17       	cp	r30, r18
+ 324:	f3 07       	cpc	r31, r19
+ 326:	29 f7       	brne	.-54     	; 0x2f2 <__vector_11+0x2a>
+            // Not yet ready to run: just decrement the delay
+            SCH_tasks_G[Index].Delay -= 1;
+         }
+      }
+   }
+}
+ 328:	ff 91       	pop	r31
+ 32a:	ef 91       	pop	r30
+ 32c:	df 91       	pop	r29
+ 32e:	cf 91       	pop	r28
+ 330:	bf 91       	pop	r27
+ 332:	af 91       	pop	r26
+ 334:	9f 91       	pop	r25
+ 336:	8f 91       	pop	r24
+ 338:	3f 91       	pop	r19
+ 33a:	2f 91       	pop	r18
+ 33c:	0f 90       	pop	r0
+ 33e:	0f be       	out	0x3f, r0	; 63
+ 340:	0f 90       	pop	r0
+ 342:	1f 90       	pop	r1
+ 344:	18 95       	reti
+
+00000346 <_exit>:
+ 346:	f8 94       	cli
+
+00000348 <__stop_program>:
+ 348:	ff cf       	rjmp	.-2      	; 0x348 <__stop_program>
